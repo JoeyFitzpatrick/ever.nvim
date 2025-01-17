@@ -1,8 +1,8 @@
 rockspec_format = "3.0"
-package = "plugin-template"
+package = "ever"
 version = "scm-1"
 
-local user = "ColinKennedy"
+local user = "JoeyFitzpatrick"
 
 description = {
     homepage = "https://github.com/" .. user .. "/" .. package,

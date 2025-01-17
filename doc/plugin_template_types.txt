@@ -6,29 +6,29 @@ These types are either required by the Lua API or required for the normal
 operation of this Lua plugin.
 
 ------------------------------------------------------------------------------
-*plugin_template.Configuration*
+*ever.Configuration*
    The user's customizations for this plugin.
 
 Fields ~
-    {cmdparse} plugin_template.ConfigurationCmdparse?
+    {cmdparse} ever.ConfigurationCmdparse?
        All settings that control the command mode tools (parsing, auto-complete, etc).
-    {commands} plugin_template.ConfigurationCommands?
-       Customize the fallback behavior of all `:PluginTemplate` commands.
-    {logging} plugin_template.LoggingConfiguration?
+    {commands} ever.ConfigurationCommands?
+       Customize the fallback behavior of all `:Ever` commands.
+    {logging} ever.LoggingConfiguration?
        Control how and which logs print to file / Neovim.
-    {tools} plugin_template.ConfigurationTools?
+    {tools} ever.ConfigurationTools?
        Optional third-party tool integrations.
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationCmdparse*
+*ever.ConfigurationCmdparse*
    All settings that control the command mode tools (parsing, auto-complete, etc).
 
 Fields ~
-    {auto_complete} plugin_template.ConfigurationCmdparseAutoComplete
+    {auto_complete} ever.ConfigurationCmdparseAutoComplete
        The settings that control what happens during auto-completion.
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationCmdparseAutoComplete*
+*ever.ConfigurationCmdparseAutoComplete*
    The settings that control what happens during auto-completion.
 
 Fields ~
@@ -36,25 +36,25 @@ Fields ~
        help_flag = Show / Hide the --help flag during auto-completion.
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationCommands*
-   Customize the fallback behavior of all `:PluginTemplate` commands.
+*ever.ConfigurationCommands*
+   Customize the fallback behavior of all `:Ever` commands.
 
 Fields ~
-    {goodnight_moon} plugin_template.ConfigurationGoodnightMoon?
-       The default values when a user calls `:PluginTemplate goodnight-moon`.
-    {hello_world} plugin_template.ConfigurationHelloWorld?
-       The default values when a user calls `:PluginTemplate hello-world`.
+    {goodnight_moon} ever.ConfigurationGoodnightMoon?
+       The default values when a user calls `:Ever goodnight-moon`.
+    {hello_world} ever.ConfigurationHelloWorld?
+       The default values when a user calls `:Ever hello-world`.
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationGoodnightMoon*
-   The default values when a user calls `:PluginTemplate goodnight-moon`.
+*ever.ConfigurationGoodnightMoon*
+   The default values when a user calls `:Ever goodnight-moon`.
 
 Fields ~
-    {read} plugin_template.ConfigurationGoodnightMoonRead?
-       The default values when a user calls `:PluginTemplate goodnight-moon read`.
+    {read} ever.ConfigurationGoodnightMoonRead?
+       The default values when a user calls `:Ever goodnight-moon read`.
 
 ------------------------------------------------------------------------------
-*plugin_template.LoggingConfiguration*
+*ever.LoggingConfiguration*
    Control whether or not logging is printed to the console or to disk.
 
 Fields ~
@@ -80,24 +80,24 @@ Fields ~
        Defaults to "/home/selecaoone/.local/share/nvim/plugin_name.log".
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationGoodnightMoonRead*
-   The default values when a user calls `:PluginTemplate goodnight-moon read`.
+*ever.ConfigurationGoodnightMoonRead*
+   The default values when a user calls `:Ever goodnight-moon read`.
 
 Fields ~
     {phrase} `(string)`
        The book to read if no book is given by the user.
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationHelloWorld*
-   The default values when a user calls `:PluginTemplate hello-world`.
+*ever.ConfigurationHelloWorld*
+   The default values when a user calls `:Ever hello-world`.
 
 Fields ~
-    {say} plugin_template.ConfigurationHelloWorldSay?
-       The default values when a user calls `:PluginTemplate hello-world say`.
+    {say} ever.ConfigurationHelloWorldSay?
+       The default values when a user calls `:Ever hello-world say`.
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationHelloWorldSay*
-   The default values when a user calls `:PluginTemplate hello-world say`.
+*ever.ConfigurationHelloWorldSay*
+   The default values when a user calls `:Ever hello-world say`.
 
 Fields ~
     {repeat} `(number)`
@@ -107,16 +107,16 @@ Fields ~
        Control how the text is displayed. e.g. "uppercase" changes "hello" to "HELLO".
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationTools*
+*ever.ConfigurationTools*
    Optional third-party tool integrations.
 
 Fields ~
-    {lualine} plugin_template.ConfigurationToolsLualine?
+    {lualine} ever.ConfigurationToolsLualine?
        A Vim statusline replacement that will show the command that the user just ran.
 
 ------------------------------------------------------------------------------
-*plugin_template.ConfigurationToolsLualineData*
-   The display values that will be used when a specific `plugin_template`
+*ever.ConfigurationToolsLualineData*
+   The display values that will be used when a specific `ever`
    command runs.
 
 Fields ~
