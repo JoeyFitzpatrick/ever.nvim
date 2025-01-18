@@ -1,29 +1,23 @@
 --- All `ever` command definitions.
 
-local cli_subcommand = require("ever._cli.cli_subcommand")
+local PREFIX = "G"
 
-local _PREFIX = "E"
-
----@type ever.ParserCreator
-local _SUBCOMMANDS = function()
-    local cmdparse = require("ever._cli.cmdparse")
-    local status = require("ever._commands.status.parser")
-
-    local root_parser = cmdparse.ParameterParser.new({ help = "The root of all commands." })
-    local root_subparsers = root_parser:add_subparsers({ "command", help = "All root commands." })
-
-    local parser = root_subparsers:add_parser({ name = _PREFIX, help = "The starting command." })
-    local subparsers = parser:add_subparsers({ "commands", help = "All runnable commands." })
-
-    subparsers:add_parser(status.make_parser())
-
-    return root_parser
+local function run_command(input_args)
+    local git_command = "git " .. input_args.args
+    local bufnr = vim.api.nvim_create_buf(false, true)
+    local win = vim.api.nvim_open_win(bufnr, true, { split = "below" })
+    vim.fn.jobstart(git_command, { term = true })
+    vim.keymap.set("n", "p", function()
+        local index = vim.api.nvim_win_get_cursor(win)[1]
+        local line = vim.api.nvim_buf_get_lines(bufnr, index - 1, index, false)[1]
+        vim.print(line)
+    end, { buffer = bufnr })
 end
 
-vim.api.nvim_create_user_command(_PREFIX, cli_subcommand.make_parser_triager(_SUBCOMMANDS), {
+vim.api.nvim_create_user_command(PREFIX, run_command, {
     nargs = "*",
     desc = "Ever's command API. Mostly the same as the Git API.",
-    complete = cli_subcommand.make_parser_completer(_SUBCOMMANDS),
+    -- complete = cli_subcommand.make_parser_completer(_SUBCOMMANDS),
 })
 
 vim.keymap.set("n", "<Plug>(EverSayHi)", function()
