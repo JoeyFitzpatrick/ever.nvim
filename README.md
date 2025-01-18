@@ -45,11 +45,6 @@ A template repository used to create Neovim plugins.
     - PR reviews - Reminds users to update `doc/news.txt`
 
 
-# Using This Template
-1. Follow the [Wiki instructions](https://github.com/JoeyFitzpatrick/ever.nvim/wiki/Using-This-Template)
-2. Once you're done, remove this section (the rest of this README.md file should be kept / customized to your needs)
-
-
 # Installation
 <!-- TODO: (you) - Adjust and add your dependencies as needed here -->
 - [lazy.nvim](https://github.com/folke/lazy.nvim)

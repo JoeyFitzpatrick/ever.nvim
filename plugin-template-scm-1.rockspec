@@ -8,7 +8,7 @@ description = {
     homepage = "https://github.com/" .. user .. "/" .. package,
     labels = { "neovim", "neovim-plugin" },
     license = "MIT",
-    summary = 'A "Best Practices" Neovim plugin template',
+    summary = "Yet another Neovim git plugin",
 }
 
 test_dependencies = {

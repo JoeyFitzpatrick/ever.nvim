@@ -91,7 +91,7 @@
 ---@field lualine ever.ConfigurationToolsLualine?
 ---    A Vim statusline replacement that will show the command that the user just ran.
 
----@alias ever.ConfigurationToolsLualine table<string, plugin_template.ConfigurationToolsLualineData>
+---@alias ever.ConfigurationToolsLualine table<string, ever.ConfigurationToolsLualineData>
 ---    Each runnable command and its display text.
 
 ---@class ever.ConfigurationToolsLualineData

@@ -1,15 +1,15 @@
 --- Basic API tests.
 ---
---- This module is pretty specific to this plugin template so you'll most
+--- This module is pretty specific to this ever so you'll most
 --- likely want to delete or heavily modify this file. But it does give a quick
 --- look how to mock a test and some things you can do with Neovim/busted.
 ---
----@module 'ever.plugin_template_spec'
+---@module 'ever.ever_spec'
 ---
 
 local configuration = require("ever._core.configuration")
 local copy_logs_runner = require("ever._commands.copy_logs.runner")
-local ever = require("plugin_template")
+local ever = require("plugin.ever")
 local vlog = require("ever._vendors.vlog")
 
 ---@class ever.Configuration
