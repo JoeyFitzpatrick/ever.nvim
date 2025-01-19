@@ -22,6 +22,22 @@ local function parse_should_enter_insert(cmd, should_enter_insert)
     return should_enter_insert
 end
 
+--- Get the number of lines to trim in terminal output.
+--- Empty lines at the end of the terminal output, and lines that begin with `[Process exited`, should be trimmed.
+---@param lines string[]
+---@return integer
+M._get_num_lines_to_trim = function(lines)
+    local num_lines_to_trim = 0
+    for i = #lines, 1, -1 do
+        if lines[i] == "" or lines[i]:find("[Process exited", 1, true) ~= nil then
+            num_lines_to_trim = num_lines_to_trim + 1
+        else
+            break
+        end
+    end
+    return num_lines_to_trim
+end
+
 ---@param cmd string
 ---@param bufnr integer
 ---@param win integer
@@ -45,7 +61,7 @@ local function open_dynamic_terminal(cmd, bufnr, win)
         on_exit = function()
             local trim_terminal_output = function()
                 local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-                local num_lines_to_trim = require("alien.elements.utils").get_num_lines_to_trim(lines)
+                local num_lines_to_trim = M._.get_num_lines_to_trim(lines)
                 vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
                 vim.api.nvim_buf_set_lines(bufnr, -num_lines_to_trim, -1, false, {})
                 vim.api.nvim_win_set_height(win, math.min(#lines - (num_lines_to_trim - 1), max_height))
