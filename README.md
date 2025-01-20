@@ -183,23 +183,14 @@ vim.api.nvim_set_hl(0, "EverTelescopeSecondary", {link="Question"})
 
 
 # Commands
-Here are some example commands:
+Just use a valid git command from command mode, via the `:G` command:
 
-<!-- TODO: (you) - You'll probably want to change all this or remove it. See -->
-<!-- plugin/ever.lua for details. -->
+<!-- See plugin/ever.lua for details. -->
 
 ```vim
-" A typical subcommand
-:Ever hello-world say phrase "Hello, World!" " How are you?"
-:Ever hello-world say phrase "Hello, World!" --repeat=2 --style=lowercase
-
-" An example of a flag this repeatable and 3 flags, -a, -b, -c, as one dash
-:Ever arbitrary-thing -vvv -abc -f
-
-" Separate commands with completely separate, flexible APIs
-:Ever goodnight-moon count-sheep 42
-:Ever goodnight-moon read "a book"
-:Ever goodnight-moon sleep -z -z -z
+:G pull
+:G status
+:G commit -m "a commit message"
 ```
 
 
