@@ -123,4 +123,13 @@ function M.reverse_array(array)
     return output
 end
 
+function M.tbls_overlap(t1, t2)
+    for _, item in ipairs(t2) do
+        if vim.tbl_contains(t1, item) then
+            return true
+        end
+    end
+    return false
+end
+
 return M

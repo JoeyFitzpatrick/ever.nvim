@@ -4,7 +4,7 @@ local PREFIX = "G"
 
 ---@param input_args vim.api.keyset.create_user_command.command_args
 local function run_command(input_args)
-    require("lua.ever._ui.elements").terminal(input_args.args)
+    require("lua.ever._ui.elements").terminal(vim.split(input_args.args, " "))
 end
 
 vim.api.nvim_create_user_command(PREFIX, run_command, {

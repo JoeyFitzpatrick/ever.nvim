@@ -1,7 +1,7 @@
 local M = {}
 
 --- Some commands parse command options to determine what display strat to use. In this case, run the parse function, otherwise return the display strat.
----@param cmd string
+---@param cmd string[]
 ---@param display_strategy DisplayStrategy | DisplayStrategyParser
 ---@return DisplayStrategy
 local function parse_display_strategy(cmd, display_strategy)
@@ -12,7 +12,7 @@ local function parse_display_strategy(cmd, display_strategy)
 end
 
 --- Some commands parse command options to determine whether to enter in insert mode. In this case, run the parse function, otherwise return the bool.
----@param cmd string
+---@param cmd string[]
 ---@param should_enter_insert boolean | ShouldEnterInsert
 ---@return boolean
 local function parse_should_enter_insert(cmd, should_enter_insert)
@@ -38,7 +38,7 @@ M._get_num_lines_to_trim = function(lines)
     return num_lines_to_trim
 end
 
----@param cmd string
+---@param cmd string[]
 ---@param bufnr integer
 ---@param win integer
 ---@return integer -- The channel id of the terminal.
@@ -77,7 +77,7 @@ local function open_dynamic_terminal(cmd, bufnr, win)
     return channel_id
 end
 
----@param cmd string
+---@param cmd string[]
 ---@param bufnr integer
 ---@param strategy Strategy
 ---@return integer -- The channel id of the terminal
@@ -98,14 +98,15 @@ local function open_terminal_buffer(cmd, bufnr, strategy)
     return channel_id
 end
 
----@param cmd string
+---@param cmd string[]
 ---@return integer -- The channel id of the terminal.
 function M.terminal(cmd)
     local bufnr = vim.api.nvim_create_buf(false, true)
-    local base_cmd = cmd:match("(%S+)%s?")
+    local base_cmd = cmd[1]
     local strategy = require("lua.ever._constants.command_strategies")[base_cmd]
         or require("lua.ever._constants.command_strategies").default
-    local git_command = "git " .. cmd
+    local git_command = cmd
+    table.insert(git_command, 1, "git")
     local channel_id = open_terminal_buffer(git_command, bufnr, strategy)
     local should_enter_insert = parse_should_enter_insert(cmd, strategy.insert)
     if should_enter_insert then

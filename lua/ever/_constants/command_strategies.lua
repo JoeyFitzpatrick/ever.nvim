@@ -1,6 +1,6 @@
 ---@alias DisplayStrategy "above" | "below" | "right" | "left" | "full" | "dynamic"
----@alias DisplayStrategyParser fun(cmd: string): DisplayStrategy
----@alias ShouldEnterInsert fun(cmd: string): boolean
+---@alias DisplayStrategyParser fun(cmd: string[]): DisplayStrategy
+---@alias ShouldEnterInsert fun(cmd: string[]): boolean
 
 ---@class Strategy
 ---@field display_strategy? DisplayStrategy | DisplayStrategyParser
@@ -31,9 +31,34 @@ M.branch = {
 M.commit = {
     display_strategy = M.STRATEGIES.BELOW,
     insert = function(cmd)
-        local should_not_enter_insert_pattern =
-            "%f[%w](-C|--reuse%-message|--squash|--long|--short|--porcelain|-z|--null|-F|--file|-m|--message|--allow%-empty|--allow%-message|--no%-edit|--dry%-run)%f[%W]"
-        return not cmd:match(should_not_enter_insert_pattern)
+        local should_not_enter_insert_options = {
+            "--allow-empty",
+            "--allow-message",
+            "--dry-run",
+            "--file",
+            "--long",
+            "--message",
+            "--no-edit",
+            "--null",
+            "--porcelain",
+            "--reuse-message",
+            "--short",
+            "--squash",
+            "-C",
+            "-F",
+            "-m",
+            "-z",
+        }
+        return not require("lua.ever._core.tabler").tbls_overlap(cmd, should_not_enter_insert_options)
+    end,
+}
+
+M.notes = {
+    display_strategy = M.STRATEGIES.BELOW,
+    insert = function(cmd)
+        local should_not_enter_insert_options =
+            { "--message", "-m", "copy", "get-ref", "list", "merge", "prune", "remove", "show" }
+        return not require("lua.ever._core.tabler").tbls_overlap(cmd, should_not_enter_insert_options)
     end,
 }
 
