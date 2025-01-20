@@ -1,3 +1,5 @@
+---@alias ElementType "terminal"
+
 local M = {}
 
 --- Some commands parse command options to determine what display strat to use. In this case, run the parse function, otherwise return the display strat.
@@ -112,6 +114,7 @@ function M.terminal(cmd)
     if should_enter_insert then
         vim.cmd("startinsert")
     end
+    require("lua.ever._ui.keymaps.base").set_keymaps(bufnr, "terminal")
     return channel_id
 end
 
