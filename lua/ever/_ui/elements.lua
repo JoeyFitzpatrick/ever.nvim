@@ -1,4 +1,4 @@
----@alias ElementType "terminal"
+---@alias ElementType "terminal" | "home"
 
 local M = {}
 

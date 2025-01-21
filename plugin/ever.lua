@@ -4,10 +4,17 @@ local PREFIX = "G"
 
 ---@param input_args vim.api.keyset.create_user_command.command_args
 local function run_command(input_args)
-    require("lua.ever._ui.elements").terminal(vim.split(input_args.args, " "))
+    local args = input_args.args
+    if args == "" then
+        require("lua.ever._ui.home").open()
+    else
+        require("lua.ever._ui.elements").terminal(vim.split(input_args.args, " "))
+    end
 end
 
-vim.api.nvim_create_user_command(PREFIX, run_command, {
+vim.api.nvim_create_user_command(PREFIX, function(input_args)
+    run_command(input_args)
+end, {
     nargs = "*",
     desc = "Ever's command API. Mostly the same as the Git API.",
     -- complete = cli_subcommand.make_parser_completer(_SUBCOMMANDS),
