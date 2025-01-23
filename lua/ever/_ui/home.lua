@@ -1,14 +1,22 @@
----@class TabHighlightIndices
+---@class ever.TabHighlightIndices
 ---@field start integer
 ---@field ending integer
 
+---@alias ever.TabOption "Status" | "Branch" | "Log" | "Stash"
+
+---@class ever.UiRenderOpts
+---@field start_line? integer
+
 local M = {}
+
+-- includes padding (two lines currently)
+local TAB_HEIGHT = 4
 
 local keymaps = require("lua.ever._core.configuration").DATA.keymaps.home
 
 --- Creates tabs for home UI
 ---@param options string[]
----@return string[], TabHighlightIndices[]
+---@return string[], ever.TabHighlightIndices[]
 function M._create_box_table(options)
     local boxes = {}
     local indices = {}
@@ -54,40 +62,57 @@ function M._create_box_table(options)
     table.insert(boxes, top_line:sub(1, -#separator - 1))
     table.insert(boxes, middle_line:sub(1, -#separator - 1))
     table.insert(boxes, bottom_line:sub(1, -#separator - 1))
+    -- Add padding
+    table.insert(boxes, "")
 
     return boxes, indices
 end
 
-local options = { "Status", "Branch", "Log", "Stash" }
-local tabs_text, tab_indices = M._create_box_table(options)
+---@type ever.TabOption[]
+local TAB_OPTIONS = { "Status", "Branch", "Log", "Stash" }
+local tabs_text, tab_indices = M._create_box_table(TAB_OPTIONS)
 
 local tabs = {
-    options = options,
-    tab_indices = tab_indices,
+    _options = TAB_OPTIONS,
+    _tab_indices = tab_indices,
     current = 1,
+    current_option = TAB_OPTIONS[1],
+    current_tab_indices = tab_indices[1],
+    set_current = function(self, index)
+        if index < 1 then
+            self.current = 1
+        elseif index > #self._options then
+            self.current = #self.options
+        else
+            self.current = index
+        end
+        self.current_option = self._options[self.current]
+        self.current_tab_indices = self._tab_indices[self.current]
+    end,
     ---@param direction "forward" | "back"
     cycle_tab = function(self, direction)
         if direction == "forward" then
-            if self.current >= #self.options then
+            if self.current >= #self._options then
                 self.current = 1
             else
                 self.current = self.current + 1
             end
         else
             if self.current <= 1 then
-                self.current = #self.options
+                self.current = #self._options
             else
                 self.current = self.current - 1
             end
         end
-        return self.tab_indices[self.current]
+        self.current_option = self._options[self.current]
+        self.current_tab_indices = self._tab_indices[self.current]
     end,
 }
 
 local highlight_namespace = vim.api.nvim_create_namespace("EverHomeTabs")
 
 ---@param bufnr integer
----@param indices TabHighlightIndices[]
+---@param indices ever.TabHighlightIndices[]
 local function highlight_tabs(bufnr, indices)
     vim.api.nvim_buf_clear_namespace(bufnr, highlight_namespace, 0, 3)
     for i = 1, 3 do
@@ -96,20 +121,44 @@ local function highlight_tabs(bufnr, indices)
     end
 end
 
+---@type table<ever.TabOption, fun(bufnr: integer, opts: ever.UiRenderOpts)>
+local tab_render_map = {
+    Status = function(bufnr, opts)
+        require("lua.ever._ui.home_options.status").render(bufnr, opts)
+    end,
+    Branch = function(bufnr, opts)
+        require("lua.ever._ui.home_options.branch").render(bufnr, opts)
+    end,
+    Log = function(bufnr, opts)
+        require("lua.ever._ui.home_options.log").render(bufnr, opts)
+    end,
+    Stash = function(bufnr, opts)
+        require("lua.ever._ui.home_options.stash").render(bufnr, opts)
+    end,
+}
+
+---@param bufnr integer
+---@param tab ever.TabOption
+---@param indices ever.TabHighlightIndices[]
+local function render(bufnr, tab, indices)
+    tab_render_map[tab](bufnr, { start_line = TAB_HEIGHT })
+    highlight_tabs(bufnr, indices)
+end
+
 function M.open()
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, tabs_text)
-    tabs.current = 1 -- TODO: move this into on-close autocmd once we have that
-    highlight_tabs(bufnr, tabs.tab_indices[tabs.current])
+    tabs:set_current(1) -- TODO: move this into on-close autocmd once we have that
+    render(bufnr, tabs.current_option, tabs.current_tab_indices)
     require("lua.ever._ui.keymaps.base").set_keymaps(bufnr, "home")
     vim.keymap.set("n", keymaps.next, function()
-        local current_tab_indices = tabs:cycle_tab("forward")
-        highlight_tabs(bufnr, current_tab_indices)
+        tabs:cycle_tab("forward")
+        render(bufnr, tabs.current_option, tabs.current_tab_indices)
     end, { buffer = bufnr })
     vim.keymap.set("n", keymaps.previous, function()
-        local current_tab_indices = tabs:cycle_tab("back")
-        highlight_tabs(bufnr, current_tab_indices)
+        tabs:cycle_tab("back")
+        render(bufnr, tabs.current_option, tabs.current_tab_indices)
     end, { buffer = bufnr })
 end
 
