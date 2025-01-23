@@ -13,37 +13,19 @@
 ---@alias vim.log.levels.WARN number An error that was recovered but could be an issue.
 
 ---@class ever.Configuration
----    The user's customizations for this plugin.
----@field cmdparse ever.ConfigurationCmdparse?
----    All settings that control the command mode tools (parsing, auto-complete, etc).
----@field commands ever.ConfigurationCommands?
----    Customize the fallback behavior of all `:Ever` commands.
----@field logging ever.LoggingConfiguration?
----    Control how and which logs print to file / Neovim.
----@field tools ever.ConfigurationTools?
----    Optional third-party tool integrations.
+---@field keymaps ever.Keymaps -- All of the keymaps in Ever UI buffers.
 
----@class ever.ConfigurationCmdparse
----    All settings that control the command mode tools (parsing, auto-complete, etc).
----@field auto_complete ever.ConfigurationCmdparseAutoComplete
----    The settings that control what happens during auto-completion.
+---@class ever.Keymaps
+---@field home ever.KeymapsHome
+
+---@class ever.KeymapsHome
+---@field next string
+---@field previous string
 
 ---@class ever.ConfigurationCmdparseAutoComplete
 ---    The settings that control what happens during auto-completion.
 ---@field display {help_flag: boolean}
 ---    help_flag = Show / Hide the --help flag during auto-completion.
-
----@class ever.ConfigurationCommands
----    Customize the fallback behavior of all `:Ever` commands.
----@field goodnight_moon ever.ConfigurationGoodnightMoon?
----    The default values when a user calls `:Ever goodnight-moon`.
----@field hello_world ever.ConfigurationHelloWorld?
----    The default values when a user calls `:Ever hello-world`.
-
----@class ever.ConfigurationGoodnightMoon
----    The default values when a user calls `:Ever goodnight-moon`.
----@field read ever.ConfigurationGoodnightMoonRead?
----    The default values when a user calls `:Ever goodnight-moon read`.
 
 ---@class ever.LoggingConfiguration
 ---    Control whether or not logging is printed to the console or to disk.
@@ -66,21 +48,5 @@
 ---    Should write to a file.
 ---@field output_path string?
 ---    The default path on-disk where log files will be written to.
+---    TODO: make this the correct log path
 ---    Defaults to "/home/selecaoone/.local/share/nvim/plugin_name.log".
-
----@class ever.ConfigurationTools
----    Optional third-party tool integrations.
----@field lualine ever.ConfigurationToolsLualine?
----    A Vim statusline replacement that will show the command that the user just ran.
-
----@alias ever.ConfigurationToolsLualine table<string, ever.ConfigurationToolsLualineData>
----    Each runnable command and its display text.
-
----@class ever.ConfigurationToolsLualineData
----    The display values that will be used when a specific `ever`
----    command runs.
----@diagnostic disable-next-line: undefined-doc-name
----@field color vim.api.keyset.highlight?
----    The foreground/background color to use for the Lualine status.
----@field prefix string?
----    The text to display in lualine.

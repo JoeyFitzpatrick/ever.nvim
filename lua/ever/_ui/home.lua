@@ -4,6 +4,8 @@
 
 local M = {}
 
+local keymaps = require("lua.ever._core.configuration").DATA.keymaps.home
+
 --- Creates tabs for home UI
 ---@param options string[]
 ---@return string[], TabHighlightIndices[]
@@ -101,11 +103,11 @@ function M.open()
     tabs.current = 1 -- TODO: move this into on-close autocmd once we have that
     highlight_tabs(bufnr, tabs.tab_indices[tabs.current])
     require("lua.ever._ui.keymaps.base").set_keymaps(bufnr, "home")
-    vim.keymap.set("n", "<Tab>", function()
+    vim.keymap.set("n", keymaps.next, function()
         local current_tab_indices = tabs:cycle_tab("forward")
         highlight_tabs(bufnr, current_tab_indices)
     end, { buffer = bufnr })
-    vim.keymap.set("n", "<S-Tab>", function()
+    vim.keymap.set("n", keymaps.previous, function()
         local current_tab_indices = tabs:cycle_tab("back")
         highlight_tabs(bufnr, current_tab_indices)
     end, { buffer = bufnr })
