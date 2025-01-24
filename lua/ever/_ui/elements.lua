@@ -84,7 +84,7 @@ end
 ---@param strategy Strategy
 ---@return integer -- The channel id of the terminal
 local function open_terminal_buffer(cmd, bufnr, strategy)
-    local strategies = require("lua.ever._constants.command_strategies").STRATEGIES
+    local strategies = require("ever._constants.command_strategies").STRATEGIES
     local display_strategy = parse_display_strategy(cmd, strategy.display_strategy)
     if vim.tbl_contains({ "above", "below", "right", "left" }, display_strategy) then
         vim.api.nvim_open_win(bufnr, true, { split = display_strategy })
@@ -105,8 +105,8 @@ end
 function M.terminal(cmd)
     local bufnr = vim.api.nvim_create_buf(false, true)
     local base_cmd = cmd[1]
-    local strategy = require("lua.ever._constants.command_strategies")[base_cmd]
-        or require("lua.ever._constants.command_strategies").default
+    local strategy = require("ever._constants.command_strategies")[base_cmd]
+        or require("ever._constants.command_strategies").default
     local git_command = cmd
     table.insert(git_command, 1, "git")
     local channel_id = open_terminal_buffer(git_command, bufnr, strategy)
@@ -114,7 +114,7 @@ function M.terminal(cmd)
     if should_enter_insert then
         vim.cmd("startinsert")
     end
-    require("lua.ever._ui.keymaps.base").set_keymaps(bufnr, "terminal")
+    require("ever._ui.keymaps.base").set_keymaps(bufnr, "terminal")
     return channel_id
 end
 

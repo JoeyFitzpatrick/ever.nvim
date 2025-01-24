@@ -6,7 +6,7 @@ local M = {}
 ---@param opts? ever.UiRenderOpts
 function M.render(bufnr, opts)
     opts = opts or {}
-    local output = require("lua.ever._core.run_cmd").run_cmd({
+    local output = require("ever._core.run_cmd").run_cmd({
         "git",
         "log",
         "--pretty=format:%h %<(25)%cr %<(25)%an %<(25)%s",

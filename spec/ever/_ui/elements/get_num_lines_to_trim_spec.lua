@@ -1,4 +1,4 @@
-local get_num_lines_to_trim = require("lua.ever._ui.elements")._get_num_lines_to_trim
+local get_num_lines_to_trim = require("ever._ui.elements")._get_num_lines_to_trim
 
 describe("get_num_lines_to_trim", function()
     it("returns 1 when there is an empty line at the end of the output", function()

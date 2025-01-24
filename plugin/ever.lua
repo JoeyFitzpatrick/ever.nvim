@@ -4,12 +4,12 @@ local PREFIX = "G"
 
 ---@param input_args vim.api.keyset.create_user_command.command_args
 local function run_command(input_args)
-    require("lua.ever._core.configuration").initialize_data_if_needed()
+    require("ever")
     local args = input_args.args
     if args == "" then
-        require("lua.ever._ui.home").open()
+        require("ever._ui.home").open()
     else
-        require("lua.ever._ui.elements").terminal(vim.split(input_args.args, " "))
+        require("ever._ui.elements").terminal(vim.split(input_args.args, " "))
     end
 end
 

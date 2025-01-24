@@ -49,7 +49,7 @@ M.commit = {
             "-m",
             "-z",
         }
-        return not require("lua.ever._core.tabler").tbls_overlap(cmd, should_not_enter_insert_options)
+        return not require("ever._core.tabler").tbls_overlap(cmd, should_not_enter_insert_options)
     end,
 }
 
@@ -58,7 +58,7 @@ M.notes = {
     insert = function(cmd)
         local should_not_enter_insert_options =
             { "--message", "-m", "copy", "get-ref", "list", "merge", "prune", "remove", "show" }
-        return not require("lua.ever._core.tabler").tbls_overlap(cmd, should_not_enter_insert_options)
+        return not require("ever._core.tabler").tbls_overlap(cmd, should_not_enter_insert_options)
     end,
 }
 

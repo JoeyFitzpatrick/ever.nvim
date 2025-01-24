@@ -1,4 +1,4 @@
-local create_box_table = require("lua.ever._ui.home")._create_box_table
+local create_box_table = require("ever._ui.home")._create_box_table
 
 describe("create box table", function()
     it("returns the correct start/end indices for the box", function()

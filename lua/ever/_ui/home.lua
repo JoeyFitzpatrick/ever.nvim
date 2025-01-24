@@ -12,7 +12,7 @@ local M = {}
 -- includes padding (two lines currently)
 local TAB_HEIGHT = 4
 
-local keymaps = require("lua.ever._core.configuration").DATA.keymaps.home
+local keymaps = require("ever._core.configuration").DATA.keymaps.home
 
 --- Creates tabs for home UI
 ---@param options string[]
@@ -124,16 +124,16 @@ end
 ---@type table<ever.TabOption, fun(bufnr: integer, opts: ever.UiRenderOpts)>
 local tab_render_map = {
     Status = function(bufnr, opts)
-        require("lua.ever._ui.home_options.status").render(bufnr, opts)
+        require("ever._ui.home_options.status").render(bufnr, opts)
     end,
     Branch = function(bufnr, opts)
-        require("lua.ever._ui.home_options.branch").render(bufnr, opts)
+        require("ever._ui.home_options.branch").render(bufnr, opts)
     end,
     Log = function(bufnr, opts)
-        require("lua.ever._ui.home_options.log").render(bufnr, opts)
+        require("ever._ui.home_options.log").render(bufnr, opts)
     end,
     Stash = function(bufnr, opts)
-        require("lua.ever._ui.home_options.stash").render(bufnr, opts)
+        require("ever._ui.home_options.stash").render(bufnr, opts)
     end,
 }
 
@@ -151,7 +151,7 @@ function M.open()
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, tabs_text)
     tabs:set_current(1) -- TODO: move this into on-close autocmd once we have that
     render(bufnr, tabs.current_option, tabs.current_tab_indices)
-    require("lua.ever._ui.keymaps.base").set_keymaps(bufnr, "home")
+    require("ever._ui.keymaps.base").set_keymaps(bufnr, "home")
     vim.keymap.set("n", keymaps.next, function()
         tabs:cycle_tab("forward")
         render(bufnr, tabs.current_option, tabs.current_tab_indices)
