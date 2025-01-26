@@ -27,13 +27,49 @@ local function highlight(bufnr, start_line, lines)
 end
 
 ---@param bufnr integer
----@param opts? ever.UiRenderOpts
-function M.render(bufnr, opts)
+---@param opts ever.UiRenderOpts
+---@return string[]
+local function set_lines(bufnr, opts)
     opts = opts or {}
     local start_line = opts.start_line or 0
     local output = require("ever._core.run_cmd").run_cmd({ "git", "status", "--porcelain" })
     vim.api.nvim_buf_set_lines(bufnr, start_line or 0, -1, false, output)
+    return output
+end
+
+---@param bufnr integer
+---@param line_num? integer
+---@return { line: string, status: string }
+local function get_line(bufnr, line_num)
+    line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
+    local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
+    return { line = line:sub(4), status = get_status(line) }
+end
+
+---@param bufnr integer
+---@param opts ever.UiRenderOpts
+local function set_keymaps(bufnr, opts)
+    local keymaps = require("ever._core.configuration").DATA.keymaps.home.status
+    vim.keymap.set("n", keymaps.stage, function()
+        local line_data = get_line(bufnr)
+        if not require("lua.ever._core.git").is_staged(line_data.status) then
+            local result = vim.system({ "git", "add", "--", line_data.line }):wait()
+            vim.print(result)
+        else
+            vim.system({ "git", "reset", "HEAD", "--", line_data.line }):wait()
+        end
+        local output = set_lines(bufnr, opts)
+        highlight(bufnr, opts.start_line or 0, output)
+    end, { buffer = bufnr, nowait = true })
+end
+
+---@param bufnr integer
+---@param opts ever.UiRenderOpts
+function M.render(bufnr, opts)
+    local output = set_lines(bufnr, opts)
+    local start_line = opts.start_line or 0
     highlight(bufnr, start_line, output)
+    set_keymaps(bufnr, opts)
 end
 
 return M
