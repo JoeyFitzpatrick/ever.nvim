@@ -28,8 +28,4 @@ vim.opt.rtp:append(".")
 
 vim.cmd("runtime plugin/ever.lua")
 
-vim.cmd("runtime plugin/plenary.vim")
-
-require("lualine").setup()
-
 require("ever._core.configuration").initialize_data_if_needed()

@@ -27,8 +27,12 @@ local _DEFAULTS = {
         },
     },
 }
+function M.initialize_data()
+    M.DATA = vim.tbl_deep_extend("force", _DEFAULTS, vim.g.ever_configuration or {})
+end
 
 --- Setup `ever` for the first time, if needed.
+--- TODO: remove this, as we are handling initialization elsewhere
 function M.initialize_data_if_needed()
     if vim.g.loaded_ever then
         return

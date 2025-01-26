@@ -4,7 +4,6 @@ local PREFIX = "G"
 
 ---@param input_args vim.api.keyset.create_user_command.command_args
 local function run_command(input_args)
-    require("ever")
     local args = input_args.args
     if args == "" then
         require("ever._ui.home").open()
@@ -14,6 +13,7 @@ local function run_command(input_args)
 end
 
 vim.api.nvim_create_user_command(PREFIX, function(input_args)
+    require("ever")
     run_command(input_args)
 end, {
     nargs = "*",
