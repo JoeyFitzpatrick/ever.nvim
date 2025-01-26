@@ -49,15 +49,28 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 local function set_keymaps(bufnr, opts)
-    local keymaps = require("ever._core.configuration").DATA.keymaps.home.status
+    local keymaps = require("ever._core.configuration").DATA.keymaps.status
+
     vim.keymap.set("n", keymaps.stage, function()
         local line_data = get_line(bufnr)
         if not require("lua.ever._core.git").is_staged(line_data.status) then
-            local result = vim.system({ "git", "add", "--", line_data.line }):wait()
-            vim.print(result)
+            vim.system({ "git", "add", "--", line_data.line }):wait()
         else
             vim.system({ "git", "reset", "HEAD", "--", line_data.line }):wait()
         end
+        local output = set_lines(bufnr, opts)
+        highlight(bufnr, opts.start_line or 0, output)
+    end, { buffer = bufnr, nowait = true })
+
+    vim.keymap.set("n", keymaps.stage_all, function()
+        for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)) do
+            if line:match("^.%S") then
+                vim.system({ "git", "add", "-A" }):wait()
+                                goto continue
+            end
+        end
+        vim.system({ "git", "reset" }):wait()
+                ::continue::
         local output = set_lines(bufnr, opts)
         highlight(bufnr, opts.start_line or 0, output)
     end, { buffer = bufnr, nowait = true })

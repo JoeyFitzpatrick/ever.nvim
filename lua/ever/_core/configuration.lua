@@ -24,9 +24,10 @@ local _DEFAULTS = {
         home = {
             next = "<Tab>",
             previous = "<S-Tab>",
-            status = {
-                stage = "s",
-            },
+        },
+        status = {
+            stage = "s",
+            stage_all = "a",
         },
     },
 }
