@@ -8,7 +8,7 @@ local function run_command(input_args)
     if args == "" then
         require("ever._ui.home").open()
     else
-        require("ever._ui.elements").terminal(vim.split(input_args.args, " "))
+        require("ever._ui.elements").terminal(input_args.args)
     end
 end
 

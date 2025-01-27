@@ -40,7 +40,7 @@ M._get_num_lines_to_trim = function(lines)
     return num_lines_to_trim
 end
 
----@param cmd string[]
+---@param cmd string
 ---@param bufnr integer
 ---@param win integer
 ---@return integer -- The channel id of the terminal.
@@ -79,13 +79,14 @@ local function open_dynamic_terminal(cmd, bufnr, win)
     return channel_id
 end
 
----@param cmd string[]
+---@param cmd string
+---@param split_cmd string[]
 ---@param bufnr integer
 ---@param strategy Strategy
 ---@return integer -- The channel id of the terminal
-local function open_terminal_buffer(cmd, bufnr, strategy)
+local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
     local strategies = require("ever._constants.command_strategies").STRATEGIES
-    local display_strategy = parse_display_strategy(cmd, strategy.display_strategy)
+    local display_strategy = parse_display_strategy(split_cmd, strategy.display_strategy)
     if vim.tbl_contains({ "above", "below", "right", "left" }, display_strategy) then
         vim.api.nvim_open_win(bufnr, true, { split = display_strategy })
     elseif display_strategy == strategies.FULL then
@@ -100,17 +101,18 @@ local function open_terminal_buffer(cmd, bufnr, strategy)
     return channel_id
 end
 
----@param cmd string[]
+---@param cmd string
 ---@return integer -- The channel id of the terminal.
 function M.terminal(cmd)
+    cmd = "git " .. cmd
+    local split_cmd = vim.split(cmd, " ")
     local bufnr = vim.api.nvim_create_buf(false, true)
-    local base_cmd = cmd[1]
+    local base_cmd = split_cmd[2]
+    vim.print(base_cmd)
     local strategy = require("ever._constants.command_strategies")[base_cmd]
         or require("ever._constants.command_strategies").default
-    local git_command = cmd
-    table.insert(git_command, 1, "git")
-    local channel_id = open_terminal_buffer(git_command, bufnr, strategy)
-    local should_enter_insert = parse_should_enter_insert(cmd, strategy.insert)
+    local channel_id = open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
+    local should_enter_insert = parse_should_enter_insert(split_cmd, strategy.insert)
     if should_enter_insert then
         vim.cmd("startinsert")
     end
