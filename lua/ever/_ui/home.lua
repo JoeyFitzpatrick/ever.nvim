@@ -141,7 +141,9 @@ local tab_render_map = {
 ---@param tab ever.TabOption
 ---@param indices ever.TabHighlightIndices[]
 local function render(bufnr, tab, indices)
+    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     tab_render_map[tab](bufnr, { start_line = TAB_HEIGHT })
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     vim.api.nvim_win_set_cursor(0, { 5, 0 })
     highlight_tabs(bufnr, indices)
 end

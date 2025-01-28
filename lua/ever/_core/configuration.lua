@@ -26,6 +26,11 @@ local _DEFAULTS = {
             previous = "h",
         },
         status = {
+            -- TODO: see why using "c" with nowait doesn't work. Could just be my nvim version.
+            commit = "co",
+            edit_file = "e",
+            pull = "p",
+            push = "<leader>p",
             stage = "s",
             stage_all = "a",
         },

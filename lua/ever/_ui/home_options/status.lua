@@ -30,10 +30,12 @@ end
 ---@param opts ever.UiRenderOpts
 ---@return string[]
 local function set_lines(bufnr, opts)
-    opts = opts or {}
     local start_line = opts.start_line or 0
     local output = require("ever._core.run_cmd").run_cmd({ "git", "status", "--porcelain" })
+    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, start_line or 0, -1, false, output)
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    highlight(bufnr, start_line, output)
     return output
 end
 
@@ -50,6 +52,7 @@ end
 ---@param opts ever.UiRenderOpts
 local function set_keymaps(bufnr, opts)
     local keymaps = require("ever._core.configuration").DATA.keymaps.status
+    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", keymaps.stage, function()
         local line_data = get_line(bufnr)
@@ -58,30 +61,38 @@ local function set_keymaps(bufnr, opts)
         else
             vim.system({ "git", "reset", "HEAD", "--", line_data.line }):wait()
         end
-        local output = set_lines(bufnr, opts)
-        highlight(bufnr, opts.start_line or 0, output)
-    end, { buffer = bufnr, nowait = true })
+        set_lines(bufnr, opts)
+    end, keymap_opts)
 
     vim.keymap.set("n", keymaps.stage_all, function()
         for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)) do
             if line:match("^.%S") then
                 vim.system({ "git", "add", "-A" }):wait()
-                                goto continue
+                set_lines(bufnr, opts)
+                return
             end
         end
         vim.system({ "git", "reset" }):wait()
-                ::continue::
-        local output = set_lines(bufnr, opts)
-        highlight(bufnr, opts.start_line or 0, output)
-    end, { buffer = bufnr, nowait = true })
+        set_lines(bufnr, opts)
+    end, keymap_opts)
+
+    local keymap_to_command_map = {
+        { keymap = keymaps.commit, command = "commit" },
+        { keymap = keymaps.pull, command = "pull" },
+        { keymap = keymaps.push, command = "push" },
+    }
+
+    for _, mapping in ipairs(keymap_to_command_map) do
+        vim.keymap.set("n", mapping.keymap, "<cmd>G " .. mapping.command .. "<CR>", keymap_opts)
+    end
+
+    -- edit_file = "e",
 end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
-    local output = set_lines(bufnr, opts)
-    local start_line = opts.start_line or 0
-    highlight(bufnr, start_line, output)
+    set_lines(bufnr, opts)
     set_keymaps(bufnr, opts)
 end
 
