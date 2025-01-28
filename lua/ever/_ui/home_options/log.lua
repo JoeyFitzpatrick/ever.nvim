@@ -2,35 +2,12 @@
 
 local M = {}
 
-local theme = {
-    [241] = { fg = "Special" },
-    activeBorderColor = { fg = "MatchParen", bold = true },
-    cherryPickedCommitBgColor = { fg = "Identifier" },
-    cherryPickedCommitFgColor = { fg = "Function" },
-    defaultFgColor = { fg = "Normal" },
-    inactiveBorderColor = { fg = "FloatBorder" },
-    optionsTextColor = { fg = "Function" },
-    searchingActiveBorderColor = { fg = "MatchParen", bold = true },
-    selectedLineBgColor = { bg = "Visual" }, -- set to `default` to have no background colour
-    unstagedChangesColor = { fg = "DiagnosticError" },
-}
-
----@param bufnr integer
----@param highlight_group string
----@param line_num integer
----@param start? integer
----@param finish? integer
-local function highlight_line(bufnr, highlight_group, line_num, start, finish)
-    if start and finish then
-        vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_group, line_num, start - 1, finish)
-    end
-end
-
 --- Highlight log (commit) lines
 ---@param bufnr integer
 ---@param start_line integer
 ---@param lines string[]
 local function highlight(bufnr, start_line, lines)
+    local highlight_line = require("ever._ui.highlight").highlight_line
     for i, line in ipairs(lines) do
         local line_num = i + start_line - 1
         local hash_start, hash_end = line:find("^󰜘 %w+")
