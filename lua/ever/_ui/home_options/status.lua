@@ -142,6 +142,23 @@ local function get_diff_cmd(status, filename)
     return "diff " .. filename
 end
 
+local function set_diff_buffer_autocmds(diff_bufnr)
+    vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+        desc = "Stop insert mode on buf enter",
+        buffer = diff_bufnr,
+        command = "stopinsert",
+        group = vim.api.nvim_create_augroup("EverStatusUi", { clear = false }),
+    })
+    vim.api.nvim_create_autocmd("BufHidden", {
+        desc = "Clean up diff variables",
+        buffer = diff_bufnr,
+        callback = function()
+            DIFF_BUFNR = nil
+            DIFF_CHANNEL_ID = nil
+        end,
+    })
+end
+
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 local function set_autocmds(bufnr, opts)
@@ -161,6 +178,7 @@ local function set_autocmds(bufnr, opts)
             local win = vim.api.nvim_get_current_win()
             DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(diff_cmd)
             DIFF_BUFNR = vim.api.nvim_get_current_buf()
+            set_diff_buffer_autocmds(DIFF_BUFNR)
             vim.api.nvim_set_current_win(win)
         end,
         group = vim.api.nvim_create_augroup("EverStatusUi", { clear = false }),

@@ -115,6 +115,8 @@ function M.terminal(cmd)
     local should_enter_insert = parse_should_enter_insert(split_cmd, strategy.insert)
     if should_enter_insert then
         vim.cmd("startinsert")
+    else
+        vim.cmd("stopinsert")
     end
     require("ever._ui.keymaps.base").set_keymaps(bufnr, "terminal")
     return channel_id
