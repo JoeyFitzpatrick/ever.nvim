@@ -93,7 +93,11 @@ local function set_keymaps(bufnr, opts)
     }
 
     for _, mapping in ipairs(keymap_to_command_map) do
-        vim.keymap.set("n", mapping.keymap, "<cmd>G " .. mapping.command .. "<CR>", keymap_opts)
+        vim.keymap.set("n", mapping.keymap, function()
+            vim.cmd("G " .. mapping.command)
+            -- TODO: make this actually work
+            set_lines(bufnr, opts)
+        end, keymap_opts)
     end
 
     vim.keymap.set("n", keymaps.edit_file, function()
