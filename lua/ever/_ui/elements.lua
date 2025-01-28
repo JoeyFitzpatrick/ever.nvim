@@ -108,7 +108,6 @@ function M.terminal(cmd)
     local split_cmd = vim.split(cmd, " ")
     local bufnr = vim.api.nvim_create_buf(false, true)
     local base_cmd = split_cmd[2]
-    vim.print(base_cmd)
     local strategy = require("ever._constants.command_strategies")[base_cmd]
         or require("ever._constants.command_strategies").default
     local channel_id = open_terminal_buffer(cmd, split_cmd, bufnr, strategy)

@@ -7,7 +7,7 @@
 ---
 
 local configuration = require("ever._core.configuration")
-local highlight = require("lua.ever._core.highlight")
+local highlight = require("ever._core.highlight")
 
 if vim.g.loaded_ever then
     return

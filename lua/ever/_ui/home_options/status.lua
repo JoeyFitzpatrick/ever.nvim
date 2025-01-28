@@ -11,13 +11,13 @@ end
 ---@param start_line integer
 ---@param lines string[]
 local function highlight(bufnr, start_line, lines)
-    local highlight_groups = require("lua.ever._constants.highlight_groups").highlight_groups
+    local highlight_groups = require("ever._constants.highlight_groups").highlight_groups
     for line_num, line in ipairs(lines) do
         local highlight_group
         local status = get_status(line)
-        if require("lua.ever._core.git").is_staged(status) then
+        if require("ever._core.git").is_staged(status) then
             highlight_group = highlight_groups.EVER_DIFF_ADD
-        elseif require("lua.ever._core.git").is_modified(status) then
+        elseif require("ever._core.git").is_modified(status) then
             highlight_group = highlight_groups.EVER_DIFF_MODIFIED
         else
             highlight_group = highlight_groups.EVER_DIFF_DELETE
@@ -53,7 +53,7 @@ local function set_keymaps(bufnr, opts)
 
     vim.keymap.set("n", keymaps.stage, function()
         local line_data = get_line(bufnr)
-        if not require("lua.ever._core.git").is_staged(line_data.status) then
+        if not require("ever._core.git").is_staged(line_data.status) then
             vim.system({ "git", "add", "--", line_data.line }):wait()
         else
             vim.system({ "git", "reset", "HEAD", "--", line_data.line }):wait()

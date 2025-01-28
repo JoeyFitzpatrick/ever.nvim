@@ -22,8 +22,8 @@ M.DATA = {}
 local _DEFAULTS = {
     keymaps = {
         home = {
-            next = "<Tab>",
-            previous = "<S-Tab>",
+            next = "l",
+            previous = "h",
         },
         status = {
             stage = "s",
