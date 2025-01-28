@@ -103,14 +103,16 @@ end
 
 --- Note that commands passed to this function should not be prefixed with "git", as it will be added.
 ---@param cmd string
+---@param strategy? Strategy
 ---@return integer -- The channel id of the terminal.
-function M.terminal(cmd)
+function M.terminal(cmd, strategy)
     cmd = "git " .. cmd
     local split_cmd = vim.split(cmd, " ")
     local bufnr = vim.api.nvim_create_buf(false, true)
     local base_cmd = split_cmd[2]
-    local strategy = require("ever._constants.command_strategies")[base_cmd]
+    local derived_strategy = require("ever._constants.command_strategies")[base_cmd]
         or require("ever._constants.command_strategies").default
+    strategy = vim.tbl_extend("force", derived_strategy, strategy or {})
     local channel_id = open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
     local should_enter_insert = parse_should_enter_insert(split_cmd, strategy.insert)
     if should_enter_insert then
@@ -120,6 +122,30 @@ function M.terminal(cmd)
     end
     require("ever._ui.keymaps.base").set_keymaps(bufnr, "terminal")
     return channel_id
+end
+
+---@param bufnr integer
+---@param float_opts? vim.api.keyset.win_config
+---@return integer -- win id
+function M.float(bufnr, float_opts)
+    local width = math.floor(vim.o.columns * 0.8)
+    local height = math.floor(vim.o.lines * 0.8)
+    local col = math.floor((vim.o.columns - width) / 2)
+    local row = math.floor((vim.o.lines - height) / 2)
+
+    ---@type vim.api.keyset.win_config
+    local default_float_opts = {
+        relative = "editor",
+        width = width,
+        height = height,
+        col = col,
+        row = row,
+        style = "minimal",
+        border = "rounded",
+    }
+    float_opts = vim.tbl_extend("force", default_float_opts, float_opts or {})
+    local win = vim.api.nvim_open_win(bufnr, true, float_opts)
+    return win
 end
 
 return M

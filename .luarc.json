@@ -9,6 +9,9 @@
         "$PWD/.dependencies/busted/library",
         "$PWD/.dependencies/luassert/library",
         "$PWD/.dependencies/luvit-meta/library",
-        "$VIMRUNTIME/lua"
+        "$VIMRUNTIME/lua",
+        "$PWD/lua",
+        "$PWD/ever",
+        "lua/ever"
     ]
 }

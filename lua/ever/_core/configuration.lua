@@ -30,6 +30,12 @@ local _DEFAULTS = {
             new_branch = "n",
             switch = "s",
         },
+        log = {
+            commit_info = "i",
+            reset = "rs",
+            revert = "rv",
+            show = "s",
+        },
         status = {
             -- TODO: see why using "c" with nowait doesn't work. Could just be my nvim version.
             commit = "co",

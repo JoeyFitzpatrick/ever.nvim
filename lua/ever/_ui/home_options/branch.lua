@@ -31,7 +31,7 @@ end
 
 ---@param bufnr integer
 ---@param line_num? integer
----@return { branch_name: string, status: string } | nil
+---@return { branch_name: string } | nil
 local function get_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
