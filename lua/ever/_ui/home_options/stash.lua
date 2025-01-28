@@ -19,7 +19,8 @@ end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
-function M.render(bufnr, opts)
+---@return string[]
+local function set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
     local output = require("ever._core.run_cmd").run_cmd({
         "git",
@@ -27,8 +28,69 @@ function M.render(bufnr, opts)
         "list",
         "--pretty=format:%<(12)%gd %<(18)%cr   %<(25)%s",
     })
+    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     highlight(bufnr, start_line, output)
+    return output
+end
+
+---@param bufnr integer
+---@param line_num? integer
+---@return { stash_index: string } | nil
+local function get_line(bufnr, line_num)
+    line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
+    local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
+    if line == "" then
+        return nil
+    end
+    return { stash_index = line:match(".+}") }
+end
+
+---@param bufnr integer
+---@param opts ever.UiRenderOpts
+local function set_keymaps(bufnr, opts)
+    local keymaps = require("ever._core.configuration").DATA.keymaps.stash
+    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+
+    vim.keymap.set("n", keymaps.apply, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.cmd("G stash apply " .. line_data.stash_index)
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.drop, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.ui.select(
+            { "No", "Yes" },
+            { prompt = "Are you sure you want to drop " .. line_data.stash_index .. "? " },
+            function(selection)
+                if selection == "Yes" then
+                    vim.cmd("G stash drop " .. line_data.stash_index)
+                end
+            end
+        )
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.pop, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.cmd("G stash pop " .. line_data.stash_index)
+    end, keymap_opts)
+end
+
+---@param bufnr integer
+---@param opts ever.UiRenderOpts
+function M.render(bufnr, opts)
+    set_lines(bufnr, opts)
+    set_keymaps(bufnr, opts)
 end
 
 return M

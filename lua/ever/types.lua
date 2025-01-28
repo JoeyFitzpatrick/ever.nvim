@@ -13,14 +13,44 @@
 ---@alias vim.log.levels.WARN number An error that was recovered but could be an issue.
 
 ---@class ever.Configuration
----@field keymaps ever.Keymaps -- All of the keymaps in Ever UI buffers.
+---@field keymaps ever.Keymaps -- All of the keymaps in Ever
 
 ---@class ever.Keymaps
 ---@field home ever.KeymapsHome
+---@field branch ever.KeymapsBranch
+---@field log ever.KeymapsLog
+---@field stash ever.KeymapsStash
+---@field status ever.KeymapsStatus
 
 ---@class ever.KeymapsHome
 ---@field next string
 ---@field previous string
+
+---@class ever.KeymapsBranch
+---@field delete string
+---@field new_branch string
+---@field switch string
+
+---@class ever.KeymapsLog
+---@field commit_info string
+---@field reset string
+---@field revert string
+---@field show string
+
+---@class ever.KeymapsStash
+---@field apply string
+---@field drop string
+---@field pop string
+
+---@class ever.KeymapsStatus
+---@field commit string
+---@field edit_file string
+---@field pull string
+---@field push string
+---@field scroll_diff_down string
+---@field scroll_diff_up string
+---@field stage string
+---@field stage_all string
 
 ---@class ever.ConfigurationCmdparseAutoComplete
 ---    The settings that control what happens during auto-completion.

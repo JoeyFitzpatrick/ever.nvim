@@ -36,6 +36,11 @@ local _DEFAULTS = {
             revert = "rv",
             show = "s",
         },
+        stash = {
+            apply = "a",
+            drop = "d",
+            pop = "p",
+        },
         status = {
             -- TODO: see why using "c" with nowait doesn't work. Could just be my nvim version.
             commit = "co",

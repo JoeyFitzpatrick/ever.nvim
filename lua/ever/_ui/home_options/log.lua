@@ -65,6 +65,7 @@ local function set_keymaps(bufnr, opts)
         )
         require("ever._ui.elements").terminal("log -n 1 " .. line_data.hash, { display_strategy = "full" })
     end, keymap_opts)
+
     vim.keymap.set("n", keymaps.reset, function()
         local line_data = get_line(bufnr)
         if not line_data then
@@ -75,6 +76,7 @@ local function set_keymaps(bufnr, opts)
             set_lines(bufnr, opts)
         end)
     end, keymap_opts)
+
     vim.keymap.set("n", keymaps.revert, function()
         local line_data = get_line(bufnr)
         if not line_data then
@@ -82,6 +84,7 @@ local function set_keymaps(bufnr, opts)
         end
         vim.cmd("G revert " .. line_data.hash .. " --no-commit")
     end, keymap_opts)
+
     vim.keymap.set("n", keymaps.show, function()
         local line_data = get_line(bufnr)
         if not line_data then
