@@ -33,7 +33,7 @@ local function set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
     local output = require("ever._core.run_cmd").run_cmd({ "git", "status", "--porcelain" })
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    vim.api.nvim_buf_set_lines(bufnr, start_line or 0, -1, false, output)
+    vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     highlight(bufnr, start_line, output)
     return output
@@ -62,10 +62,14 @@ local function set_keymaps(bufnr, opts)
         if not line_data then
             return
         end
+        local result
         if not require("ever._core.git").is_staged(line_data.status) then
-            vim.system({ "git", "add", "--", line_data.filename }):wait()
+            result = require("ever._core.run_cmd").run_hidden_cmd({ "git", "add", "--", line_data.filename })
         else
-            vim.system({ "git", "reset", "HEAD", "--", line_data.filename }):wait()
+            result = require("ever._core.run_cmd").run_hidden_cmd({ "git", "reset", "HEAD", "--", line_data.filename })
+        end
+        if result == "error" then
+            return
         end
         set_lines(bufnr, opts)
     end, keymap_opts)
@@ -73,12 +77,12 @@ local function set_keymaps(bufnr, opts)
     vim.keymap.set("n", keymaps.stage_all, function()
         for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)) do
             if line:match("^.%S") then
-                vim.system({ "git", "add", "-A" }):wait()
+                require("ever._core.run_cmd").run_hidden_cmd({ "git", "add", "-A" })
                 set_lines(bufnr, opts)
                 return
             end
         end
-        vim.system({ "git", "reset" }):wait()
+        require("ever._core.run_cmd").run_hidden_cmd({ "git", "reset" })
         set_lines(bufnr, opts)
     end, keymap_opts)
 

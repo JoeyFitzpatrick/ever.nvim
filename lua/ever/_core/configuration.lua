@@ -25,6 +25,11 @@ local _DEFAULTS = {
             next = "l",
             previous = "h",
         },
+        branch = {
+            delete = "db",
+            new_branch = "n",
+            switch = "s",
+        },
         status = {
             -- TODO: see why using "c" with nowait doesn't work. Could just be my nvim version.
             commit = "co",
