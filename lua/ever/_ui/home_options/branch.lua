@@ -90,7 +90,7 @@ local function set_keymaps(bufnr, opts)
                 set_lines(bufnr, opts)
             end
         )
-    end)
+    end, keymap_opts)
 
     vim.keymap.set("n", keymaps.new_branch, function()
         local line_data = get_line(bufnr)

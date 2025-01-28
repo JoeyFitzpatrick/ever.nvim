@@ -36,6 +36,8 @@ local _DEFAULTS = {
             edit_file = "e",
             pull = "p",
             push = "<leader>p",
+            scroll_diff_down = "J",
+            scroll_diff_up = "K",
             stage = "s",
             stage_all = "a",
         },

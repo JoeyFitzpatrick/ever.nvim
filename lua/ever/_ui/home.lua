@@ -137,6 +137,15 @@ local tab_render_map = {
     end,
 }
 
+local tab_cleanup_map = {
+    Status = function(bufnr)
+        require("ever._ui.home_options.status").cleanup(bufnr)
+    end,
+    Branch = function(bufnr) end,
+    Log = function(bufnr) end,
+    Stash = function(bufnr) end,
+}
+
 ---@param bufnr integer
 ---@param tab ever.TabOption
 ---@param indices ever.TabHighlightIndices[]
@@ -156,10 +165,12 @@ function M.open()
     render(bufnr, tabs.current_option, tabs.current_tab_indices)
     require("ever._ui.keymaps.base").set_keymaps(bufnr, "home")
     vim.keymap.set("n", keymaps.next, function()
+        tab_cleanup_map[tabs.current_option](bufnr)
         tabs:cycle_tab("forward")
         render(bufnr, tabs.current_option, tabs.current_tab_indices)
     end, { buffer = bufnr })
     vim.keymap.set("n", keymaps.previous, function()
+        tab_cleanup_map[tabs.current_option](bufnr)
         tabs:cycle_tab("back")
         render(bufnr, tabs.current_option, tabs.current_tab_indices)
     end, { buffer = bufnr })

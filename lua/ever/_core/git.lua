@@ -28,4 +28,11 @@ M.is_renamed = function(status)
     return vim.tbl_contains(require("ever._constants.git_status").RENAMED_STATUSES, status)
 end
 
+--- Returns true for a git status that represents an untracked file, and false otherwise.
+---@param status string
+---@return boolean
+M.is_untracked = function(status)
+    return status == "??"
+end
+
 return M

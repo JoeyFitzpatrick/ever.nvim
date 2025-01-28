@@ -2,6 +2,9 @@
 
 local M = {}
 
+local DIFF_BUFNR = nil
+local DIFF_CHANNEL_ID = nil
+
 local function get_status(line)
     return line:sub(1, 2)
 end
@@ -41,14 +44,15 @@ end
 
 ---@param bufnr integer
 ---@param line_num? integer
----@return { filename: string, status: string } | nil
+---@return { filename: string, safe_filename: string, status: string } | nil
 local function get_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
     if line == "" then
         return nil
     end
-    return { filename = line:sub(4), status = get_status(line) }
+    local filename = line:sub(4)
+    return { filename = filename, safe_filename = "'" .. filename .. "'", status = get_status(line) }
 end
 
 ---@param bufnr integer
@@ -106,14 +110,91 @@ local function set_keymaps(bufnr, opts)
             return
         end
         vim.api.nvim_exec2("e " .. line_data.filename, {})
-    end)
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.scroll_diff_down, function()
+        if DIFF_BUFNR and DIFF_CHANNEL_ID then
+            pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")
+        end
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.scroll_diff_up, function()
+        if DIFF_BUFNR and DIFF_CHANNEL_ID then
+            pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "kk")
+        end
+    end, keymap_opts)
+end
+
+local function get_diff_cmd(status, filename)
+    local status_checks = require("ever._core.git")
+    if status_checks.is_untracked(status) then
+        return "diff --no-index /dev/null " .. filename
+    end
+    if status_checks.is_deleted(status) then
+        if status_checks.is_staged(status) then
+            return "diff --cached -- " .. filename
+        end
+        return "diff -- " .. filename
+    end
+    if status_checks.is_staged(status) then
+        return "diff --staged " .. filename
+    end
+    return "diff " .. filename
+end
+
+---@param bufnr integer
+---@param opts ever.UiRenderOpts
+local function set_autocmds(bufnr, opts)
+    vim.api.nvim_create_autocmd("CursorMoved", {
+        desc = "Diff the file under the cursor",
+        buffer = bufnr,
+        callback = function()
+            local line_data = get_line(bufnr)
+            if not line_data then
+                return
+            end
+            local diff_cmd = get_diff_cmd(line_data.status, line_data.safe_filename)
+            if DIFF_BUFNR then
+                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+                DIFF_BUFNR = nil
+            end
+            local win = vim.api.nvim_get_current_win()
+            DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(diff_cmd)
+            DIFF_BUFNR = vim.api.nvim_get_current_buf()
+            vim.api.nvim_set_current_win(win)
+        end,
+        group = vim.api.nvim_create_augroup("EverStatusUi", { clear = false }),
+    })
+
+    vim.api.nvim_create_autocmd("BufHidden", {
+        desc = "Close open diffs when buffer is hidden",
+        buffer = bufnr,
+        callback = function()
+            if DIFF_BUFNR then
+                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+                DIFF_BUFNR = nil
+            end
+            DIFF_CHANNEL_ID = nil
+        end,
+        group = vim.api.nvim_create_augroup("EverStatusUi", { clear = false }),
+    })
 end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
     set_lines(bufnr, opts)
+    set_autocmds(bufnr, opts)
     set_keymaps(bufnr, opts)
+end
+
+function M.cleanup(bufnr)
+    if DIFF_BUFNR then
+        vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+        DIFF_BUFNR = nil
+    end
+    DIFF_CHANNEL_ID = nil
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusUi" })
 end
 
 return M

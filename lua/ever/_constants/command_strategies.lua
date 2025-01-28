@@ -53,6 +53,11 @@ M.commit = {
     end,
 }
 
+M.diff = {
+    display_strategy = M.STRATEGIES.RIGHT,
+    insert = false,
+}
+
 M.notes = {
     display_strategy = M.STRATEGIES.BELOW,
     insert = function(cmd)
