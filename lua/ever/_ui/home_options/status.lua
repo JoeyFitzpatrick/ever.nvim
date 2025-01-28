@@ -41,11 +41,14 @@ end
 
 ---@param bufnr integer
 ---@param line_num? integer
----@return { line: string, status: string }
+---@return { filename: string, status: string } | nil
 local function get_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
-    return { line = line:sub(4), status = get_status(line) }
+    if line == "" then
+        return nil
+    end
+    return { filename = line:sub(4), status = get_status(line) }
 end
 
 ---@param bufnr integer
@@ -56,10 +59,13 @@ local function set_keymaps(bufnr, opts)
 
     vim.keymap.set("n", keymaps.stage, function()
         local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
         if not require("ever._core.git").is_staged(line_data.status) then
-            vim.system({ "git", "add", "--", line_data.line }):wait()
+            vim.system({ "git", "add", "--", line_data.filename }):wait()
         else
-            vim.system({ "git", "reset", "HEAD", "--", line_data.line }):wait()
+            vim.system({ "git", "reset", "HEAD", "--", line_data.filename }):wait()
         end
         set_lines(bufnr, opts)
     end, keymap_opts)
@@ -86,7 +92,13 @@ local function set_keymaps(bufnr, opts)
         vim.keymap.set("n", mapping.keymap, "<cmd>G " .. mapping.command .. "<CR>", keymap_opts)
     end
 
-    -- edit_file = "e",
+    vim.keymap.set("n", keymaps.edit_file, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.api.nvim_exec2("e " .. line_data.filename, {})
+    end)
 end
 
 ---@param bufnr integer
