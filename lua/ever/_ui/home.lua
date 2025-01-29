@@ -68,7 +68,6 @@ function M._create_box_table(options)
     return boxes, indices
 end
 
----@type ever.TabOption[]
 local TAB_OPTIONS = { "Status", "Branch", "Log", "Stash" }
 local tabs_text, tab_indices = M._create_box_table(TAB_OPTIONS)
 
@@ -146,37 +145,44 @@ local tab_cleanup_map = {
     Stash = function(bufnr) end,
 }
 
----@param bufnr integer
 ---@param tab ever.TabOption
 ---@param indices ever.TabHighlightIndices[]
-local function render(bufnr, tab, indices)
+local function create_and_render_buffer(tab, indices)
+    local bufnr = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_win_set_buf(0, bufnr)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, tabs_text)
+
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     tab_render_map[tab](bufnr, { start_line = TAB_HEIGHT })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     vim.api.nvim_win_set_cursor(0, { 5, 0 })
     highlight_tabs(bufnr, indices)
-end
 
-function M.open()
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, bufnr)
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, tabs_text)
-    tabs:set_current(1) -- TODO: move this into on-close autocmd once we have that
-    render(bufnr, tabs.current_option, tabs.current_tab_indices)
     vim.keymap.set("n", "q", function()
         tab_cleanup_map[tabs.current_option](bufnr)
         vim.api.nvim_buf_delete(bufnr, { force = true })
     end, { buffer = bufnr })
+
     vim.keymap.set("n", keymaps.next, function()
-        tab_cleanup_map[tabs.current_option](bufnr)
+        local old_bufnr = bufnr
+        tab_cleanup_map[tabs.current_option](old_bufnr)
         tabs:cycle_tab("forward")
-        render(bufnr, tabs.current_option, tabs.current_tab_indices)
+        create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
+        vim.api.nvim_buf_delete(old_bufnr, { force = true })
     end, { buffer = bufnr })
+
     vim.keymap.set("n", keymaps.previous, function()
-        tab_cleanup_map[tabs.current_option](bufnr)
+        local old_bufnr = bufnr
+        tab_cleanup_map[tabs.current_option](old_bufnr)
         tabs:cycle_tab("back")
-        render(bufnr, tabs.current_option, tabs.current_tab_indices)
+        create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
+        vim.api.nvim_buf_delete(old_bufnr, { force = true })
     end, { buffer = bufnr })
+end
+
+function M.open()
+    tabs:set_current(1) -- TODO: move this into on-close autocmd once we have that
+    create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
 end
 
 return M
