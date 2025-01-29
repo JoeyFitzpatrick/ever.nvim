@@ -47,31 +47,48 @@ local function set_keymaps(bufnr, opts)
     local keymaps = require("ever._core.configuration").DATA.keymaps.branch
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
+    ---@param branch_name string
+    ---@param delete_type string
+    ---@return boolean
+    local function delete_branch(branch_name, delete_type)
+        local run_cmd = require("ever._core.run_cmd").run_hidden_cmd
+        local delete_actions = {
+            local_only = function()
+                return run_cmd("git branch --delete " .. branch_name) ~= "error"
+            end,
+            remote_only = function()
+                return run_cmd("git push origin --delete " .. branch_name) ~= "error"
+            end,
+            both = function()
+                -- Try local deletion first
+                if run_cmd("git branch --delete " .. branch_name) == "error" then
+                    return false
+                end
+                -- Then try remote deletion
+                return run_cmd("git push origin --delete " .. branch_name) ~= "error"
+            end,
+        }
+        local action_map = {
+            ["local"] = delete_actions.local_only,
+            ["remote"] = delete_actions.remote_only,
+            ["both"] = delete_actions.both,
+        }
+        return action_map[delete_type] and action_map[delete_type]() or false
+    end
+
     vim.keymap.set("n", keymaps.delete, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
         end
+
         vim.ui.select(
             { "local", "remote", "both" },
             { prompt = "Delete type for branch " .. line_data.branch_name .. ": " },
             function(selection)
-                if selection == "local" then
-                    require("ever._core.run_cmd").run_hidden_cmd("git branch --delete " .. line_data.branch_name)
-                elseif selection == "remote" then
-                    require("ever._core.run_cmd").run_hidden_cmd("git push origin --delete " .. line_data.branch_name)
-                elseif selection == "both" then
-                    -- Run local deletion first
-                    local result =
-                        require("ever._core.run_cmd").run_hidden_cmd("git branch --delete " .. line_data.branch_name)
-                    -- If local delete fails, stop here
-                    if result == "error" then
-                        return
-                    end
-                    -- Run remote deletion
-                    require("ever._core.run_cmd").run_hidden_cmd("git push origin --delete " .. line_data.branch_name)
+                if selection and delete_branch(line_data.branch_name, selection) then
+                    set_lines(bufnr, opts)
                 end
-                set_lines(bufnr, opts)
             end
         )
     end, keymap_opts)
