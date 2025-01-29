@@ -47,6 +47,7 @@
 ---@field edit_file string
 ---@field pull string
 ---@field push string
+---@field restore string
 ---@field scroll_diff_down string
 ---@field scroll_diff_up string
 ---@field stage string

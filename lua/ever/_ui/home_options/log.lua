@@ -9,6 +9,9 @@ local M = {}
 local function highlight(bufnr, start_line, lines)
     local highlight_line = require("ever._ui.highlight").highlight_line
     for i, line in ipairs(lines) do
+        if line == "" then
+            return
+        end
         local line_num = i + start_line - 1
         local hash_start, hash_end = line:find("^󰜘 %w+")
         highlight_line(bufnr, "MatchParen", line_num, hash_start, hash_end)
@@ -72,7 +75,7 @@ local function set_keymaps(bufnr, opts)
             return
         end
         vim.ui.select({ "mixed", "soft", "hard" }, { prompt = "Git reset type: " }, function(selection)
-            require("ever._core.run_cmd").run_hidden_cmd({ "git", "reset", "--" .. selection, line_data.hash })
+            require("ever._core.run_cmd").run_hidden_cmd("git reset --" .. selection .. " " .. line_data.hash)
             set_lines(bufnr, opts)
         end)
     end, keymap_opts)

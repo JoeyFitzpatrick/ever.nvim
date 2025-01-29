@@ -68,9 +68,9 @@ local function set_keymaps(bufnr, opts)
         end
         local result
         if not require("ever._core.git").is_staged(line_data.status) then
-            result = require("ever._core.run_cmd").run_hidden_cmd({ "git", "add", "--", line_data.filename })
+            result = require("ever._core.run_cmd").run_hidden_cmd("git add -- " .. line_data.filename)
         else
-            result = require("ever._core.run_cmd").run_hidden_cmd({ "git", "reset", "HEAD", "--", line_data.filename })
+            result = require("ever._core.run_cmd").run_hidden_cmd("git reset HEAD -- " .. line_data.filename)
         end
         if result == "error" then
             return
@@ -81,12 +81,12 @@ local function set_keymaps(bufnr, opts)
     vim.keymap.set("n", keymaps.stage_all, function()
         for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)) do
             if line:match("^.%S") then
-                require("ever._core.run_cmd").run_hidden_cmd({ "git", "add", "-A" })
+                require("ever._core.run_cmd").run_hidden_cmd("git add -A")
                 set_lines(bufnr, opts)
                 return
             end
         end
-        require("ever._core.run_cmd").run_hidden_cmd({ "git", "reset" })
+        require("ever._core.run_cmd").run_hidden_cmd("git reset")
         set_lines(bufnr, opts)
     end, keymap_opts)
 
@@ -122,6 +122,45 @@ local function set_keymaps(bufnr, opts)
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "kk")
         end
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.restore, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        local filename = line_data.safe_filename
+        local status = line_data.status
+        local status_checks = require("ever._core.git")
+        local cmd
+        vim.ui.select(
+            { "Just this file", "Nuke working tree", "Hard reset", "Mixed reset", "Soft reset" },
+            { prompt = "Git restore type: " },
+            function(selection)
+                if selection == "Just this file" then
+                    if not filename then
+                        return
+                    end
+                    if status_checks.is_untracked(status) then
+                        cmd = "git clean -f " .. filename
+                    elseif status_checks.is_staged(status) then
+                        cmd = "git reset -- " .. filename, "&& git clean -f -- " .. filename
+                    else
+                        cmd = "git restore -- " .. filename
+                    end
+                elseif selection == "Nuke working tree" then
+                    cmd = "git reset --hard HEAD && git clean -fd"
+                elseif selection == "Hard reset" then
+                    cmd = "git reset --hard HEAD"
+                elseif selection == "Mixed reset" then
+                    cmd = "git reset --mixed HEAD"
+                elseif selection == "Soft reset" then
+                    cmd = "git reset --soft HEAD"
+                end
+                require("ever._core.run_cmd").run_hidden_cmd(cmd)
+                set_lines(bufnr, opts)
+            end
+        )
     end, keymap_opts)
 end
 

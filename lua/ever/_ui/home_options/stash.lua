@@ -7,6 +7,9 @@ local M = {}
 local function highlight(bufnr, start_line, lines)
     local highlight_line = require("ever._ui.highlight").highlight_line
     for i, line in ipairs(lines) do
+        if line == "" then
+            return
+        end
         local line_num = i + start_line - 1
         local stash_index_start, stash_index_end = line:find("^%S+")
         highlight_line(bufnr, "Keyword", line_num, stash_index_start, stash_index_end)
@@ -41,6 +44,7 @@ end
 local function get_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
+    vim.print(line)
     if line == "" then
         return nil
     end

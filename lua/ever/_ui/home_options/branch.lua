@@ -57,35 +57,19 @@ local function set_keymaps(bufnr, opts)
             { prompt = "Delete type for branch " .. line_data.branch_name .. ": " },
             function(selection)
                 if selection == "local" then
-                    require("ever._core.run_cmd").run_hidden_cmd({ "git", "branch", "--delete", line_data.branch_name })
+                    require("ever._core.run_cmd").run_hidden_cmd("git branch --delete " .. line_data.branch_name)
                 elseif selection == "remote" then
-                    require("ever._core.run_cmd").run_hidden_cmd({
-                        "git",
-                        "push",
-                        "origin",
-                        "--delete",
-                        line_data.branch_name,
-                    })
+                    require("ever._core.run_cmd").run_hidden_cmd("git push origin --delete " .. line_data.branch_name)
                 elseif selection == "both" then
                     -- Run local deletion first
-                    local result = require("ever._core.run_cmd").run_hidden_cmd({
-                        "git",
-                        "branch",
-                        "--delete",
-                        line_data.branch_name,
-                    })
+                    local result =
+                        require("ever._core.run_cmd").run_hidden_cmd("git branch --delete " .. line_data.branch_name)
                     -- If local delete fails, stop here
                     if result == "error" then
                         return
                     end
                     -- Run remote deletion
-                    require("ever._core.run_cmd").run_hidden_cmd({
-                        "git",
-                        "push",
-                        "origin",
-                        "--delete",
-                        line_data.branch_name,
-                    })
+                    require("ever._core.run_cmd").run_hidden_cmd("git push origin --delete " .. line_data.branch_name)
                 end
                 set_lines(bufnr, opts)
             end
@@ -98,13 +82,8 @@ local function set_keymaps(bufnr, opts)
             return
         end
         vim.ui.input({ prompt = "Name for new branch off of " .. line_data.branch_name .. ": " }, function(input)
-            local result = require("ever._core.run_cmd").run_hidden_cmd({
-                "git",
-                "switch",
-                "--create",
-                input,
-                line_data.branch_name,
-            })
+            local result =
+                require("ever._core.run_cmd").run_hidden_cmd("git switch --create " .. input .. line_data.branch_name)
             if result == "error" then
                 return
             end
@@ -117,7 +96,7 @@ local function set_keymaps(bufnr, opts)
         if not line_data then
             return
         end
-        local result = require("ever._core.run_cmd").run_hidden_cmd({ "git", "switch", line_data.branch_name })
+        local result = require("ever._core.run_cmd").run_hidden_cmd("git switch " .. line_data.branch_name)
         if result == "error" then
             return
         end
