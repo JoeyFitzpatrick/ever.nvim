@@ -5,8 +5,9 @@ local PREFIX = "G"
 ---@param input_args vim.api.keyset.create_user_command.command_args
 local function run_command(input_args)
     local args = input_args.args
-    if args == "" then
-        require("ever._ui.home").open()
+    local ui_function = require("ever._ui.interceptors").get_ui(args)
+    if ui_function then
+        ui_function(args)
     else
         require("ever._ui.elements").terminal(input_args.args)
     end

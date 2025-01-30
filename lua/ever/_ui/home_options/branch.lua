@@ -21,7 +21,7 @@ end
 ---@return string[]
 local function set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
-    local output = require("ever._core.run_cmd").run_cmd({ "git", "branch" })
+    local output = require("ever._core.run_cmd").run_cmd("git branch")
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })

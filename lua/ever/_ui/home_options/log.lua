@@ -77,13 +77,6 @@ local function set_lines(bufnr, opts)
         end
     end
 
-    local start_line = opts.start_line or 0
-    -- local output = require("ever._core.run_cmd").run_cmd({
-    --     "git",
-    --     "log",
-    --     "--pretty=format:󰜘 %h %<(25)%cr %<(25)%an %<(25)%s",
-    -- })
-
     -- Start the asynchronous job
     vim.fn.jobstart({ "git", "log", "--pretty=format:󰜘 %h %<(25)%cr %<(25)%an %<(25)%s" }, {
         on_stdout = function(...)
