@@ -67,8 +67,4 @@ M.notes = {
     end,
 }
 
-M.status = {
-    display_strategy = M.STRATEGIES.FULL,
-}
-
 return M
