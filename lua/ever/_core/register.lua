@@ -23,7 +23,6 @@ function M.rerender_buffers(bufnr)
     if main_buffer then
         M.buffers[bufnr].render_fn(bufnr)
     end
-    vim.print("here")
     for buf, opts in pairs(M.buffers) do
         if buf ~= bufnr then
             vim.schedule(opts.render_fn)
