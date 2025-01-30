@@ -127,4 +127,8 @@ function M.render(bufnr, opts)
     set_keymaps(bufnr, opts)
 end
 
+function M.cleanup(bufnr)
+    require("ever._core.register").deregister_buffer(bufnr)
+end
+
 return M

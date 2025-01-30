@@ -4,8 +4,8 @@ local M = {}
 
 --- Some commands parse command options to determine what display strat to use. In this case, run the parse function, otherwise return the display strat.
 ---@param cmd string[]
----@param display_strategy DisplayStrategy | DisplayStrategyParser
----@return DisplayStrategy
+---@param display_strategy ever.DisplayStrategy | ever.DisplayStrategyParser
+---@return ever.DisplayStrategy
 local function parse_display_strategy(cmd, display_strategy)
     if type(display_strategy) == "function" then
         return display_strategy(cmd)
@@ -15,7 +15,7 @@ end
 
 --- Some commands parse command options to determine whether to enter in insert mode. In this case, run the parse function, otherwise return the bool.
 ---@param cmd string[]
----@param should_enter_insert boolean | ShouldEnterInsert
+---@param should_enter_insert boolean | ever.ShouldEnterInsert
 ---@return boolean
 local function parse_should_enter_insert(cmd, should_enter_insert)
     if type(should_enter_insert) == "function" then
@@ -43,8 +43,9 @@ end
 ---@param cmd string
 ---@param bufnr integer
 ---@param win integer
+---@param strategy ever.Strategy
 ---@return integer -- The channel id of the terminal.
-local function open_dynamic_terminal(cmd, bufnr, win)
+local function open_dynamic_terminal(cmd, bufnr, win, strategy)
     local height = 2
     local max_height = math.floor(vim.o.lines * 0.5)
     vim.api.nvim_win_set_height(win, height)
@@ -61,6 +62,9 @@ local function open_dynamic_terminal(cmd, bufnr, win)
             vim.api.nvim_win_set_height(win, math.min(height, max_height))
         end,
         on_exit = function()
+            if strategy.trigger_redraw then
+                require("ever._core.register").rerender_buffers()
+            end
             local trim_terminal_output = function()
                 local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
                 local num_lines_to_trim = M._get_num_lines_to_trim(lines)
@@ -82,7 +86,7 @@ end
 ---@param cmd string
 ---@param split_cmd string[]
 ---@param bufnr integer
----@param strategy Strategy
+---@param strategy ever.Strategy
 ---@return integer -- The channel id of the terminal
 local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
     local strategies = require("ever._constants.command_strategies").STRATEGIES
@@ -93,17 +97,20 @@ local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
         vim.api.nvim_win_set_buf(0, bufnr)
     elseif display_strategy == strategies.DYNAMIC then
         local win = vim.api.nvim_open_win(bufnr, true, { split = "below" })
-        return open_dynamic_terminal(cmd, bufnr, win)
+        return open_dynamic_terminal(cmd, bufnr, win, strategy)
     else
         error("Unable to determine display strategy", vim.log.levels.ERROR)
     end
     local channel_id = vim.fn.jobstart(cmd, { term = true })
+    if strategy.trigger_redraw then
+        require("ever._core.register").rerender_buffers()
+    end
     return channel_id
 end
 
 --- Note that commands passed to this function should not be prefixed with "git", as it will be added.
 ---@param cmd string
----@param strategy? Strategy
+---@param strategy? ever.Strategy
 ---@return integer -- The channel id of the terminal.
 function M.terminal(cmd, strategy)
     cmd = "git " .. cmd
@@ -111,8 +118,8 @@ function M.terminal(cmd, strategy)
     local bufnr = vim.api.nvim_create_buf(false, true)
     local base_cmd = split_cmd[2]
     local derived_strategy = require("ever._constants.command_strategies")[base_cmd]
-        or require("ever._constants.command_strategies").default
-    strategy = vim.tbl_extend("force", derived_strategy, strategy or {})
+    local base_strategy = require("ever._constants.command_strategies").default
+    strategy = vim.tbl_extend("force", base_strategy, derived_strategy, strategy or {})
     local channel_id = open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
     local should_enter_insert = parse_should_enter_insert(split_cmd, strategy.insert)
     if should_enter_insert then

@@ -140,9 +140,15 @@ local tab_cleanup_map = {
     Status = function(bufnr)
         require("ever._ui.home_options.status").cleanup(bufnr)
     end,
-    Branch = function(bufnr) end,
-    Log = function(bufnr) end,
-    Stash = function(bufnr) end,
+    Branch = function(bufnr)
+        require("ever._ui.home_options.branch").cleanup(bufnr)
+    end,
+    Log = function(bufnr)
+        require("ever._ui.home_options.log").cleanup(bufnr)
+    end,
+    Stash = function(bufnr)
+        require("ever._ui.home_options.stash").cleanup(bufnr)
+    end,
 }
 
 ---@param tab ever.TabOption
@@ -152,11 +158,17 @@ local function create_and_render_buffer(tab, indices)
     vim.api.nvim_win_set_buf(0, bufnr)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, tabs_text)
 
+    local ui_render = tab_render_map[tab]
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    tab_render_map[tab](bufnr, { start_line = TAB_HEIGHT })
+    ui_render(bufnr, { start_line = TAB_HEIGHT })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     vim.api.nvim_win_set_cursor(0, { math.min(vim.api.nvim_buf_line_count(bufnr), 5), 0 })
     highlight_tabs(bufnr, indices)
+    require("ever._core.register").register_buffer(bufnr, {
+        render_fn = function()
+            ui_render(bufnr, { start_line = TAB_HEIGHT })
+        end,
+    })
 
     vim.keymap.set("n", "q", function()
         tab_cleanup_map[tabs.current_option](bufnr)

@@ -99,8 +99,6 @@ local function set_keymaps(bufnr, opts)
     for _, mapping in ipairs(keymap_to_command_map) do
         vim.keymap.set("n", mapping.keymap, function()
             vim.cmd("G " .. mapping.command)
-            -- TODO: make this actually work
-            set_lines(bufnr, opts)
         end, keymap_opts)
     end
 
@@ -220,7 +218,7 @@ local function set_autocmds(bufnr, opts)
             set_diff_buffer_autocmds(DIFF_BUFNR)
             vim.api.nvim_set_current_win(win)
         end,
-        group = vim.api.nvim_create_augroup("EverStatusUi", { clear = false }),
+        group = vim.api.nvim_create_augroup("EverStatusAutoDiff", { clear = true }),
     })
 
     vim.api.nvim_create_autocmd("BufHidden", {
@@ -233,7 +231,7 @@ local function set_autocmds(bufnr, opts)
             end
             DIFF_CHANNEL_ID = nil
         end,
-        group = vim.api.nvim_create_augroup("EverStatusUi", { clear = false }),
+        group = vim.api.nvim_create_augroup("EverStatusCloseAutoDiff", { clear = true }),
     })
 end
 
@@ -246,12 +244,14 @@ function M.render(bufnr, opts)
 end
 
 function M.cleanup(bufnr)
+    require("ever._core.register").deregister_buffer(bufnr)
     if DIFF_BUFNR then
         vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
         DIFF_BUFNR = nil
     end
     DIFF_CHANNEL_ID = nil
-    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusUi" })
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusAutoDiff" })
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusCloseAutoDiff" })
 end
 
 return M
