@@ -25,6 +25,10 @@ M.default = {
     trigger_redraw = false,
 }
 
+M.add = {
+    trigger_redraw = true,
+}
+
 M.branch = {
     display_strategy = M.STRATEGIES.BELOW,
     trigger_redraw = true,

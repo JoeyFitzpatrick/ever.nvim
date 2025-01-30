@@ -101,10 +101,14 @@ local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
     else
         error("Unable to determine display strategy", vim.log.levels.ERROR)
     end
-    local channel_id = vim.fn.jobstart(cmd, { term = true })
-    if strategy.trigger_redraw then
-        require("ever._core.register").rerender_buffers()
-    end
+    local channel_id = vim.fn.jobstart(cmd, {
+        term = true,
+        on_exit = function()
+            if strategy.trigger_redraw then
+                require("ever._core.register").rerender_buffers()
+            end
+        end,
+    })
     return channel_id
 end
 
@@ -117,8 +121,8 @@ function M.terminal(cmd, strategy)
     local split_cmd = vim.split(cmd, " ")
     local bufnr = vim.api.nvim_create_buf(false, true)
     local base_cmd = split_cmd[2]
-    local derived_strategy = require("ever._constants.command_strategies")[base_cmd]
     local base_strategy = require("ever._constants.command_strategies").default
+    local derived_strategy = require("ever._constants.command_strategies")[base_cmd] or {}
     strategy = vim.tbl_extend("force", base_strategy, derived_strategy, strategy or {})
     local channel_id = open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
     local should_enter_insert = parse_should_enter_insert(split_cmd, strategy.insert)
