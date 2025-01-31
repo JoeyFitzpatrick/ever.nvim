@@ -1,8 +1,8 @@
 local M = {}
 
 local cmd_ui_map = {
-    difftool = function()
-        require("ever._ui.interceptors.difftool").render()
+    difftool = function(cmd)
+        require("ever._ui.interceptors.difftool").render(cmd)
     end,
 }
 
