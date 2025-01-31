@@ -52,6 +52,9 @@ local function get_line(bufnr, line_num)
     if line == "" then
         return nil
     end
+    if not line:match("^%s*%w") then
+        return nil
+    end
     local filename = line:sub(4)
     return { filename = filename, safe_filename = "'" .. filename .. "'", status = get_status(line) }
 end
