@@ -1,7 +1,26 @@
 local M = {}
 
+local DIFF_BUFNR = nil
+local CURRENT_DIFF_FILE = nil
+---@type string[]
+local COMMITS_TO_DIFF = {}
+
+--- This sets COMMITS_TO_DIFF, which is used to derive commands to see what files to diff and create diff commands.
+--- TODO: remove flags and such so that this just looks at the commits
+---@param cmd string
+local function set_commits_to_diff(cmd)
+    local cmd_args = vim.split(cmd, " ")
+    COMMITS_TO_DIFF = {}
+    if cmd_args[2] then
+        table.insert(COMMITS_TO_DIFF, cmd_args[2])
+    end
+    if cmd_args[3] then
+        table.insert(COMMITS_TO_DIFF, cmd_args[3])
+    end
+end
+
 --- Get diff stats for a group of files.
---- Each file should be formatted something like `status` `filename` `number of changed files`
+--- Each file should be formatted something like "M lua/ever/_ui/interceptors/difftool.lua 111, 13"
 ---@param commit1 string
 ---@param commit2 string
 ---@return string[]
@@ -25,17 +44,13 @@ M.get_diff_stats = function(commit1, commit2)
     return diff_stats
 end
 
--- TODO: remove flags and such so that this just looks at the commits
----@param cmd string
 ---@return string[]
-local function get_diff_files(cmd)
-    vim.print(cmd)
-    local cmd_args = vim.split(cmd, " ")
+local function get_diff_files()
     local diff_cmd
-    if #cmd_args >= 3 then
-        diff_cmd = string.format("git diff --name-status %s %s", cmd_args[2], cmd_args[3])
-    elseif #cmd_args == 2 then
-        diff_cmd = string.format("git diff --name-status %s", cmd_args[2])
+    if #COMMITS_TO_DIFF >= 2 then
+        diff_cmd = string.format("git diff --name-status %s %s", COMMITS_TO_DIFF[1], COMMITS_TO_DIFF[2])
+    elseif #COMMITS_TO_DIFF == 1 then
+        diff_cmd = string.format("git diff --name-status %s", COMMITS_TO_DIFF[1])
     else
         diff_cmd = "git diff --name-status"
     end
@@ -73,19 +88,115 @@ local function highlight(bufnr)
     end
 end
 
+---@param bufnr integer
+---@param line_num? integer
+---@return { filename: string, safe_filename: string } | nil
+local function get_line(bufnr, line_num)
+    line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
+    local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
+    if line == "" then
+        return nil
+    end
+    local filename = line:match("%S+", 3)
+    return { filename = filename, safe_filename = "'" .. filename .. "'" }
+end
+
+--- Uses COMMITS_TO_DIFF to create a command to diff a file between commits
+---@param filename string
+---@return string
+local function get_diff_cmd(filename)
+    local diff_cmd
+    if #COMMITS_TO_DIFF >= 2 then
+        diff_cmd = string.format("git diff %s..%s -- %s", COMMITS_TO_DIFF[1], COMMITS_TO_DIFF[2], filename)
+    elseif #COMMITS_TO_DIFF == 1 then
+        diff_cmd = string.format("git diff ..%s -- %s", COMMITS_TO_DIFF[1], filename)
+    else
+        diff_cmd = "git diff " .. filename
+    end
+    return diff_cmd
+end
+
+local function set_diff_buffer_autocmds(diff_bufnr)
+    vim.api.nvim_create_autocmd("BufHidden", {
+        desc = "Clean up diff variables",
+        buffer = diff_bufnr,
+        callback = function()
+            DIFF_BUFNR = nil
+            CURRENT_DIFF_FILE = nil
+        end,
+    })
+end
+
+---@param bufnr integer
+local function set_autocmds(bufnr)
+    vim.api.nvim_create_autocmd("CursorMoved", {
+        desc = "Diff the file under the cursor",
+        buffer = bufnr,
+        callback = function()
+            local line_data = get_line(bufnr)
+            if not line_data or line_data.filename == CURRENT_DIFF_FILE then
+                return
+            end
+            CURRENT_DIFF_FILE = line_data.filename
+            if DIFF_BUFNR and vim.api.nvim_buf_is_valid(DIFF_BUFNR) then
+                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+                DIFF_BUFNR = nil
+            end
+            DIFF_BUFNR = vim.api.nvim_create_buf(false, true)
+            vim.api.nvim_open_win(DIFF_BUFNR, false, { split = "below", height = math.floor(vim.o.lines * 0.67) })
+            local diff_lines = require("ever._core.run_cmd").run_cmd(get_diff_cmd(line_data.safe_filename))
+            vim.api.nvim_set_option_value("filetype", "git", { buf = DIFF_BUFNR })
+            vim.api.nvim_buf_set_lines(DIFF_BUFNR, 0, -1, false, diff_lines)
+            vim.api.nvim_set_option_value("modifiable", false, { buf = DIFF_BUFNR })
+            set_diff_buffer_autocmds(DIFF_BUFNR)
+        end,
+        group = vim.api.nvim_create_augroup("EverDiffAutoDiff", { clear = true }),
+    })
+
+    vim.api.nvim_create_autocmd({ "BufWipeout" }, {
+        desc = "Close open diffs when buffer is hidden",
+        buffer = bufnr,
+        callback = function()
+            if DIFF_BUFNR and vim.api.nvim_buf_is_valid(DIFF_BUFNR) then
+                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+                DIFF_BUFNR = nil
+            end
+            CURRENT_DIFF_FILE = nil
+        end,
+        group = vim.api.nvim_create_augroup("EverDiffCloseAutoDiff", { clear = true }),
+    })
+end
+
+local function set_keymaps(bufnr)
+    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+
+    vim.keymap.set("n", "q", function()
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+    end, keymap_opts)
+end
+
 ---@param cmd string
 M.render = function(cmd)
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
-    local diff_files = get_diff_files(cmd)
+    set_commits_to_diff(cmd)
+    local diff_files = get_diff_files()
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, diff_files)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     highlight(bufnr)
+    set_keymaps(bufnr)
+    set_autocmds(bufnr)
+end
 
-    vim.keymap.set("n", "q", function()
-        vim.api.nvim_buf_delete(bufnr, { force = true })
-    end, { buffer = bufnr })
+function M.cleanup(bufnr)
+    if DIFF_BUFNR then
+        vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+        DIFF_BUFNR = nil
+    end
+    CURRENT_DIFF_FILE = nil
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverDiffAutoDiff" })
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverDiffCloseAutoDiff" })
 end
 
 return M

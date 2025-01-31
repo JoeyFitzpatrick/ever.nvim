@@ -4,6 +4,7 @@ local M = {}
 
 local DIFF_BUFNR = nil
 local DIFF_CHANNEL_ID = nil
+local CURRENT_DIFF_FILE = nil
 
 local function get_status(line)
     return line:sub(1, 2)
@@ -192,6 +193,7 @@ local function set_diff_buffer_autocmds(diff_bufnr)
         callback = function()
             DIFF_BUFNR = nil
             DIFF_CHANNEL_ID = nil
+            CURRENT_DIFF_FILE = nil
         end,
     })
 end
@@ -204,10 +206,11 @@ local function set_autocmds(bufnr, opts)
         buffer = bufnr,
         callback = function()
             local line_data = get_line(bufnr)
-            if not line_data then
+            if not line_data or line_data.filename == CURRENT_DIFF_FILE then
                 return
             end
             local diff_cmd = get_diff_cmd(line_data.status, line_data.safe_filename)
+            CURRENT_DIFF_FILE = line_data.filename
             if DIFF_BUFNR then
                 vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
                 DIFF_BUFNR = nil
@@ -230,6 +233,7 @@ local function set_autocmds(bufnr, opts)
                 DIFF_BUFNR = nil
             end
             DIFF_CHANNEL_ID = nil
+            CURRENT_DIFF_FILE = nil
         end,
         group = vim.api.nvim_create_augroup("EverStatusCloseAutoDiff", { clear = true }),
     })
@@ -250,6 +254,7 @@ function M.cleanup(bufnr)
         DIFF_BUFNR = nil
     end
     DIFF_CHANNEL_ID = nil
+    CURRENT_DIFF_FILE = nil
     vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusAutoDiff" })
     vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusCloseAutoDiff" })
 end
