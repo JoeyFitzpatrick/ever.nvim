@@ -2,55 +2,32 @@ local M = {}
 
 local DIFF_BUFNR = nil
 local CURRENT_DIFF_FILE = nil
----@type string[]
-local COMMITS_TO_DIFF = {}
+---@type string
+local COMMITS_TO_DIFF = ""
 
---- This sets COMMITS_TO_DIFF, which is used to derive commands to see what files to diff and create diff commands.
---- TODO: remove flags and such so that this just looks at the commits
 ---@param cmd string
-local function set_commits_to_diff(cmd)
-    local cmd_args = vim.split(cmd, " ")
-    COMMITS_TO_DIFF = {}
-    if cmd_args[2] then
-        table.insert(COMMITS_TO_DIFF, cmd_args[2])
+---@return string
+function M._get_commits_to_diff(cmd)
+    local commits = ""
+    local cmd_args = vim.tbl_filter(function(cmd_arg)
+        return cmd_arg:sub(1, 1) ~= "-"
+    end, vim.split(cmd, " "))
+    if #cmd_args >= 2 then
+        commits = cmd_args[2]
     end
-    if cmd_args[3] then
-        table.insert(COMMITS_TO_DIFF, cmd_args[3])
-    end
+    return commits
 end
 
---- Get diff stats for a group of files.
---- Each file should be formatted something like "M lua/ever/_ui/interceptors/difftool.lua 111, 13"
----@param commit1 string
----@param commit2 string
----@return string[]
-M.get_diff_stats = function(commit1, commit2)
-    local raw_diff_stats = M._get_raw_diff_stats(commit1, commit2)
-    local files_with_status = raw_diff_stats.files_with_status
-    local files_with_changed_lines = raw_diff_stats.files_with_changed_lines
-    if #files_with_status ~= #files_with_changed_lines then
-        error("Alien: unable to parse diff stats")
-    end
-    local diff_stats = {}
-    for i = 1, #files_with_status do
-        local file_with_status = files_with_status[i]
-        local file_with_changed_lines = files_with_changed_lines[i]
-        local status = file_with_status:sub(1, 1)
-        local filename = file_with_status:match("%S+$")
-        local lines_added = file_with_changed_lines:match("%S+")
-        local lines_removed = file_with_changed_lines:match("%s(%S+)")
-        table.insert(diff_stats, string.format("%s %s %d, %d", status, filename, lines_added, lines_removed))
-    end
-    return diff_stats
+--- This sets COMMITS_TO_DIFF, which is used to derive commands to see what files to diff and create diff commands.
+local function set_commits_to_diff(cmd)
+    COMMITS_TO_DIFF = M._get_commits_to_diff(cmd)
 end
 
 ---@return string[]
 local function get_diff_files()
     local diff_cmd
-    if #COMMITS_TO_DIFF >= 2 then
-        diff_cmd = string.format("git diff --name-status %s %s", COMMITS_TO_DIFF[1], COMMITS_TO_DIFF[2])
-    elseif #COMMITS_TO_DIFF == 1 then
-        diff_cmd = string.format("git diff --name-status %s", COMMITS_TO_DIFF[1])
+    if COMMITS_TO_DIFF ~= "" then
+        diff_cmd = string.format("git diff --name-status %s", COMMITS_TO_DIFF)
     else
         diff_cmd = "git diff --name-status"
     end
@@ -106,10 +83,8 @@ end
 ---@return string
 local function get_diff_cmd(filename)
     local diff_cmd
-    if #COMMITS_TO_DIFF >= 2 then
-        diff_cmd = string.format("git diff %s..%s -- %s", COMMITS_TO_DIFF[1], COMMITS_TO_DIFF[2], filename)
-    elseif #COMMITS_TO_DIFF == 1 then
-        diff_cmd = string.format("git diff ..%s -- %s", COMMITS_TO_DIFF[1], filename)
+    if COMMITS_TO_DIFF ~= "" then
+        diff_cmd = string.format("git diff %s -- %s", COMMITS_TO_DIFF, filename)
     else
         diff_cmd = "git diff " .. filename
     end
