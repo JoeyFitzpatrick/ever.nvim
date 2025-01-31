@@ -6,14 +6,12 @@
 ---@module 'ever'
 ---
 
-local configuration = require("ever._core.configuration")
-local highlight = require("ever._core.highlight")
-
 if vim.g.loaded_ever then
     return
 end
 
-configuration.initialize_data()
-highlight.initialize_highlights()
+require("ever._core.configuration").initialize_data()
+require("ever._core.highlight").initialize_highlights()
+require("ever._core.signcolumn").initialize_signcolumns()
 
 vim.g.loaded_ever = true

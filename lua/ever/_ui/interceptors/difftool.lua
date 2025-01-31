@@ -1,3 +1,7 @@
+---@class ever.DiffLineData
+---@field filename string
+---@field safe_filename string
+
 local M = {}
 
 local DIFF_BUFNR = nil
@@ -67,7 +71,7 @@ end
 
 ---@param bufnr integer
 ---@param line_num? integer
----@return { filename: string, safe_filename: string } | nil
+---@return ever.DiffLineData | nil
 local function get_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
@@ -103,6 +107,35 @@ local function set_diff_buffer_autocmds(diff_bufnr)
 end
 
 ---@param bufnr integer
+---@param line_data ever.DiffLineData
+local function setup_diff_buffer(bufnr, line_data)
+    vim.api.nvim_open_win(bufnr, false, { split = "below", height = math.floor(vim.o.lines * 0.67) })
+    local diff_lines = require("ever._core.run_cmd").run_cmd(get_diff_cmd(line_data.safe_filename))
+    vim.api.nvim_buf_set_name(bufnr, "EverDiff--" .. line_data.filename)
+    -- TODO: ensure lsp isn't used for new buffer, by using vim.lsp.buf_get_clients and vim.lsp.buf_detach_client
+    -- For me, it isn't attached, but maybe some users have autocmd that would attach it
+    vim.api.nvim_set_option_value("filetype", vim.filetype.match({ buf = bufnr }), { buf = bufnr })
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, diff_lines)
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    local highlight_groups = require("ever._constants.highlight_groups").highlight_groups
+    local signcolumns = require("ever._constants.signcolumns").signcolumns
+    for i, line in ipairs(diff_lines) do
+        local line_num = i - 1
+        local first_char = line:sub(1, 1)
+        if first_char == "+" then
+            vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_ADD_BG, line_num, 0, -1)
+            vim.fn.sign_place(0, signcolumns.EVER_PLUS, signcolumns.EVER_PLUS, bufnr, { lnum = i })
+        elseif first_char == "-" then
+            vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_REMOVE_BG, line_num, 0, -1)
+            vim.fn.sign_place(0, signcolumns.EVER_MINUS, signcolumns.EVER_MINUS, bufnr, { lnum = i })
+        elseif first_char ~= " " then
+            vim.api.nvim_buf_add_highlight(bufnr, -1, "Normal", line_num, 0, -1)
+        end
+    end
+    set_diff_buffer_autocmds(bufnr)
+end
+
+---@param bufnr integer
 local function set_autocmds(bufnr)
     vim.api.nvim_create_autocmd("CursorMoved", {
         desc = "Diff the file under the cursor",
@@ -118,12 +151,7 @@ local function set_autocmds(bufnr)
                 DIFF_BUFNR = nil
             end
             DIFF_BUFNR = vim.api.nvim_create_buf(false, true)
-            vim.api.nvim_open_win(DIFF_BUFNR, false, { split = "below", height = math.floor(vim.o.lines * 0.67) })
-            local diff_lines = require("ever._core.run_cmd").run_cmd(get_diff_cmd(line_data.safe_filename))
-            vim.api.nvim_set_option_value("filetype", "git", { buf = DIFF_BUFNR })
-            vim.api.nvim_buf_set_lines(DIFF_BUFNR, 0, -1, false, diff_lines)
-            vim.api.nvim_set_option_value("modifiable", false, { buf = DIFF_BUFNR })
-            set_diff_buffer_autocmds(DIFF_BUFNR)
+            setup_diff_buffer(DIFF_BUFNR, line_data)
         end,
         group = vim.api.nvim_create_augroup("EverDiffAutoDiff", { clear = true }),
     })
