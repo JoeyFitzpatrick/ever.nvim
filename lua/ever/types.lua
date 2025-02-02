@@ -52,6 +52,7 @@
 ---@field scroll_diff_up string
 ---@field stage string
 ---@field stage_all string
+---@field stash string
 
 ---@class ever.ConfigurationCmdparseAutoComplete
 ---    The settings that control what happens during auto-completion.

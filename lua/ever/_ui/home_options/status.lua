@@ -164,6 +164,33 @@ local function set_keymaps(bufnr, opts)
             end
         )
     end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.stash, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+
+        -- TODO: make a fn that gets the stash name as input from the user
+        -- and uses it to apply the stash
+        local filename = line_data.safe_filename
+        vim.ui.select(
+            { "Stash just this file", "Stash all changes", "Stash staged changes", "Stash unstaged changes" },
+            { prompt = "Git stash options: " },
+            function(selection)
+                local cmd
+                if selection == "Stash just this file" then
+                    if not filename then
+                        return
+                    end
+                    cmd = "git commit --no-verify -m '[ever] stashing unstaged changes' && git stash push -m "
+                        .. msg
+                        .. " && git reset --soft HEAD^"
+                end
+                set_lines(bufnr, opts)
+            end
+        )
+    end, keymap_opts)
 end
 
 local function get_diff_cmd(status, filename)

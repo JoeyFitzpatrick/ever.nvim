@@ -52,6 +52,7 @@ local _DEFAULTS = {
             scroll_diff_up = "K",
             stage = "s",
             stage_all = "a",
+            stash = "S",
         },
     },
 }
