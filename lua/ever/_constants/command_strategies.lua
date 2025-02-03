@@ -74,6 +74,11 @@ M.notes = {
     end,
 }
 
+M.push = {
+    display_strategy = M.STRATEGIES.DYNAMIC,
+    trigger_redraw = true,
+}
+
 M.reset = {
     trigger_redraw = true,
 }

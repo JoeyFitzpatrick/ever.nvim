@@ -29,12 +29,7 @@ end
 
 ---@return string[]
 local function get_diff_files()
-    local diff_cmd
-    if COMMITS_TO_DIFF ~= "" then
-        diff_cmd = string.format("git diff --name-status %s", COMMITS_TO_DIFF)
-    else
-        diff_cmd = "git diff --name-status"
-    end
+    local diff_cmd = string.format("git diff --name-status %s", COMMITS_TO_DIFF)
     local diff_stat_cmd = diff_cmd:gsub("%-%-name%-status", "--numstat", 1)
     local diff_files = require("ever._core.run_cmd").run_cmd(diff_cmd)
     local diff_stats = require("ever._core.run_cmd").run_cmd(diff_stat_cmd)
@@ -86,13 +81,7 @@ end
 ---@param filename string
 ---@return string
 local function get_diff_cmd(filename)
-    local diff_cmd
-    if COMMITS_TO_DIFF ~= "" then
-        diff_cmd = string.format("git diff %s -- %s", COMMITS_TO_DIFF, filename)
-    else
-        diff_cmd = "git diff " .. filename
-    end
-    return diff_cmd
+    return string.format("git diff %s -- %s", COMMITS_TO_DIFF, filename)
 end
 
 local function set_diff_buffer_autocmds(diff_bufnr)
@@ -207,12 +196,8 @@ M.render = function(cmd)
     vim.api.nvim_win_set_buf(0, bufnr)
     set_commits_to_diff(cmd)
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    if COMMITS_TO_DIFF == "" then
-        require("ever._ui.home_options.status").set_lines(bufnr, {})
-    else
-        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_diff_files())
-        highlight(bufnr)
-    end
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_diff_files())
+    highlight(bufnr)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     set_keymaps(bufnr)
     set_autocmds(bufnr)
