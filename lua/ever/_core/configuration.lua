@@ -30,6 +30,12 @@ local _DEFAULTS = {
             new_branch = "n",
             switch = "s",
         },
+        diff = {
+            next_hunk = "i",
+            previous_hunk = "p",
+            stage_hunk = "sh",
+            stage_line = "sl",
+        },
         log = {
             commit_info = "i",
             reset = "rs",

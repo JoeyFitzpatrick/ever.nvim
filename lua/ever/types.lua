@@ -18,6 +18,7 @@
 ---@class ever.Keymaps
 ---@field home ever.KeymapsHome
 ---@field branch ever.KeymapsBranch
+---@field diff ever.KeymapsDiff
 ---@field log ever.KeymapsLog
 ---@field stash ever.KeymapsStash
 ---@field status ever.KeymapsStatus
@@ -25,6 +26,12 @@
 ---@class ever.KeymapsHome
 ---@field next string
 ---@field previous string
+
+---@class ever.KeymapsDiff
+---@field next_hunk string
+---@field previous_hunk string
+---@field stage_hunk string
+---@field stage_line string
 
 ---@class ever.KeymapsBranch
 ---@field delete string

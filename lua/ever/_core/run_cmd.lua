@@ -1,4 +1,6 @@
 ---@class ever.RunCmdOpts
+---@field stdin? string[]
+---@field rerender? boolean
 
 local M = {}
 
@@ -7,7 +9,17 @@ local M = {}
 ---@param opts? ever.RunCmdOpts -- options, such as special error handling
 ---@return string[] -- command output
 M.run_cmd = function(cmd, opts)
-    return vim.fn.systemlist(cmd)
+    opts = opts or {}
+    local output
+    if opts.stdin then
+        output = vim.fn.systemlist(cmd, opts.stdin)
+    else
+        output = vim.fn.systemlist(cmd)
+    end
+    if opts.rerender then
+        require("ever._core.register").rerender_buffers()
+    end
+    return output
 end
 
 --- Runs a command that doesn't display output.
