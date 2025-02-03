@@ -1,5 +1,10 @@
 -- Status rendering
 
+---@class ever.StatusLineData
+---@field filename string
+---@field safe_filename string
+---@field status string
+
 local M = {}
 
 local DIFF_BUFNR = nil
@@ -45,8 +50,8 @@ end
 
 ---@param bufnr integer
 ---@param line_num? integer
----@return { filename: string, safe_filename: string, status: string } | nil
-local function get_line(bufnr, line_num)
+---@return ever.StatusLineData | nil
+function M.get_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
     if line == "" then
@@ -66,7 +71,7 @@ local function set_keymaps(bufnr, opts)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", keymaps.stage, function()
-        local line_data = get_line(bufnr)
+        local line_data = M.get_line(bufnr)
         if not line_data then
             return
         end
@@ -107,7 +112,7 @@ local function set_keymaps(bufnr, opts)
     end
 
     vim.keymap.set("n", keymaps.edit_file, function()
-        local line_data = get_line(bufnr)
+        local line_data = M.get_line(bufnr)
         if not line_data then
             return
         end
@@ -127,7 +132,7 @@ local function set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     vim.keymap.set("n", keymaps.restore, function()
-        local line_data = get_line(bufnr)
+        local line_data = M.get_line(bufnr)
         if not line_data then
             return
         end
@@ -166,7 +171,7 @@ local function set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     vim.keymap.set("n", keymaps.stash, function()
-        local line_data = get_line(bufnr)
+        local line_data = M.get_line(bufnr)
         if not line_data then
             return
         end
@@ -197,7 +202,7 @@ end
 ---@param status string
 ---@param filename string
 ---@return string
-function M.get_diff_cmd(status, filename)
+local function get_diff_cmd(status, filename)
     local status_checks = require("ever._core.git")
     if status_checks.is_untracked(status) then
         return "diff --no-index /dev/null -- " .. filename
@@ -239,11 +244,11 @@ local function set_autocmds(bufnr, opts)
         desc = "Diff the file under the cursor",
         buffer = bufnr,
         callback = function()
-            local line_data = get_line(bufnr)
+            local line_data = M.get_line(bufnr)
             if not line_data or line_data.filename == CURRENT_DIFF_FILE then
                 return
             end
-            local diff_cmd = M.get_diff_cmd(line_data.status, line_data.safe_filename)
+            local diff_cmd = get_diff_cmd(line_data.status, line_data.safe_filename)
             CURRENT_DIFF_FILE = line_data.filename
             if DIFF_BUFNR then
                 vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })

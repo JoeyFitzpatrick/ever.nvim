@@ -1,7 +1,3 @@
----@class ever.DiffLineData
----@field filename string
----@field safe_filename string
-
 local M = {}
 
 local DIFF_BUFNR = nil
@@ -49,7 +45,7 @@ local function get_diff_files()
     return diff_files_with_stats
 end
 
---- Highlight stash lines
+--- Highlight difftool lines
 ---@param bufnr integer
 local function highlight(bufnr)
     local highlight_line = require("ever._ui.highlight").highlight_line
