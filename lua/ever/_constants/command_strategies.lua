@@ -20,23 +20,22 @@ M.STRATEGIES = {
 }
 
 M.default = {
-    display_strategy = M.STRATEGIES.DYNAMIC,
+    display_strategy = M.STRATEGIES.BELOW,
     insert = false,
     trigger_redraw = false,
 }
 
 M.add = {
+    display_strategy = M.STRATEGIES.DYNAMIC,
     trigger_redraw = true,
 }
 
 M.branch = {
-    display_strategy = M.STRATEGIES.BELOW,
     trigger_redraw = true,
 }
 
 ---@type ever.Strategy
 M.commit = {
-    display_strategy = M.STRATEGIES.BELOW,
     insert = function(cmd)
         local should_not_enter_insert_options = {
             "--allow-empty",

@@ -130,6 +130,13 @@ local function set_diff_buf_lines(bufnr, line_data)
         end
     end
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    -- Remove any lsp that might have tried to attach to the diff buffer
+    -- We don't want any diagnostics or anything
+    vim.schedule(function()
+        for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+            vim.lsp.buf_detach_client(bufnr, client.id)
+        end
+    end)
 end
 
 ---@param bufnr integer
@@ -140,8 +147,6 @@ local function setup_diff_buffer(bufnr, line_data)
     end
     vim.api.nvim_open_win(bufnr, false, { split = "below", height = math.floor(vim.o.lines * 0.67) })
     pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiff--" .. line_data.filename)
-    -- TODO: ensure lsp isn't used for new buffer, by using vim.lsp.buf_get_clients and vim.lsp.buf_detach_client
-    -- For me, it isn't attached, but maybe some users have autocmd that would attach it
 
     -- Sometimes when scrolling fast, there are some treesitter errors. Deferring the filetype change seems to avoid this
     vim.defer_fn(function()
@@ -201,11 +206,14 @@ M.render = function(cmd)
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
     set_commits_to_diff(cmd)
-    local diff_files = get_diff_files()
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, diff_files)
+    if COMMITS_TO_DIFF == "" then
+        require("ever._ui.home_options.status").set_lines(bufnr, {})
+    else
+        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_diff_files())
+        highlight(bufnr)
+    end
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    highlight(bufnr)
     set_keymaps(bufnr)
     set_autocmds(bufnr)
 end

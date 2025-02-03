@@ -33,7 +33,7 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 ---@return string[]
-local function set_lines(bufnr, opts)
+function M.set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
     local output = require("ever._core.run_cmd").run_cmd("git status --porcelain --untracked")
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
@@ -52,7 +52,7 @@ local function get_line(bufnr, line_num)
     if line == "" then
         return nil
     end
-    if not line:match("^%s*%w") then
+    if not line:match("^%s?[%w%?]") then
         return nil
     end
     local filename = line:sub(4)
@@ -79,19 +79,19 @@ local function set_keymaps(bufnr, opts)
         if result == "error" then
             return
         end
-        set_lines(bufnr, opts)
+        M.set_lines(bufnr, opts)
     end, keymap_opts)
 
     vim.keymap.set("n", keymaps.stage_all, function()
         for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)) do
             if line:match("^.%S") then
                 require("ever._core.run_cmd").run_hidden_cmd("git add -A")
-                set_lines(bufnr, opts)
+                M.set_lines(bufnr, opts)
                 return
             end
         end
         require("ever._core.run_cmd").run_hidden_cmd("git reset")
-        set_lines(bufnr, opts)
+        M.set_lines(bufnr, opts)
     end, keymap_opts)
 
     local keymap_to_command_map = {
@@ -160,7 +160,7 @@ local function set_keymaps(bufnr, opts)
                     cmd = "git reset --soft HEAD"
                 end
                 require("ever._core.run_cmd").run_hidden_cmd(cmd)
-                set_lines(bufnr, opts)
+                M.set_lines(bufnr, opts)
             end
         )
     end, keymap_opts)
@@ -187,16 +187,20 @@ local function set_keymaps(bufnr, opts)
                         .. msg
                         .. " && git reset --soft HEAD^"
                 end
-                set_lines(bufnr, opts)
+                M.set_lines(bufnr, opts)
             end
         )
     end, keymap_opts)
 end
 
-local function get_diff_cmd(status, filename)
+--- Worth noting we don't include "git" in the string
+---@param status string
+---@param filename string
+---@return string
+function M.get_diff_cmd(status, filename)
     local status_checks = require("ever._core.git")
     if status_checks.is_untracked(status) then
-        return "diff --no-index /dev/null " .. filename
+        return "diff --no-index /dev/null -- " .. filename
     end
     if status_checks.is_deleted(status) then
         if status_checks.is_staged(status) then
@@ -205,9 +209,9 @@ local function get_diff_cmd(status, filename)
         return "diff -- " .. filename
     end
     if status_checks.is_staged(status) then
-        return "diff --staged " .. filename
+        return "diff --staged -- " .. filename
     end
-    return "diff " .. filename
+    return "diff -- " .. filename
 end
 
 local function set_diff_buffer_autocmds(diff_bufnr)
@@ -239,7 +243,7 @@ local function set_autocmds(bufnr, opts)
             if not line_data or line_data.filename == CURRENT_DIFF_FILE then
                 return
             end
-            local diff_cmd = get_diff_cmd(line_data.status, line_data.safe_filename)
+            local diff_cmd = M.get_diff_cmd(line_data.status, line_data.safe_filename)
             CURRENT_DIFF_FILE = line_data.filename
             if DIFF_BUFNR then
                 vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
@@ -272,7 +276,7 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
-    set_lines(bufnr, opts)
+    M.set_lines(bufnr, opts)
     set_autocmds(bufnr, opts)
     set_keymaps(bufnr, opts)
 end
