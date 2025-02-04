@@ -34,6 +34,10 @@ M.branch = {
     trigger_redraw = true,
 }
 
+M.checkout = {
+    trigger_redraw = true,
+}
+
 ---@type ever.Strategy
 M.commit = {
     insert = function(cmd)
