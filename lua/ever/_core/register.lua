@@ -1,5 +1,5 @@
 ---@class ever.RegisterOpts
----@field render_fn fun()
+---@field render_fn fun(buf?: integer)
 
 local M = {}
 
@@ -25,7 +25,9 @@ function M.rerender_buffers(bufnr)
     end
     for buf, opts in pairs(M.buffers) do
         if buf ~= bufnr then
-            vim.schedule(opts.render_fn)
+            vim.schedule(function()
+                opts.render_fn(buf)
+            end)
         end
     end
 end

@@ -38,37 +38,15 @@ end
 ---@param bufnr integer
 ---@param cmd string
 local function set_diff_buf_lines(bufnr, cmd)
+    -- TODO: make diff highlighting look better
+    -- Use treesitter highlighting instead of native git
+    -- Remove first char from diff lines
+    -- add signcolumns
+    -- and prevent lsp from attaching
     local diff_lines = require("ever._core.run_cmd").run_cmd(cmd)
-    local highlight_groups = require("ever._constants.highlight_groups").highlight_groups
-    local signcolumns = require("ever._constants.signcolumns").signcolumns
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    for i, line in ipairs(diff_lines) do
-        local first_char = line:sub(1, 1)
-        local is_index_line = line:match("^--- [ab]/") or line:match("^+++ [ab]/") or line:match("^--- /dev/null")
-        local is_patch_line = is_index_line or (first_char ~= "+" and first_char ~= "-" and first_char ~= " ")
-        -- TODO: figure out how to make this work while still chopping off the first char
-        -- Currently the hunk extractor expects diff lines to have "+" and "-"
-        vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { line })
-        -- vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { is_patch_line and line or line:sub(2) })
-        local signcolumn_line_num = i + 1
-        if is_patch_line then
-            vim.api.nvim_buf_add_highlight(bufnr, -1, "Normal", i, 0, -1)
-        elseif first_char == "+" then
-            vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_ADD_BG, i, 0, -1)
-            vim.fn.sign_place(0, signcolumns.EVER_PLUS, signcolumns.EVER_PLUS, bufnr, { lnum = signcolumn_line_num })
-        elseif first_char == "-" then
-            vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_REMOVE_BG, i, 0, -1)
-            vim.fn.sign_place(0, signcolumns.EVER_MINUS, signcolumns.EVER_MINUS, bufnr, { lnum = signcolumn_line_num })
-        end
-    end
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, diff_lines)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    -- Remove any lsp that might have tried to attach to the diff buffer
-    -- We don't want any diagnostics or anything
-    vim.schedule(function()
-        for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-            vim.lsp.buf_detach_client(bufnr, client.id)
-        end
-    end)
 end
 
 ---@param bufnr integer
@@ -116,9 +94,8 @@ local function set_diff_keymaps(bufnr, is_staged)
         else
             cmd = "git apply --cached --whitespace=nowarn -"
         end
-        vim.print(cmd)
+        vim.print(hunk.patch_lines)
         local output = require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_lines, rerender = true })
-        vim.print(output)
     end, keymap_opts)
 
     vim.keymap.set("n", keymaps.stage_line, function()
@@ -146,20 +123,19 @@ local function setup_diff_buffer(bufnr, cmd, filename, diff_type)
     end
     if diff_type == "unstaged" then
         vim.api.nvim_open_win(bufnr, true, { split = "below", height = math.floor(vim.o.lines * 0.67) })
-        pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiffUnstaged--" .. filename)
+        pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiffUnstaged--" .. filename .. ".git")
     else
         vim.api.nvim_open_win(bufnr, true, { split = "right" })
-        pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiffStaged--" .. filename)
+        pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiffStaged--" .. filename .. ".git")
     end
 
-    -- Sometimes when scrolling fast, there are some treesitter errors. Deferring the filetype change seems to avoid this
-    vim.defer_fn(function()
-        if not vim.api.nvim_buf_is_valid(bufnr) then
-            return
-        end
-        vim.api.nvim_set_option_value("filetype", vim.filetype.match({ buf = bufnr }), { buf = bufnr })
-    end, 10)
+    vim.api.nvim_set_option_value("filetype", "git", { buf = bufnr })
     set_diff_buf_lines(bufnr, cmd)
+    require("ever._core.register").register_buffer(bufnr, {
+        render_fn = function()
+            set_diff_buf_lines(bufnr, cmd)
+        end,
+    })
     set_diff_buffer_autocmds(bufnr)
     if diff_type == "unstaged" then
         set_diff_keymaps(bufnr, false)
@@ -222,12 +198,14 @@ local function set_keymaps(bufnr)
     end, keymap_opts)
 end
 
+---@return integer -- created bufnr
 M.render = function()
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
     require("ever._ui.home_options.status").set_lines(bufnr, { start_line = 0 })
     set_keymaps(bufnr)
     set_autocmds(bufnr)
+    return bufnr
 end
 
 function M.cleanup(bufnr)
