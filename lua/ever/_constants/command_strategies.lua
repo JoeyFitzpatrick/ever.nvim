@@ -92,4 +92,8 @@ M.stage = {
     trigger_redraw = true,
 }
 
+M.stash = {
+    trigger_redraw = true,
+}
+
 return M

@@ -37,15 +37,16 @@ end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
----@return string[]
 function M.set_lines(bufnr, opts)
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+    end
     local start_line = opts.start_line or 0
     local output = require("ever._core.run_cmd").run_cmd("git status --porcelain --untracked")
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     highlight(bufnr, start_line, output)
-    return output
 end
 
 ---@param bufnr integer
@@ -176,25 +177,45 @@ local function set_keymaps(bufnr, opts)
             return
         end
 
-        -- TODO: make a fn that gets the stash name as input from the user
-        -- and uses it to apply the stash
         local filename = line_data.safe_filename
-        vim.ui.select(
-            { "Stash just this file", "Stash all changes", "Stash staged changes", "Stash unstaged changes" },
-            { prompt = "Git stash options: " },
-            function(selection)
-                local cmd
-                if selection == "Stash just this file" then
-                    if not filename then
-                        return
-                    end
-                    cmd = "git commit --no-verify -m '[ever] stashing unstaged changes' && git stash push -m "
-                        .. msg
-                        .. " && git reset --soft HEAD^"
+        local STASH_OPTIONS = {
+            JUST_THIS_FILE = "Stash just this file",
+            ALL_CHANGES = "Stash all changes",
+            STAGED_CHANGES = "Stash staged changes",
+        }
+        vim.ui.select({
+            STASH_OPTIONS.JUST_THIS_FILE,
+            STASH_OPTIONS.ALL_CHANGES,
+            STASH_OPTIONS.STAGED_CHANGES,
+        }, { prompt = "Git stash options: " }, function(selection)
+            local cmd
+            if selection == STASH_OPTIONS.JUST_THIS_FILE then
+                if not filename then
+                    return
                 end
-                M.set_lines(bufnr, opts)
+                cmd = "stash push " .. filename
+            elseif selection == STASH_OPTIONS.ALL_CHANGES then
+                cmd = "stash --include-untracked"
+            elseif selection == STASH_OPTIONS.STAGED_CHANGES then
+                cmd = "stash push --staged"
+                -- TODO: support stashing unstaged changes
+                -- This can be done by committing staged changes,
+                -- stashing remaining changes,
+                -- and resetting to previous commit
             end
-        )
+            -- Get the stash name
+            vim.ui.input({ prompt = "Stash message: " }, function(input)
+                if not input then
+                    return
+                end
+                if input:match("^%s*$") then
+                    vim.cmd("G " .. cmd)
+                else
+                    vim.cmd("G " .. cmd .. " -m " .. input)
+                end
+            end)
+            M.set_lines(bufnr, opts)
+        end)
     end, keymap_opts)
 end
 
