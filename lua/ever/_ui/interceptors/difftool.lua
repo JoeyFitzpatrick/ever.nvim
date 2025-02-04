@@ -100,7 +100,7 @@ local function set_diff_buf_lines(bufnr, line_data)
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     for i, line in ipairs(diff_lines) do
         local first_char = line:sub(1, 1)
-        local is_index_line = line:match("^--- [ab]/") or line:match("^+++ [ab]/") or line:match("^--- /dev/null")
+        local is_index_line = line:match("^[+-][+-][+-] [ab]/") or line:match("^[+-][+-][+-] /dev/null")
         local is_patch_line = is_index_line or (first_char ~= "+" and first_char ~= "-" and first_char ~= " ")
         vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { is_patch_line and line or line:sub(2) })
         local signcolumn_line_num = i + 1
