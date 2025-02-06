@@ -1,0 +1,118 @@
+==============================================================================
+------------------------------------------------------------------------------
+A collection of types to be included / used in other Lua files.
+
+These types are either required by the Lua API or required for the normal
+operation of this Lua plugin.
+
+------------------------------------------------------------------------------
+*ever.Configuration*
+
+Fields ~
+    {keymaps} ever.Keymaps -- All of the keymaps in Ever
+
+------------------------------------------------------------------------------
+*ever.Keymaps*
+
+Fields ~
+    {home} ever.KeymapsHome
+    {branch} ever.KeymapsBranch
+    {diff} ever.KeymapsDiff
+    {log} ever.KeymapsLog
+    {stash} ever.KeymapsStash
+    {status} ever.KeymapsStatus
+
+------------------------------------------------------------------------------
+*ever.KeymapsHome*
+
+Fields ~
+    {next} `(string)`
+    {previous} `(string)`
+
+------------------------------------------------------------------------------
+*ever.KeymapsDiff*
+
+Fields ~
+    {next_hunk} `(string)`
+    {previous_hunk} `(string)`
+    {stage_hunk} `(string)`
+    {stage_line} `(string)`
+
+------------------------------------------------------------------------------
+*ever.KeymapsBranch*
+
+Fields ~
+    {delete} `(string)`
+    {new_branch} `(string)`
+    {switch} `(string)`
+
+------------------------------------------------------------------------------
+*ever.KeymapsLog*
+
+Fields ~
+    {commit_info} `(string)`
+    {reset} `(string)`
+    {revert} `(string)`
+    {show} `(string)`
+
+------------------------------------------------------------------------------
+*ever.KeymapsStash*
+
+Fields ~
+    {apply} `(string)`
+    {drop} `(string)`
+    {pop} `(string)`
+
+------------------------------------------------------------------------------
+*ever.KeymapsStatus*
+
+Fields ~
+    {commit} `(string)`
+    {edit_file} `(string)`
+    {pull} `(string)`
+    {push} `(string)`
+    {restore} `(string)`
+    {scroll_diff_down} `(string)`
+    {scroll_diff_up} `(string)`
+    {stage} `(string)`
+    {stage_all} `(string)`
+    {stash} `(string)`
+
+------------------------------------------------------------------------------
+*ever.ConfigurationCmdparseAutoComplete*
+   The settings that control what happens during auto-completion.
+
+Fields ~
+    {display} {help_flag: `(boolean})`
+       help_flag = Show / Hide the --help flag during auto-completion.
+
+------------------------------------------------------------------------------
+*ever.LoggingConfiguration*
+   Control whether or not logging is printed to the console or to disk.
+
+Fields ~
+    {level} (
+       | "trace"
+       | "debug"
+       | "info"
+       | "warn" | "error"
+       | "fatal"
+       | vim.log.levels.DEBUG
+       | vim.log.levels.ERROR
+       | vim.log.levels.INFO
+       | vim.log.levels.TRACE
+       | vim.log.levels.WARN)?
+       Any messages above this level will be logged.
+    {use_console} `(boolean?)`
+       Should print the output to neovim while running. Warning: This is very
+       spammy. You probably don't want to enable this unless you have to.
+    {use_file} `(boolean?)`
+       Should write to a file.
+    {output_path} `(string?)`
+       The default path on-disk where log files will be written to.
+       TODO: make this the correct log path
+       Defaults to "/home/selecaoone/.local/share/nvim/plugin_name.log".
+
+WARNING: This file is auto-generated. Do not edit it!
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
