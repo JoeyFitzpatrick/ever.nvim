@@ -48,8 +48,7 @@ local function get_line(bufnr, line_num)
 end
 
 ---@param bufnr integer
----@param opts ever.UiRenderOpts
-local function set_keymaps(bufnr, opts)
+local function set_keymaps(bufnr)
     local keymaps = require("ever._core.configuration").DATA.keymaps.stash
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
@@ -90,7 +89,7 @@ end
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
     set_lines(bufnr, opts)
-    set_keymaps(bufnr, opts)
+    set_keymaps(bufnr)
 end
 
 function M.cleanup(bufnr)

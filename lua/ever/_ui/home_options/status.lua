@@ -152,7 +152,7 @@ local function set_keymaps(bufnr, opts)
                     if status_checks.is_untracked(status) then
                         cmd = "git clean -f " .. filename
                     elseif status_checks.is_staged(status) then
-                        cmd = "git reset -- " .. filename, "&& git clean -f -- " .. filename
+                        cmd = "git reset -- " .. filename .. " && git clean -f -- " .. filename
                     else
                         cmd = "git restore -- " .. filename
                     end
@@ -259,8 +259,7 @@ local function set_diff_buffer_autocmds(diff_bufnr)
 end
 
 ---@param bufnr integer
----@param opts ever.UiRenderOpts
-local function set_autocmds(bufnr, opts)
+local function set_autocmds(bufnr)
     vim.api.nvim_create_autocmd("CursorMoved", {
         desc = "Diff the file under the cursor",
         buffer = bufnr,
@@ -303,7 +302,7 @@ end
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
     M.set_lines(bufnr, opts)
-    set_autocmds(bufnr, opts)
+    set_autocmds(bufnr)
     set_keymaps(bufnr, opts)
 end
 

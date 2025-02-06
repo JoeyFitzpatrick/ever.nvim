@@ -29,7 +29,13 @@ end
 ---@param opts? ever.RunCmdOpts -- options, such as special error handling
 ---@return "success" | "error"
 M.run_hidden_cmd = function(cmd, opts)
-    local output = vim.fn.system(cmd)
+    opts = opts or {}
+    local output
+    if opts.stdin then
+        output = vim.fn.system(cmd, opts.stdin)
+    else
+        output = vim.fn.system(cmd)
+    end
     if vim.v.shell_error ~= 0 then
         vim.notify(output.stderr, vim.log.levels.ERROR)
         return "error"

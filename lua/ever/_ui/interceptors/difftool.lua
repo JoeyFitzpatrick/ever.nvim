@@ -1,3 +1,7 @@
+---@class ever.DiffLineData
+---@field filename string
+---@field safe_filename string
+
 local M = {}
 
 local DIFF_BUFNR = nil
@@ -133,7 +137,8 @@ local function setup_diff_buffer(bufnr, line_data)
     vim.api.nvim_open_win(bufnr, false, { split = "below", height = math.floor(vim.o.lines * 0.67) })
     pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiff--" .. line_data.filename)
 
-    -- Sometimes when scrolling fast, there are some treesitter errors. Deferring the filetype change seems to avoid this
+    -- Sometimes when scrolling fast, there are some treesitter errors.
+    -- Deferring the filetype change seems to avoid this
     vim.defer_fn(function()
         if not vim.api.nvim_buf_is_valid(bufnr) then
             return

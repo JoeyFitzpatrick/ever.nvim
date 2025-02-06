@@ -20,4 +20,4 @@ jobs:
           sudo luarocks install luacheck
 
       - name: Lint
-        run: make luacheck
+        run: luacheck lua plugin scripts

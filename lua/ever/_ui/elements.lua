@@ -1,8 +1,9 @@
----@alias ElementType "terminal" | "home"
+---@alias ever.ElementType "terminal" | "home"
 
 local M = {}
 
---- Some commands parse command options to determine what display strat to use. In this case, run the parse function, otherwise return the display strat.
+--- Some commands parse command options to determine what display strat to use.
+--- In this case, run the parse function, otherwise return the display strat.
 ---@param cmd string[]
 ---@param display_strategy ever.DisplayStrategy | ever.DisplayStrategyParser
 ---@return ever.DisplayStrategy
@@ -13,7 +14,8 @@ local function parse_display_strategy(cmd, display_strategy)
     return display_strategy
 end
 
---- Some commands parse command options to determine whether to enter in insert mode. In this case, run the parse function, otherwise return the bool.
+--- Some commands parse command options to determine whether to enter in insert mode.
+--- In this case, run the parse function, otherwise return the bool.
 ---@param cmd string[]
 ---@param should_enter_insert boolean | ever.ShouldEnterInsert
 ---@return boolean

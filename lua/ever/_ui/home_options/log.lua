@@ -53,9 +53,8 @@ end
 --- This `set_lines` is different than the others, in that it streams content into the buffer
 --- instead of writing it all at once.
 ---@param bufnr integer
----@param opts ever.UiRenderOpts
 ---@return string[]
-local function set_lines(bufnr, opts)
+local function set_lines(bufnr)
     local function on_stdout(_, data, _)
         if data then
             -- Populate the buffer with the git log data
@@ -95,8 +94,7 @@ local function set_lines(bufnr, opts)
 end
 
 ---@param bufnr integer
----@param opts ever.UiRenderOpts
-local function set_keymaps(bufnr, opts)
+local function set_keymaps(bufnr)
     local keymaps = require("ever._core.configuration").DATA.keymaps.log
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
@@ -119,7 +117,7 @@ local function set_keymaps(bufnr, opts)
         end
         vim.ui.select({ "mixed", "soft", "hard" }, { prompt = "Git reset type: " }, function(selection)
             require("ever._core.run_cmd").run_hidden_cmd("git reset --" .. selection .. " " .. line_data.hash)
-            set_lines(bufnr, opts)
+            set_lines(bufnr)
         end)
     end, keymap_opts)
 
@@ -145,10 +143,9 @@ local function set_keymaps(bufnr, opts)
 end
 
 ---@param bufnr integer
----@param opts ever.UiRenderOpts
-function M.render(bufnr, opts)
-    set_lines(bufnr, opts)
-    set_keymaps(bufnr, opts)
+function M.render(bufnr)
+    set_lines(bufnr)
+    set_keymaps(bufnr)
 end
 
 function M.cleanup(bufnr)

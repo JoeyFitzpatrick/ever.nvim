@@ -15,9 +15,8 @@ end
 
 --- Set the appropriate keymaps for a given command and element.
 ---@param bufnr integer
----@param element ElementType -- Element type, e.g. "terminal"
----@param base_cmd string? -- e.g. "commit", "pull", etc.
-function M.set_keymaps(bufnr, element, base_cmd)
+---@param element ever.ElementType -- Element type, e.g. "terminal"
+function M.set_keymaps(bufnr, element)
     if element == "terminal" then
         set_terminal_keymaps(bufnr)
     end
