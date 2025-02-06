@@ -37,7 +37,7 @@ M.run_hidden_cmd = function(cmd, opts)
         output = vim.fn.system(cmd)
     end
     if vim.v.shell_error ~= 0 then
-        vim.notify(output.stderr, vim.log.levels.ERROR)
+        vim.notify(output, vim.log.levels.ERROR)
         return "error"
     end
     return "success"

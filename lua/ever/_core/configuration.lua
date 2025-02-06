@@ -10,7 +10,6 @@ local M = {}
 -- NOTE: Don't remove this line. It makes the Lua module much easier to reload
 vim.g.loaded_ever = false
 
----@type ever.Configuration
 M.DATA = {}
 
 -- TODO: (you) If you use the vlog.lua for built-in logging, keep the `logging`
@@ -62,6 +61,7 @@ local _DEFAULTS = {
         },
     },
 }
+
 function M.initialize_data()
     M.DATA = vim.tbl_deep_extend("force", _DEFAULTS, vim.g.ever_configuration or {})
 end
@@ -77,7 +77,7 @@ function M.initialize_data_if_needed()
 
     vim.g.loaded_ever = true
 
-    vlog.new(M.DATA.logging or {}, true)
+    -- vlog.new(M.DATA.logging or {}, true)
 
     -- vlog.fmt_debug("Initialized ever's configuration.")
 end
