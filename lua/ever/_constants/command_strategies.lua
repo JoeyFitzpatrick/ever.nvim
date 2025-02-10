@@ -69,6 +69,11 @@ M.diff = {
     insert = false,
 }
 
+M.merge = {
+    insert = true,
+    trigger_redraw = true,
+}
+
 M.notes = {
     display_strategy = M.STRATEGIES.BELOW,
     insert = function(cmd)

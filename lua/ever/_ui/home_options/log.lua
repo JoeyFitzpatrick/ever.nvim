@@ -53,8 +53,9 @@ end
 --- This `set_lines` is different than the others, in that it streams content into the buffer
 --- instead of writing it all at once.
 ---@param bufnr integer
+---@param opts ever.UiRenderOpts
 ---@return string[]
-local function set_lines(bufnr)
+local function set_lines(bufnr, opts)
     local function on_stdout(_, data, _)
         if data then
             -- Populate the buffer with the git log data
@@ -76,6 +77,11 @@ local function set_lines(bufnr)
         end
     end
 
+    -- Remove existing lines before adding new lines
+    -- This is for when we rerender the output
+    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
+    vim.api.nvim_buf_set_lines(bufnr, opts.start_line or 0, -1, false, {})
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     -- Start the asynchronous job
     vim.fn.jobstart({ "git", "log", "--pretty=format:󰜘 %h %<(25)%cr %<(25)%an %<(25)%s" }, {
         on_stdout = function(...)
@@ -94,7 +100,8 @@ local function set_lines(bufnr)
 end
 
 ---@param bufnr integer
-local function set_keymaps(bufnr)
+---@param opts ever.UiRenderOpts
+local function set_keymaps(bufnr, opts)
     local keymaps = require("ever._core.configuration").DATA.keymaps.log
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
@@ -117,7 +124,7 @@ local function set_keymaps(bufnr)
         end
         vim.ui.select({ "mixed", "soft", "hard" }, { prompt = "Git reset type: " }, function(selection)
             require("ever._core.run_cmd").run_hidden_cmd("git reset --" .. selection .. " " .. line_data.hash)
-            set_lines(bufnr)
+            set_lines(bufnr, opts)
         end)
     end, keymap_opts)
 
@@ -143,9 +150,10 @@ local function set_keymaps(bufnr)
 end
 
 ---@param bufnr integer
-function M.render(bufnr)
-    set_lines(bufnr)
-    set_keymaps(bufnr)
+---@param opts ever.UiRenderOpts
+function M.render(bufnr, opts)
+    set_lines(bufnr, opts)
+    set_keymaps(bufnr, opts)
 end
 
 function M.cleanup(bufnr)

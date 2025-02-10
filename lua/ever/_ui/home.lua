@@ -128,8 +128,8 @@ local tab_render_map = {
     Branch = function(bufnr, opts)
         require("ever._ui.home_options.branch").render(bufnr, opts)
     end,
-    Log = function(bufnr)
-        require("ever._ui.home_options.log").render(bufnr)
+    Log = function(bufnr, opts)
+        require("ever._ui.home_options.log").render(bufnr, opts)
     end,
     Stash = function(bufnr, opts)
         require("ever._ui.home_options.stash").render(bufnr, opts)
