@@ -19,6 +19,9 @@ function M._get_commits_to_diff(cmd)
     if #cmd_args >= 2 then
         commits = cmd_args[2]
     end
+    if commits ~= "" and not commits:match("%.%.") then
+        commits = "HEAD.." .. commits
+    end
     return commits
 end
 
