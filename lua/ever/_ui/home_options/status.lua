@@ -211,7 +211,7 @@ local function set_keymaps(bufnr, opts)
                 if input:match("^%s*$") then
                     vim.cmd("G " .. cmd)
                 else
-                    vim.cmd("G " .. cmd .. " -m " .. input)
+                    vim.cmd("G " .. cmd .. " -m " .. require("ever._core.texter").surround_with_quotes(input))
                 end
             end)
             M.set_lines(bufnr, opts)

@@ -101,4 +101,13 @@ function M.startswith(text, start)
     return text:sub(1, #start) == start
 end
 
+--- Surround `text` with quotes
+---
+---@param text string The text to surround with quotes
+---@return string # The text surrounded with quotes
+---
+function M.surround_with_quotes(text)
+    return "'" .. text .. "'"
+end
+
 return M
