@@ -28,10 +28,16 @@
 ---@field previous string
 
 ---@class ever.KeymapsDiff
+---@field next_file string
+---@field previous_file string
 ---@field next_hunk string
 ---@field previous_hunk string
 ---@field stage_hunk string
 ---@field stage_line string
+
+---@class ever.KeymapsDifftool
+---@field scroll_diff_down string
+---@field scroll_diff_up string
 
 ---@class ever.KeymapsBranch
 ---@field delete string

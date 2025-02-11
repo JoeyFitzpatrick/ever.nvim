@@ -98,6 +98,51 @@ local function set_diff_buffer_autocmds(diff_bufnr)
     })
 end
 
+---@param bufnr integer The bufnr of the buffer that shows the diff
+local function set_diff_buffer_keymaps(bufnr)
+    local keymaps = require("ever._core.configuration").DATA.keymaps.diff
+    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+
+    vim.keymap.set("n", "q", function()
+        local upper_win = vim.fn.winnr("k")
+        if upper_win == 0 then
+            return
+        end
+        local win = vim.fn.win_getid(upper_win)
+        vim.api.nvim_set_current_win(win)
+        vim.api.nvim_buf_delete(0, { force = true })
+    end)
+    vim.keymap.set("n", keymaps.next_file, function()
+        local upper_win = vim.fn.winnr("k")
+        if upper_win == 0 then
+            return
+        end
+        local win = vim.fn.win_getid(upper_win)
+        vim.api.nvim_set_current_win(win)
+        local cursor_pos = vim.api.nvim_win_get_cursor(win)
+        vim.api.nvim_win_set_cursor(win, { cursor_pos[1] + 1, cursor_pos[2] })
+        vim.schedule(function()
+            local lower_win = vim.fn.win_getid(vim.fn.winnr("j"))
+            vim.api.nvim_set_current_win(lower_win)
+        end)
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.previous_file, function()
+        local upper_win = vim.fn.winnr("k")
+        if upper_win == 0 then
+            return
+        end
+        local win = vim.fn.win_getid(upper_win)
+        vim.api.nvim_set_current_win(win)
+        local cursor_pos = vim.api.nvim_win_get_cursor(win)
+        vim.api.nvim_win_set_cursor(win, { cursor_pos[1] - 1, cursor_pos[2] })
+        vim.schedule(function()
+            local lower_win = vim.fn.win_getid(vim.fn.winnr("j"))
+            vim.api.nvim_set_current_win(lower_win)
+        end)
+    end, keymap_opts)
+end
+
 ---@param bufnr integer
 ---@param line_data ever.DiffLineData
 local function set_diff_buf_lines(bufnr, line_data)
@@ -131,8 +176,8 @@ local function set_diff_buf_lines(bufnr, line_data)
     end)
 end
 
----@param bufnr integer
----@param line_data ever.DiffLineData
+---@param bufnr integer The bufnr of the buffer that shows the diff
+---@param line_data ever.DiffLineData Line data
 local function setup_diff_buffer(bufnr, line_data)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
@@ -150,6 +195,7 @@ local function setup_diff_buffer(bufnr, line_data)
     end, 10)
     set_diff_buf_lines(bufnr, line_data)
     set_diff_buffer_autocmds(bufnr)
+    set_diff_buffer_keymaps(bufnr)
 end
 
 ---@param bufnr integer

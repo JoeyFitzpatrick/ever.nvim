@@ -30,6 +30,8 @@ local _DEFAULTS = {
             switch = "s",
         },
         diff = {
+            next_file = "<tab>",
+            previous_file = "<S-tab>",
             next_hunk = "i",
             previous_hunk = "p",
             stage_hunk = "sh",
