@@ -99,6 +99,9 @@ local function set_keymaps(bufnr, opts)
             return
         end
         vim.ui.input({ prompt = "Name for new branch off of " .. line_data.branch_name .. ": " }, function(input)
+            if not input then
+                return
+            end
             local result = require("ever._core.run_cmd").run_hidden_cmd("git switch --create " .. input)
             if result == "error" then
                 return
