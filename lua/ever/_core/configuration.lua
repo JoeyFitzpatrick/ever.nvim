@@ -3,7 +3,7 @@
 ---@module 'ever._core.configuration'
 ---
 
-local vlog = require("ever._vendors.vlog")
+-- local vlog = require("ever._vendors.vlog")
 
 local M = {}
 

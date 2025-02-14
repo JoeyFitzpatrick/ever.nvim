@@ -5,6 +5,7 @@ local function get_conflict_lines()
 
     -- Get the initial list of potential conflict lines
     local potential_conflicts = run_cmd(
+        -- luacheck: ignore 631
         "git -c core.whitespace=-trailing-space,-space-before-tab,-indent-with-non-tab,-tab-in-indent,-cr-at-eol diff --check"
     )
 
@@ -54,8 +55,7 @@ local function populate_and_open_quickfix()
     vim.cmd("copen")
 end
 
----@param cmd string
-function M.render(cmd)
+function M.render()
     populate_and_open_quickfix()
 end
 

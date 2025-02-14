@@ -4,8 +4,8 @@ local cmd_ui_map = {
     difftool = function(cmd)
         require("ever._ui.interceptors.difftool").render(cmd)
     end,
-    mergetool = function(cmd)
-        require("ever._ui.interceptors.mergetool").render(cmd)
+    mergetool = function()
+        require("ever._ui.interceptors.mergetool").render()
     end,
     staging_area = function()
         local bufnr = require("ever._ui.interceptors.staging_area").render()
