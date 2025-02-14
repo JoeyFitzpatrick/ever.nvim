@@ -88,6 +88,11 @@ M.push = {
     trigger_redraw = true,
 }
 
+M.rebase = {
+    insert = true,
+    trigger_redraw = true,
+}
+
 M.reset = {
     trigger_redraw = true,
 }
