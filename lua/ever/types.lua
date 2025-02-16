@@ -46,6 +46,7 @@
 
 ---@class ever.KeymapsLog
 ---@field commit_info string
+---@field rebase string
 ---@field reset string
 ---@field revert string
 ---@field show string
@@ -57,6 +58,8 @@
 
 ---@class ever.KeymapsStatus
 ---@field commit string
+---@field commit_amend string
+---@field commit_amend_reuse_message string
 ---@field edit_file string
 ---@field pull string
 ---@field push string

@@ -18,26 +18,6 @@ local function highlight_line(bufnr, line, line_num)
     ui_highlight_line(bufnr, "Identifier", line_num, author_start, author_end)
 end
 
---- --- Highlight log (commit) lines
---- ---@param bufnr integer
---- ---@param start_line integer
---- ---@param lines string[]
---- local function highlight(bufnr, start_line, lines)
--- local highlight_line = require("ever._ui.highlight").highlight_line
----     for i, line in ipairs(lines) do
----         if line == "" then
----             return
----         end
----         local line_num = i + start_line - 1
----         local hash_start, hash_end = line:find("^󰜘 %w+")
----         highlight_line(bufnr, "MatchParen", line_num, hash_start, hash_end)
----         local date_start, date_end = line:find(".+ago", hash_end + 1)
----         highlight_line(bufnr, "Function", line_num, date_start, date_end)
----         local author_start, author_end = line:find("%s%s+(.-)%s%s+", date_end + 1)
----         highlight_line(bufnr, "Identifier", line_num, author_start, author_end)
----     end
---- end
-
 ---@param bufnr integer
 ---@param line_num? integer
 ---@return { hash: string } | nil
@@ -115,6 +95,14 @@ local function set_keymaps(bufnr, opts)
             { title = "Git log " .. line_data.hash }
         )
         require("ever._ui.elements").terminal("log -n 1 " .. line_data.hash, { display_strategy = "full" })
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.rebase, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.cmd("G rebase -i " .. line_data.hash .. "^")
     end, keymap_opts)
 
     vim.keymap.set("n", keymaps.reset, function()

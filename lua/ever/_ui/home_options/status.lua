@@ -102,6 +102,8 @@ local function set_keymaps(bufnr, opts)
 
     local keymap_to_command_map = {
         { keymap = keymaps.commit, command = "commit" },
+        { keymap = keymaps.commit_amend, command = "commit --amend" },
+        { keymap = keymaps.commit_amend_reuse_message, command = "commit --amend --reuse-message HEAD --no-verify" },
         { keymap = keymaps.pull, command = "pull" },
         { keymap = keymaps.push, command = "push" },
     }

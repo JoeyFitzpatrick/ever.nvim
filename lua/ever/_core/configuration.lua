@@ -39,6 +39,7 @@ local _DEFAULTS = {
         },
         log = {
             commit_info = "i",
+            rebase = "rb",
             reset = "rs",
             revert = "rv",
             show = "s",
@@ -51,6 +52,8 @@ local _DEFAULTS = {
         status = {
             -- TODO: see why using "c" with nowait doesn't work. Could just be my nvim version.
             commit = "co",
+            commit_amend = "ca",
+            commit_amend_reuse_message = "cA",
             edit_file = "e",
             pull = "p",
             push = "<leader>p",
