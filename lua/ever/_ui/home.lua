@@ -6,6 +6,7 @@
 
 ---@class ever.UiRenderOpts
 ---@field start_line? integer
+---@field cmd? string -- The command used for this UI
 
 local M = {}
 

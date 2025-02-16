@@ -63,7 +63,15 @@ local function set_lines(bufnr, opts)
     vim.api.nvim_buf_set_lines(bufnr, opts.start_line or 0, -1, false, {})
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     -- Start the asynchronous job
-    vim.fn.jobstart({ "git", "log", "--pretty=format:󰜘 %h %<(25)%cr %<(25)%an %<(25)%s" }, {
+    local cmd = "git log --pretty='format:󰜘 %h %<(25)%cr %<(25)%an %<(25)%s'"
+    local cmd_args = opts.cmd
+    if cmd_args then
+        cmd_args = cmd_args:sub(5) -- remove "log " from opts.cmd
+    end
+    if cmd_args and cmd_args ~= "" then
+        cmd = cmd .. " " .. cmd_args
+    end
+    vim.fn.jobstart(cmd, {
         on_stdout = function(...)
             pcall(on_stdout, ...)
         end,

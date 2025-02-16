@@ -4,6 +4,11 @@ local cmd_ui_map = {
     difftool = function(cmd)
         require("ever._ui.interceptors.difftool").render(cmd)
     end,
+    log = function(cmd)
+        local bufnr = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_win_set_buf(0, bufnr)
+        require("ever._ui.home_options.log").render(bufnr, { start_line = 0, cmd = cmd })
+    end,
     mergetool = function()
         require("ever._ui.interceptors.mergetool").render()
     end,
