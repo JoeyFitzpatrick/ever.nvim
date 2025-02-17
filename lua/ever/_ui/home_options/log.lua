@@ -90,7 +90,7 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 local function set_keymaps(bufnr, opts)
-    local keymaps = require("ever._core.configuration").DATA.keymaps.log
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "log")
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", keymaps.commit_info, function()

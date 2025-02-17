@@ -68,7 +68,7 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 local function set_keymaps(bufnr, opts)
-    local keymaps = require("ever._core.configuration").DATA.keymaps.status
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "status")
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", keymaps.stage, function()
@@ -147,6 +147,9 @@ local function set_keymaps(bufnr, opts)
             { "Just this file", "Nuke working tree", "Hard reset", "Mixed reset", "Soft reset" },
             { prompt = "Git restore type: " },
             function(selection)
+                if not selection then
+                    return
+                end
                 if selection == "Just this file" then
                     if not filename then
                         return

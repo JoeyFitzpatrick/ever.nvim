@@ -62,6 +62,9 @@ local function highlight(bufnr)
         highlight_line(bufnr, "Keyword", line_num, status_start, status_end)
         local lines_added_start, lines_added_end = line:find("(%d+),", status_end + 1)
         highlight_line(bufnr, "Added", line_num, lines_added_start, lines_added_end)
+        if not lines_added_end then
+            return
+        end
         local lines_removed_start, lines_removed_end = line:find("%d+", lines_added_end + 1)
         highlight_line(bufnr, "Removed", line_num, lines_removed_start, lines_removed_end)
     end
@@ -100,7 +103,7 @@ end
 
 ---@param bufnr integer The bufnr of the buffer that shows the diff
 local function set_diff_buffer_keymaps(bufnr)
-    local keymaps = require("ever._core.configuration").DATA.keymaps.diff
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "diff")
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", "q", function()
