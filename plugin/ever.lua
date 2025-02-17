@@ -19,7 +19,13 @@ vim.api.nvim_create_user_command(PREFIX, function(input_args)
 end, {
     nargs = "*",
     desc = "Ever's command API. Mostly the same as the Git API.",
-    -- complete = cli_subcommand.make_parser_completer(_SUBCOMMANDS),
+    complete = function(arglead, cmdline)
+        local completion = require("ever._completion").complete_git_command(arglead, cmdline)
+        return vim.tbl_filter(function(val)
+            return vim.startswith(val, arglead)
+        end, completion)
+    end,
+    range = true,
 })
 
 vim.keymap.set("n", "<Plug>(EverSayHi)", function()
