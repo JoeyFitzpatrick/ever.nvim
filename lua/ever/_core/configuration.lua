@@ -26,6 +26,7 @@ local _DEFAULTS = {
         },
         branch = {
             delete = "db",
+            log = "<enter>",
             new_branch = "n",
             switch = "s",
         },

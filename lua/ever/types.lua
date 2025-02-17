@@ -41,6 +41,7 @@
 
 ---@class ever.KeymapsBranch
 ---@field delete string
+---@field log string
 ---@field new_branch string
 ---@field switch string
 

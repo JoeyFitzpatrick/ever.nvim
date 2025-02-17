@@ -93,6 +93,14 @@ local function set_keymaps(bufnr, opts)
         )
     end, keymap_opts)
 
+    vim.keymap.set("n", keymaps.log, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.cmd("G log " .. line_data.branch_name)
+    end, keymap_opts)
+
     vim.keymap.set("n", keymaps.new_branch, function()
         local line_data = get_line(bufnr)
         if not line_data then
