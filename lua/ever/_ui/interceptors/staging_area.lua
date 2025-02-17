@@ -43,6 +43,9 @@ local function set_diff_buf_lines(bufnr, cmd)
     -- Remove first char from diff lines
     -- add signcolumns
     -- and prevent lsp from attaching
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+    end
     local diff_lines = require("ever._core.run_cmd").run_cmd(cmd)
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, diff_lines)

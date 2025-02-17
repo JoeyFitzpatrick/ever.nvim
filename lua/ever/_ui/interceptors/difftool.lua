@@ -149,6 +149,9 @@ end
 ---@param bufnr integer
 ---@param line_data ever.DiffLineData
 local function set_diff_buf_lines(bufnr, line_data)
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+    end
     local diff_lines = require("ever._core.run_cmd").run_cmd(get_diff_cmd(line_data.safe_filename))
     local highlight_groups = require("ever._constants.highlight_groups").highlight_groups
     local signcolumns = require("ever._constants.signcolumns").signcolumns
