@@ -51,6 +51,9 @@ M.complete_git_command = function(arglead, cmdline)
     end
     if space_count > 1 then
         local subcommand = get_subcommand(cmdline)
+        if arglead:sub(1, 1) == "-" then
+            return subcommand_options(subcommand) or { arglead, cmdline }
+        end
         local completion_arguments = get_arguments(subcommand)
         if completion_arguments ~= nil then
             return completion_arguments
