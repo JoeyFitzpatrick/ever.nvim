@@ -15,6 +15,8 @@ return {
         open_in_horizontal_split = "Open file at this commit in a horizontal split",
         open_in_new_tab = "Open file at this commit in a new tab",
         open_in_vertical_split = "Open file at this commit in a vertical split",
+        scroll_diff_down = "Scroll diff down",
+        scroll_diff_up = "Scroll diff up",
         show_all_changes = "Show all changes from this commit in a single buffer",
     },
     diff = {

@@ -35,6 +35,8 @@ local _DEFAULTS = {
             open_in_horizontal_split = "<C-s>",
             open_in_new_tab = "<C-t>",
             open_in_vertical_split = "<C-v>",
+            scroll_diff_down = "J",
+            scroll_diff_up = "K",
             show_all_changes = "<enter>",
         },
         diff = {

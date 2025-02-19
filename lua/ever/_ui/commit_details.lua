@@ -7,6 +7,7 @@
 local M = {}
 
 local DIFF_BUFNR = nil
+local DIFF_CHANNEL_ID = nil
 local CURRENT_DIFF_FILE = nil
 
 ---@param bufnr integer
@@ -89,6 +90,18 @@ local function set_keymaps(bufnr, commit)
         require("ever._core.open_file").open_file_in_split(line_data.filename, commit, "right")
     end, keymap_opts)
 
+    vim.keymap.set("n", keymaps.scroll_diff_down, function()
+        if DIFF_BUFNR and DIFF_CHANNEL_ID then
+            pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")
+        end
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.scroll_diff_up, function()
+        if DIFF_BUFNR and DIFF_CHANNEL_ID then
+            pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "kk")
+        end
+    end, keymap_opts)
+
     vim.keymap.set("n", keymaps.show_all_changes, function()
         require("ever._ui.elements").new_buffer({
             filetype = "git",
@@ -111,6 +124,7 @@ local function set_diff_buffer_autocmds(diff_bufnr)
         buffer = diff_bufnr,
         callback = function()
             DIFF_BUFNR = nil
+            DIFF_CHANNEL_ID = nil
             CURRENT_DIFF_FILE = nil
         end,
     })
@@ -131,9 +145,10 @@ local function set_autocmds(bufnr, commit)
             if DIFF_BUFNR then
                 vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
                 DIFF_BUFNR = nil
+                DIFF_CHANNEL_ID = nil
             end
             local win = vim.api.nvim_get_current_win()
-            require("ever._ui.elements").terminal(
+            DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(
                 "show " .. commit .. " -- " .. line_data.safe_filename,
                 { display_strategy = "right", insert = false }
             )
@@ -151,6 +166,7 @@ local function set_autocmds(bufnr, commit)
             if DIFF_BUFNR then
                 vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
                 DIFF_BUFNR = nil
+                DIFF_CHANNEL_ID = nil
             end
             CURRENT_DIFF_FILE = nil
         end,
@@ -173,6 +189,7 @@ function M.cleanup(bufnr)
     if DIFF_BUFNR then
         vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
         DIFF_BUFNR = nil
+        DIFF_CHANNEL_ID = nil
     end
     CURRENT_DIFF_FILE = nil
     vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverCommitDetailsAutoDiff" })

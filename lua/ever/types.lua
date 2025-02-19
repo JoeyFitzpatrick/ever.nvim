@@ -33,6 +33,8 @@
 ---@field open_in_horizontal_split string
 ---@field open_in_new_tab string
 ---@field open_in_vertical_split string
+---@field scroll_diff_down string
+---@field scroll_diff_up string
 ---@field show_all_changes string
 
 ---@class ever.KeymapsDiff
