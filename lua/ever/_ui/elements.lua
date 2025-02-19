@@ -1,5 +1,9 @@
 ---@alias ever.ElementType "terminal" | "home"
 
+---@class ever.ElementNewBufferOpts
+---@field filetype? string
+---@field lines? fun(): string[]
+
 local M = {}
 
 --- Some commands parse command options to determine what display strat to use.
@@ -159,6 +163,24 @@ function M.float(bufnr, float_opts)
     float_opts = vim.tbl_extend("force", default_float_opts, float_opts or {})
     local win = vim.api.nvim_open_win(bufnr, true, float_opts)
     return win
+end
+
+---@param opts ever.ElementNewBufferOpts -- opts for new buffer
+---@return integer -- buffer id
+function M.new_buffer(opts)
+    local bufnr = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_win_set_buf(0, bufnr)
+    if opts.filetype then
+        vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
+    end
+    if opts.lines then
+        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, opts.lines())
+        vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    end
+    vim.keymap.set("n", "q", function()
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+    end)
+    return bufnr
 end
 
 return M

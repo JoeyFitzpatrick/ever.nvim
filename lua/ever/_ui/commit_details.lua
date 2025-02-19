@@ -15,10 +15,16 @@ function M.set_lines(bufnr, commit)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
-    local output = require("ever._core.run_cmd").run_cmd("git diff-tree --no-commit-id --name-only " .. commit .. " -r")
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
+    local commit_data = require("ever._core.run_cmd").run_cmd("git log -n 1 " .. commit)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, commit_data)
+    vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { "" })
+
+    local files_start_line = #commit_data + 2
+    local files = require("ever._core.run_cmd").run_cmd("git diff-tree --no-commit-id --name-only " .. commit .. " -r")
+    vim.api.nvim_buf_set_lines(bufnr, files_start_line, -1, false, files)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    vim.api.nvim_win_set_cursor(0, { files_start_line, 0 })
 end
 
 ---@param bufnr integer
@@ -36,10 +42,61 @@ end
 ---@param bufnr integer
 ---@param commit string
 local function set_keymaps(bufnr, commit)
-    vim.print(bufnr, commit)
-    -- TODO: add keymaps
-    -- local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "commit_details")
-    -- local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "commit_details")
+
+    vim.keymap.set("n", "q", function()
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.open_in_current_window, function()
+        local line_data = M.get_line(bufnr)
+        if not line_data then
+            return
+        end
+        require("ever._core.open_file").open_file_in_current_window(line_data.filename, commit)
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.open_in_horizontal_split, function()
+        local line_data = M.get_line(bufnr)
+        if not line_data then
+            return
+        end
+        if DIFF_BUFNR and vim.api.nvim_buf_is_valid(DIFF_BUFNR) then
+            vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+            DIFF_BUFNR = nil
+        end
+        require("ever._core.open_file").open_file_in_split(line_data.filename, commit, "below")
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.open_in_new_tab, function()
+        local line_data = M.get_line(bufnr)
+        if not line_data then
+            return
+        end
+        require("ever._core.open_file").open_file_in_tab(line_data.filename, commit)
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.open_in_vertical_split, function()
+        local line_data = M.get_line(bufnr)
+        if not line_data then
+            return
+        end
+        if DIFF_BUFNR and vim.api.nvim_buf_is_valid(DIFF_BUFNR) then
+            vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+            DIFF_BUFNR = nil
+        end
+        require("ever._core.open_file").open_file_in_split(line_data.filename, commit, "right")
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.show_all_changes, function()
+        require("ever._ui.elements").new_buffer({
+            filetype = "git",
+            lines = function()
+                return require("ever._core.run_cmd").run_cmd("git show " .. commit)
+            end,
+        })
+    end, keymap_opts)
 end
 
 local function set_diff_buffer_autocmds(diff_bufnr)
@@ -106,6 +163,7 @@ function M.render(commit)
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
     M.set_lines(bufnr, commit)
+    vim.api.nvim_set_option_value("filetype", "git", { buf = bufnr })
     set_autocmds(bufnr, commit)
     set_keymaps(bufnr, commit)
 end

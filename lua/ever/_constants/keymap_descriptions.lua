@@ -10,6 +10,13 @@ return {
         new_branch = "Create new branch",
         switch = "Switch branch",
     },
+    commit_details = {
+        open_in_current_window = "Open file at this commit in current window",
+        open_in_horizontal_split = "Open file at this commit in a horizontal split",
+        open_in_new_tab = "Open file at this commit in a new tab",
+        open_in_vertical_split = "Open file at this commit in a vertical split",
+        show_all_changes = "Show all changes from this commit in a single buffer",
+    },
     diff = {
         next_file = "Go to next file",
         previous_file = "Go to previous file",
@@ -19,6 +26,7 @@ return {
         stage_line = "Stage line",
     },
     log = {
+        commit_details = "Show commit details",
         commit_info = "Show commit info",
         rebase = "Rebase",
         reset = "Reset",

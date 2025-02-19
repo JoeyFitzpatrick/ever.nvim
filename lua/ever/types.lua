@@ -18,6 +18,7 @@
 ---@class ever.Keymaps
 ---@field home ever.KeymapsHome
 ---@field branch ever.KeymapsBranch
+---@field commit_details ever.KeymapsCommitDetails
 ---@field diff ever.KeymapsDiff
 ---@field log ever.KeymapsLog
 ---@field stash ever.KeymapsStash
@@ -26,6 +27,13 @@
 ---@class ever.KeymapsHome
 ---@field next string
 ---@field previous string
+
+---@class ever.KeymapsCommitDetails
+---@field open_in_current_window string
+---@field open_in_horizontal_split string
+---@field open_in_new_tab string
+---@field open_in_vertical_split string
+---@field show_all_changes string
 
 ---@class ever.KeymapsDiff
 ---@field next_file string

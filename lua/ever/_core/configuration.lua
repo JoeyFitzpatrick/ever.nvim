@@ -30,6 +30,13 @@ local _DEFAULTS = {
             new_branch = "n",
             switch = "s",
         },
+        commit_details = {
+            open_in_current_window = "<C-w>",
+            open_in_horizontal_split = "<C-s>",
+            open_in_new_tab = "<C-t>",
+            open_in_vertical_split = "<C-v>",
+            show_all_changes = "<enter>",
+        },
         diff = {
             next_file = "<tab>",
             previous_file = "<S-tab>",
