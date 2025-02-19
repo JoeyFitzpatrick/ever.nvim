@@ -7,7 +7,6 @@
 
 
 # Installation
-<!-- TODO: (you) - Adjust and add your dependencies as needed here -->
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
 {

@@ -93,6 +93,14 @@ local function set_keymaps(bufnr, opts)
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "log")
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
+    vim.keymap.set("n", keymaps.commit_details, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        require("ever._ui.commit_details").render(line_data.hash)
+    end, keymap_opts)
+
     vim.keymap.set("n", keymaps.commit_info, function()
         local line_data = get_line(bufnr)
         if not line_data then

@@ -39,6 +39,7 @@ local _DEFAULTS = {
             stage_line = "sl",
         },
         log = {
+            commit_details = "<enter>",
             commit_info = "i",
             rebase = "rb",
             reset = "rs",

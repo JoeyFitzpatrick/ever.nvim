@@ -46,6 +46,7 @@
 ---@field switch string
 
 ---@class ever.KeymapsLog
+---@field commit_details string
 ---@field commit_info string
 ---@field rebase string
 ---@field reset string
