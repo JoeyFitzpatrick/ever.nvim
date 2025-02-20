@@ -10,7 +10,7 @@ local function highlight_line(bufnr, line, line_num)
     if not line or line == "" then
         return
     end
-    local hash_start, hash_end = line:find("^󰜘 %w+")
+    local hash_start, hash_end = line:find("^%w+")
     ui_highlight_line(bufnr, "MatchParen", line_num, hash_start, hash_end)
     local date_start, date_end = line:find(".+ago", hash_end + 1)
     ui_highlight_line(bufnr, "Function", line_num, date_start, date_end)
@@ -27,7 +27,7 @@ local function get_line(bufnr, line_num)
     if line == "" then
         return nil
     end
-    return { hash = line:match("%w+", 4) }
+    return { hash = line:match("%w+") }
 end
 
 --- This `set_lines` is different than the others, in that it streams content into the buffer
@@ -63,7 +63,7 @@ local function set_lines(bufnr, opts)
     vim.api.nvim_buf_set_lines(bufnr, opts.start_line or 0, -1, false, {})
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     -- Start the asynchronous job
-    local cmd = "git log --pretty='format:󰜘 %h %<(25)%cr %<(25)%an %<(25)%s'"
+    local cmd = "git log --pretty='format:%h %<(25)%cr %<(25)%an %<(25)%s'"
     local cmd_args = opts.cmd
     if cmd_args then
         cmd_args = cmd_args:sub(5) -- remove "log " from opts.cmd
