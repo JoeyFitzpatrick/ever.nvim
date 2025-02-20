@@ -110,4 +110,8 @@ M.stash = {
     trigger_redraw = true,
 }
 
+M.switch = {
+    trigger_redraw = true,
+}
+
 return M
