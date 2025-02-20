@@ -28,6 +28,7 @@ return {
         stage_line = "Stage line",
     },
     log = {
+        checkout = "Checkout commit (with detached HEAD)",
         commit_details = "Show commit details",
         commit_info = "Show commit info",
         rebase = "Rebase",
