@@ -179,7 +179,7 @@ function M.new_buffer(opts)
     end
     vim.keymap.set("n", "q", function()
         vim.api.nvim_buf_delete(bufnr, { force = true })
-    end)
+    end, { buffer = bufnr })
     return bufnr
 end
 

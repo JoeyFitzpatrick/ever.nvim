@@ -2,7 +2,7 @@ local M = {}
 
 local function setup_git_file(bufnr, filename, commit)
     local lines = require("ever._core.run_cmd").run_cmd(
-        string.format("git show %s:%s", commit, require("ever._core.texter").surround_with_quotes(filename))
+        string.format("git show %s^:%s", commit, require("ever._core.texter").surround_with_quotes(filename))
     )
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
