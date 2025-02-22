@@ -1,9 +1,13 @@
+---@class ever.SetKeymapsOpts
+---@field terminal_channel_id? integer
+
 local M = {}
 
 local MAP_SYMBOL = "⟶"
 
 ---@param bufnr integer
-local function set_terminal_keymaps(bufnr)
+---@param channel_id integer
+local function set_terminal_keymaps(bufnr, channel_id)
     local opts = { buffer = bufnr }
 
     vim.keymap.set("n", "q", function()
@@ -13,14 +17,26 @@ local function set_terminal_keymaps(bufnr)
     vim.keymap.set("n", "<enter>", function()
         vim.api.nvim_buf_delete(bufnr, { force = true })
     end, opts)
+
+    vim.keymap.set("n", "J", function()
+        vim.api.nvim_chan_send(channel_id, "j")
+    end, opts)
+
+    vim.keymap.set("n", "K", function()
+        vim.api.nvim_chan_send(channel_id, "k")
+    end, opts)
+
+    -- vim.keymap.set("t", "<esc>", function()
+    --     vim.cmd("stopinsert")
+    -- end, opts)
 end
 
 --- Set the appropriate keymaps for a given command and element.
 ---@param bufnr integer
----@param element ever.ElementType -- Element type, e.g. "terminal"
-function M.set_keymaps(bufnr, element)
-    if element == "terminal" then
-        set_terminal_keymaps(bufnr)
+---@param opts ever.SetKeymapsOpts
+function M.set_keymaps(bufnr, opts)
+    if opts.terminal_channel_id then
+        set_terminal_keymaps(bufnr, opts.terminal_channel_id)
     end
 end
 

@@ -137,7 +137,7 @@ function M.terminal(cmd, strategy)
     else
         vim.cmd("stopinsert")
     end
-    require("ever._ui.keymaps.base").set_keymaps(bufnr, "terminal")
+    require("ever._ui.keymaps.base").set_keymaps(bufnr, { terminal_channel_id = channel_id })
     return channel_id
 end
 
