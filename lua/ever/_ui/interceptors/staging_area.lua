@@ -97,7 +97,6 @@ local function set_diff_keymaps(bufnr, is_staged)
         else
             cmd = "git apply --cached --whitespace=nowarn -"
         end
-        vim.print(hunk.patch_lines)
         require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_lines, rerender = true })
     end, keymap_opts)
 
