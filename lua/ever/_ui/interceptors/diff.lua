@@ -20,12 +20,12 @@ local function stream_lines(bufnr, cmd)
                     vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { line })
                 end
             end
-            -- vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+            vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
         end
     end
 
     local function on_exit(_, code, _)
-        -- vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+        vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
         if code ~= 0 then
             vim.notify("command '" .. cmd .. "' failed with exit code " .. code, vim.log.levels.ERROR)
         end
