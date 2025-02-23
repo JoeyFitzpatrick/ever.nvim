@@ -1,6 +1,9 @@
 local M = {}
 
 local cmd_ui_map = {
+    blame = function(cmd)
+        require("ever._ui.interceptors.blame").render(cmd)
+    end,
     diff = function(cmd)
         require("ever._ui.interceptors.diff").render(cmd)
     end,

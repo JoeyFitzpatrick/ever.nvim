@@ -3,6 +3,7 @@
 ---@class ever.ElementNewBufferOpts
 ---@field filetype? string
 ---@field lines? fun(): string[]
+---@field win_config? vim.api.keyset.win_config
 
 local M = {}
 
@@ -169,7 +170,11 @@ end
 ---@return integer -- buffer id
 function M.new_buffer(opts)
     local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, bufnr)
+    if opts.win_config then
+        vim.api.nvim_open_win(bufnr, true, opts.win_config)
+    else
+        vim.api.nvim_win_set_buf(0, bufnr)
+    end
     if opts.filetype then
         vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
     end
