@@ -19,18 +19,25 @@ M.DATA = {}
 --
 ---@type ever.Configuration
 local _DEFAULTS = {
-    keymaps = {
-        home = {
+    home = {
+        keymaps = {
             next = "l",
             previous = "h",
         },
-        branch = {
+    },
+    blame = {
+        default_cmd_args = {},
+    },
+    branch = {
+        keymaps = {
             delete = "db",
             log = "<enter>",
             new_branch = "n",
             switch = "s",
         },
-        commit_details = {
+    },
+    commit_details = {
+        keymaps = {
             open_in_current_window = "<C-w>",
             open_in_horizontal_split = "<C-s>",
             open_in_new_tab = "<C-t>",
@@ -39,7 +46,9 @@ local _DEFAULTS = {
             scroll_diff_up = "K",
             show_all_changes = "<enter>",
         },
-        diff = {
+    },
+    diff = {
+        keymaps = {
             next_file = "<tab>",
             previous_file = "<S-tab>",
             next_hunk = "i",
@@ -47,7 +56,9 @@ local _DEFAULTS = {
             stage_hunk = "sh",
             stage_line = "sl",
         },
-        log = {
+    },
+    log = {
+        keymaps = {
             checkout = "c",
             commit_details = "<enter>",
             commit_info = "i",
@@ -56,12 +67,16 @@ local _DEFAULTS = {
             revert = "rv",
             show = "s",
         },
-        stash = {
+    },
+    stash = {
+        keymaps = {
             apply = "a",
             drop = "d",
             pop = "p",
         },
-        status = {
+    },
+    status = {
+        keymaps = {
             commit = "co",
             commit_amend = "ca",
             commit_amend_reuse_message = "cA",

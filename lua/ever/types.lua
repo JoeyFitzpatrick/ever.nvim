@@ -13,22 +13,50 @@
 ---@alias vim.log.levels.WARN number An error that was recovered but could be an issue.
 
 ---@class ever.Configuration
----@field keymaps ever.Keymaps -- All of the keymaps in Ever
+---@field blame ever.BlameConfiguration
+---@field home ever.HomeConfiguration
+---@field branch ever.BranchConfiguration
+---@field commit_details ever.CommitDetailsConfiguration
+---@field diff ever.DiffConfiguration
+---@field log ever.LogConfiguration
+---@field stash ever.StashConfiguration
+---@field status ever.StatusConfiguration
 
----@class ever.Keymaps
----@field home ever.KeymapsHome
----@field branch ever.KeymapsBranch
----@field commit_details ever.KeymapsCommitDetails
----@field diff ever.KeymapsDiff
----@field log ever.KeymapsLog
----@field stash ever.KeymapsStash
----@field status ever.KeymapsStatus
+---@class ever.BlameConfiguration
+---@field default_cmd_args string[]
 
----@class ever.KeymapsHome
+---@class ever.HomeConfiguration
+---@field keymaps ever.HomeKeymaps
+
+---@class ever.BranchConfiguration
+---@field keymaps ever.BranchKeymaps
+
+---@class ever.CommitDetailsConfiguration
+---@field keymaps ever.CommitDetailsKeymaps
+
+---@class ever.DiffConfiguration
+---@field keymaps ever.DiffKeymaps
+
+---@class ever.LogConfiguration
+---@field keymaps ever.LogKeymaps
+
+---@class ever.StashConfiguration
+---@field keymaps ever.StashKeymaps
+
+---@class ever.StatusConfiguration
+---@field keymaps ever.StatusKeymaps
+
+---@class ever.HomeKeymaps
 ---@field next string
 ---@field previous string
 
----@class ever.KeymapsCommitDetails
+---@class ever.BranchKeymaps
+---@field delete string
+---@field log string
+---@field new_branch string
+---@field switch string
+
+---@class ever.CommitDetailsKeymaps
 ---@field open_in_current_window string
 ---@field open_in_horizontal_split string
 ---@field open_in_new_tab string
@@ -37,7 +65,7 @@
 ---@field scroll_diff_up string
 ---@field show_all_changes string
 
----@class ever.KeymapsDiff
+---@class ever.DiffKeymaps
 ---@field next_file string
 ---@field previous_file string
 ---@field next_hunk string
@@ -45,17 +73,11 @@
 ---@field stage_hunk string
 ---@field stage_line string
 
----@class ever.KeymapsDifftool
+---@class ever.DifftoolKeymaps
 ---@field scroll_diff_down string
 ---@field scroll_diff_up string
 
----@class ever.KeymapsBranch
----@field delete string
----@field log string
----@field new_branch string
----@field switch string
-
----@class ever.KeymapsLog
+---@class ever.LogKeymaps
 ---@field checkout string
 ---@field commit_details string
 ---@field commit_info string
@@ -64,12 +86,12 @@
 ---@field revert string
 ---@field show string
 
----@class ever.KeymapsStash
+---@class ever.StashKeymaps
 ---@field apply string
 ---@field drop string
 ---@field pop string
 
----@class ever.KeymapsStatus
+---@class ever.StatusKeymaps
 ---@field commit string
 ---@field commit_amend string
 ---@field commit_amend_reuse_message string

@@ -169,7 +169,7 @@ local function create_and_render_buffer(tab, indices)
         end,
     })
 
-    local keymaps = require("ever._core.configuration").DATA.keymaps.home
+    local keymaps = require("ever._core.configuration").DATA.home.keymaps
     vim.keymap.set("n", "q", function()
         tab_cleanup_map[tabs.current_option](bufnr)
         vim.api.nvim_buf_delete(bufnr, { force = true })
