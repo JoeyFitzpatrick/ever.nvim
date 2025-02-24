@@ -9,6 +9,7 @@ return {
         checkout = "Checkout commit (with detached HEAD)",
         commit_details = "Show commit details",
         commit_info = "Show commit info",
+        diff_file = "Display file diff",
         show = "Show commit details",
     },
     ---@type ever.BranchKeymaps

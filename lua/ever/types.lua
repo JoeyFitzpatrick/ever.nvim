@@ -53,6 +53,7 @@
 
 ---@class ever.BlameKeymaps
 ---@field checkout string
+---@field diff_file string
 ---@field commit_details string
 ---@field commit_info string
 ---@field show string

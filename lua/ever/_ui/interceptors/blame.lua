@@ -25,6 +25,7 @@ local function set_keymaps(bufnr)
         if not line_data then
             return
         end
+        vim.api.nvim_buf_delete(bufnr, { force = true })
         vim.cmd("G checkout " .. line_data.hash)
     end, keymap_opts)
 
@@ -33,6 +34,7 @@ local function set_keymaps(bufnr)
         if not line_data then
             return
         end
+        vim.api.nvim_buf_delete(bufnr, { force = true })
         require("ever._ui.commit_details").render(line_data.hash)
     end, keymap_opts)
 
@@ -46,6 +48,15 @@ local function set_keymaps(bufnr)
             { title = "Git log " .. line_data.hash }
         )
         require("ever._ui.elements").terminal("log -n 1 " .. line_data.hash, { display_strategy = "full" })
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.diff_file, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+        vim.cmd("G diff %")
     end, keymap_opts)
 
     vim.keymap.set("n", keymaps.show, function()

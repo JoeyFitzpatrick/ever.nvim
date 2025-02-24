@@ -31,6 +31,7 @@ local _DEFAULTS = {
             checkout = "c",
             commit_details = "<enter>",
             commit_info = "i",
+            diff_file = "d",
             show = "s",
         },
     },
