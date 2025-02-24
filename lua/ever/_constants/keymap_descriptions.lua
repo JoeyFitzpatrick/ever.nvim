@@ -1,15 +1,24 @@
----@type ever.Keymaps
 return {
+    ---@type ever.HomeKeymaps
     home = {
         next = "Move to next item",
         previous = "Move to previous item",
     },
+    ---@type ever.BlameKeymaps
+    blame = {
+        checkout = "Checkout commit (with detached HEAD)",
+        commit_details = "Show commit details",
+        commit_info = "Show commit info",
+        show = "Show commit details",
+    },
+    ---@type ever.BranchKeymaps
     branch = {
         delete = "Delete branch",
         log = "Show branch log",
         new_branch = "Create new branch",
         switch = "Switch branch",
     },
+    ---@type ever.CommitDetailsKeymaps
     commit_details = {
         open_in_current_window = "Open file at this commit in current window",
         open_in_horizontal_split = "Open file at this commit in a horizontal split",
@@ -19,6 +28,7 @@ return {
         scroll_diff_up = "Scroll diff up",
         show_all_changes = "Show all changes from this commit in a single buffer",
     },
+    ---@type ever.DiffKeymaps
     diff = {
         next_file = "Go to next file",
         previous_file = "Go to previous file",
@@ -27,6 +37,7 @@ return {
         stage_hunk = "Stage hunk",
         stage_line = "Stage line",
     },
+    ---@type ever.LogKeymaps
     log = {
         checkout = "Checkout commit (with detached HEAD)",
         commit_details = "Show commit details",
@@ -36,11 +47,13 @@ return {
         revert = "Revert commit",
         show = "Show commit details",
     },
+    ---@type ever.StashKeymaps
     stash = {
         apply = "Apply stash",
         drop = "Drop stash",
         pop = "Pop stash",
     },
+    ---@type ever.StatusKeymaps
     status = {
         commit = "Commit changes",
         commit_amend = "Amend commit",

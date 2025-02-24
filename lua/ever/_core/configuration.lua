@@ -26,7 +26,13 @@ local _DEFAULTS = {
         },
     },
     blame = {
-        default_cmd_args = {},
+        default_cmd_args = { " --date=format-local:'%Y/%m/%d %I:%M %p'" },
+        keymaps = {
+            checkout = "c",
+            commit_details = "<enter>",
+            commit_info = "i",
+            show = "s",
+        },
     },
     branch = {
         keymaps = {

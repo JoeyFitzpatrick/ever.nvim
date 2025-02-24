@@ -24,6 +24,7 @@
 
 ---@class ever.BlameConfiguration
 ---@field default_cmd_args string[]
+---@field keymaps ever.BlameKeymaps
 
 ---@class ever.HomeConfiguration
 ---@field keymaps ever.HomeKeymaps
@@ -49,6 +50,12 @@
 ---@class ever.HomeKeymaps
 ---@field next string
 ---@field previous string
+
+---@class ever.BlameKeymaps
+---@field checkout string
+---@field commit_details string
+---@field commit_info string
+---@field show string
 
 ---@class ever.BranchKeymaps
 ---@field delete string
