@@ -85,7 +85,7 @@ local function highlight_line(bufnr, line, line_num)
 
     local timestamp_pattern = "%d%d%d%d/%d%d/%d%d %d%d:%d%d %a%a"
     local start_index, end_index = line:find(timestamp_pattern)
-    require("ever._ui.highlight").highlight_line(bufnr, "Error", line_num, start_index, end_index)
+    require("ever._ui.highlight").highlight_line(bufnr, "Function", line_num, start_index, end_index)
 end
 
 ---@param bufnr integer
@@ -94,6 +94,22 @@ local function set_blame_win_width(bufnr)
     if closing_paren then
         local number_width = vim.fn.strwidth(tostring(vim.api.nvim_buf_line_count(0))) + 2
         vim.api.nvim_win_set_width(0, closing_paren + number_width)
+    end
+end
+
+function M.set_lines(bufnr, cmd)
+    local output = require("ever._core.run_cmd").run_cmd(cmd, {})
+    local lines = {}
+    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
+    for _, line in ipairs(output) do
+        local line_without_filename = line:gsub("^(%S*)%s+[^%(]*%(", "%1 (") -- remove the filename when it is shown, e.g. when using -C flag
+        table.insert(lines, line_without_filename)
+    end
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    set_blame_win_width(bufnr)
+    for i, line in ipairs(lines) do
+        highlight_line(bufnr, line, i - 1)
     end
 end
 
@@ -110,22 +126,9 @@ M.render = function(cmd)
     local bufnr = require("ever._ui.elements").new_buffer({
         win_config = { split = "left", width = math.floor(vim.o.columns * 0.33) },
     })
-    set_keymaps(bufnr)
+    M.set_lines(bufnr, cmd)
     vim.api.nvim_set_option_value("wrap", false, { win = 0 })
-    require("ever._ui.stream").stream_lines(bufnr, cmd, {
-        highlight_line = highlight_line,
-        on_exit = set_blame_win_width,
-        transform_line = function(line)
-            local new_line = line:gsub("^(%S*)%s+[^%(]*%(", "%1 (") -- remove the filename when it is shown, e.g. when using -C flag
-            return new_line
-        end,
-        error_code_handlers = {
-            [128] = function()
-                vim.notify(string.format("%s not tracked by git", current_filename), vim.log.levels.ERROR)
-                vim.api.nvim_buf_delete(bufnr, { force = true })
-            end,
-        },
-    })
+    set_keymaps(bufnr)
 end
 
 return M

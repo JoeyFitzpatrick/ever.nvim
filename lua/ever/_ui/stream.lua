@@ -21,12 +21,9 @@ function M.stream_lines(bufnr, cmd, opts)
                     if opts.transform_line then
                         line = opts.transform_line(line)
                     end
-                    vim.api.nvim_buf_set_lines(bufnr, line_num, -1, false, { line })
+                    vim.api.nvim_buf_set_lines(bufnr, line_num, line_num + 1, false, { line })
                     if opts.highlight_line then
-                        local ok, res = pcall(opts.highlight_line, bufnr, line, line_num)
-                        if not ok then
-                            vim.print(res)
-                        end
+                        pcall(opts.highlight_line, bufnr, line, line_num)
                     end
                     line_num = line_num + 1
                 end
