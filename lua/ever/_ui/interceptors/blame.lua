@@ -1,5 +1,7 @@
 local M = {}
 
+local FILENAME_PREFIX = "ever.nvim//"
+
 ---@param bufnr integer
 ---@param line_num? integer
 ---@return { hash: string } | nil
@@ -59,6 +61,32 @@ local function set_keymaps(bufnr)
         vim.cmd("G diff %")
     end, keymap_opts)
 
+    local function get_filepath()
+        local buf_name = vim.api.nvim_buf_get_name(0)
+        local start, finish = buf_name:find(FILENAME_PREFIX, 1, true)
+        if start and finish then
+            return buf_name:sub(finish + 1)
+        end
+        return vim.fn.expand("%:.")
+    end
+
+    vim.keymap.set("n", keymaps.reblame, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+        local filepath = get_filepath()
+        require("ever._ui.elements").new_buffer({
+            filetype = vim.api.nvim_get_option_value("filetype", { buf = 0 }),
+            lines = function()
+                return require("ever._core.run_cmd").run_cmd(string.format("git show %s:%s", line_data.hash, filepath))
+            end,
+            buffer_name = os.tmpname() .. "/" .. FILENAME_PREFIX .. filepath,
+        })
+        vim.cmd(string.format("G blame %s -- %s", line_data.hash, filepath))
+    end, keymap_opts)
+
     vim.keymap.set("n", keymaps.show, function()
         local line_data = get_line(bufnr)
         if not line_data then
@@ -98,6 +126,7 @@ local function set_blame_win_width(bufnr)
 end
 
 function M.set_lines(bufnr, cmd)
+    vim.print(cmd)
     local output = require("ever._core.run_cmd").run_cmd(cmd, {})
     local lines = {}
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
@@ -148,12 +177,12 @@ end
 ---@param cmd string
 M.render = function(cmd)
     local current_filename = vim.api.nvim_buf_get_name(0)
-    cmd = cmd
-        .. " "
-        .. current_filename
+    cmd = "git blame "
         .. table.concat(require("ever._core.configuration").DATA.blame.default_cmd_args, " ")
-    if not cmd:match("^git ") then
-        cmd = "git " .. cmd
+        .. cmd:sub(6) -- remove "blame" from command
+    -- add current filename if file isn't provided
+    if not cmd:match("%-%- %S+") then
+        cmd = cmd .. " -- " .. current_filename
     end
     local win = vim.api.nvim_get_current_win()
     local bufnr = require("ever._ui.elements").new_buffer({

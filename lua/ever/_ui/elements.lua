@@ -4,6 +4,7 @@
 ---@field filetype? string
 ---@field lines? fun(): string[]
 ---@field win_config? vim.api.keyset.win_config
+---@field buffer_name? string
 
 local M = {}
 
@@ -181,6 +182,9 @@ function M.new_buffer(opts)
     if opts.lines then
         vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, opts.lines())
         vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    end
+    if opts.buffer_name then
+        vim.api.nvim_buf_set_name(bufnr, opts.buffer_name)
     end
     vim.keymap.set("n", "q", function()
         vim.api.nvim_buf_delete(bufnr, { force = true })

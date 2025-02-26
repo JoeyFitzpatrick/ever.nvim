@@ -10,6 +10,7 @@ return {
         commit_details = "Show commit details",
         commit_info = "Show commit info",
         diff_file = "Display file diff",
+        reblame = "Reblame file at commit",
         show = "Show commit details",
     },
     ---@type ever.BranchKeymaps

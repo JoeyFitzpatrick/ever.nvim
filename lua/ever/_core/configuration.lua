@@ -32,6 +32,7 @@ local _DEFAULTS = {
             commit_details = "<enter>",
             commit_info = "i",
             diff_file = "d",
+            reblame = "r",
             show = "s",
         },
     },

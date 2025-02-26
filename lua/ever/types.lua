@@ -56,6 +56,7 @@
 ---@field diff_file string
 ---@field commit_details string
 ---@field commit_info string
+---@field reblame string
 ---@field show string
 
 ---@class ever.BranchKeymaps
