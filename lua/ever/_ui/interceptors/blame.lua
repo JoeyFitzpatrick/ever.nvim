@@ -113,6 +113,38 @@ function M.set_lines(bufnr, cmd)
     end
 end
 
+---@param blame_bufnr integer
+---@param file_win integer
+local function set_autocmds(blame_bufnr, file_win)
+    local previous_settings = {}
+    local blame_settings = { { name = "scrollbind", value = true }, { name = "wrap", value = false } }
+    for _, setting in ipairs(blame_settings) do
+        table.insert(
+            previous_settings,
+            { name = setting.name, value = vim.api.nvim_get_option_value(setting.name, { win = file_win }) }
+        )
+    end
+
+    for _, setting in ipairs(blame_settings) do
+        vim.api.nvim_set_option_value(setting.name, setting.value, { win = file_win }) -- set value in file window
+        vim.api.nvim_set_option_value(setting.name, setting.value, { win = 0 }) -- set value in blame window
+    end
+    local file_win_line_num = vim.api.nvim_win_get_cursor(file_win)[1]
+    vim.api.nvim_win_set_cursor(0, { file_win_line_num, 0 })
+    vim.cmd("syncbind")
+
+    vim.api.nvim_create_autocmd("BufHidden", {
+        group = vim.api.nvim_create_augroup("EverBlameBufHidden", { clear = true }),
+        buffer = blame_bufnr,
+        desc = "Reset file options for blamed filed",
+        callback = function()
+            for _, setting in ipairs(previous_settings) do
+                vim.api.nvim_set_option_value(setting.name, setting.value, { win = file_win })
+            end
+        end,
+    })
+end
+
 ---@param cmd string
 M.render = function(cmd)
     local current_filename = vim.api.nvim_buf_get_name(0)
@@ -123,12 +155,14 @@ M.render = function(cmd)
     if not cmd:match("^git ") then
         cmd = "git " .. cmd
     end
+    local win = vim.api.nvim_get_current_win()
     local bufnr = require("ever._ui.elements").new_buffer({
         win_config = { split = "left", width = math.floor(vim.o.columns * 0.33) },
     })
     M.set_lines(bufnr, cmd)
     vim.api.nvim_set_option_value("wrap", false, { win = 0 })
     set_keymaps(bufnr)
+    set_autocmds(bufnr, win)
 end
 
 return M
