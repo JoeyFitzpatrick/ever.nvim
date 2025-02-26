@@ -52,15 +52,6 @@ local function set_keymaps(bufnr)
         require("ever._ui.elements").terminal("log -n 1 " .. line_data.hash, { display_strategy = "full" })
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.diff_file, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
-            return
-        end
-        vim.api.nvim_buf_delete(bufnr, { force = true })
-        vim.cmd("G diff %")
-    end, keymap_opts)
-
     local function get_filepath()
         local buf_name = vim.api.nvim_buf_get_name(0)
         local start, finish = buf_name:find(FILENAME_PREFIX, 1, true)
@@ -69,6 +60,15 @@ local function set_keymaps(bufnr)
         end
         return vim.fn.expand("%:.")
     end
+
+    vim.keymap.set("n", keymaps.diff_file, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+        vim.cmd(string.format("G show %s -- %s", line_data.hash, get_filepath()))
+    end, keymap_opts)
 
     vim.keymap.set("n", keymaps.reblame, function()
         local line_data = get_line(bufnr)
@@ -131,7 +131,8 @@ function M.set_lines(bufnr, cmd)
     local lines = {}
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     for _, line in ipairs(output) do
-        local line_without_filename = line:gsub("^(%S*)%s+[^%(]*%(", "%1 (") -- remove the filename when it is shown, e.g. when using -C flag
+        -- remove the filename when it is shown, e.g. when using -C flag
+        local line_without_filename = line:gsub("^(%S*)%s+[^%(]*%(", "%1 (")
         table.insert(lines, line_without_filename)
     end
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)

@@ -10,23 +10,21 @@ local M = {}
 ---@param cmd string
 ---@param opts ever.StreamLinesOpts
 function M.stream_lines(bufnr, cmd, opts)
+    local line_num = 0
     local error_code_handlers = opts.error_code_handlers or {}
     local function on_stdout(_, data, _)
         if data then
             -- Populate the buffer with the incoming lines
             vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-            local line_num = 0
             for _, line in ipairs(data) do
-                if line ~= "" then
-                    if opts.transform_line then
-                        line = opts.transform_line(line)
-                    end
-                    vim.api.nvim_buf_set_lines(bufnr, line_num, line_num + 1, false, { line })
-                    if opts.highlight_line then
-                        pcall(opts.highlight_line, bufnr, line, line_num)
-                    end
-                    line_num = line_num + 1
+                if opts.transform_line then
+                    line = opts.transform_line(line)
                 end
+                vim.api.nvim_buf_set_lines(bufnr, line_num, line_num + 1, false, { line })
+                if opts.highlight_line then
+                    pcall(opts.highlight_line, bufnr, line, line_num)
+                end
+                line_num = line_num + 1
             end
             vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
         end

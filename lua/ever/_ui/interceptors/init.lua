@@ -5,7 +5,7 @@ local cmd_ui_map = {
         require("ever._ui.interceptors.blame").render(cmd)
     end,
     diff = function(cmd)
-        require("ever._ui.interceptors.diff").render(cmd)
+        require("ever._ui.interceptors.standard_interceptor").render(cmd)
     end,
     difftool = function(cmd)
         require("ever._ui.interceptors.difftool").render(cmd)
@@ -17,6 +17,9 @@ local cmd_ui_map = {
     end,
     mergetool = function()
         require("ever._ui.interceptors.mergetool").render()
+    end,
+    show = function(cmd)
+        require("ever._ui.interceptors.standard_interceptor").render(cmd)
     end,
     staging_area = function()
         local bufnr = require("ever._ui.interceptors.staging_area").render()
