@@ -11,6 +11,7 @@ return {
         commit_info = "Show commit info",
         diff_file = "Display file diff",
         reblame = "Reblame file at commit",
+        return_to_original_file = "Close blame and return to original file",
         show = "Show commit details",
     },
     ---@type ever.BranchKeymaps

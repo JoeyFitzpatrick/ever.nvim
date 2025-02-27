@@ -33,6 +33,7 @@ local _DEFAULTS = {
             commit_info = "i",
             diff_file = "d",
             reblame = "r",
+            return_to_original_file = "gq",
             show = "s",
         },
     },

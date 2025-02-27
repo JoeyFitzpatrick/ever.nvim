@@ -75,6 +75,7 @@ local function set_keymaps(bufnr)
         if not line_data then
             return
         end
+        local current_cursor_line = vim.api.nvim_win_get_cursor(0)[1]
         vim.api.nvim_buf_delete(bufnr, { force = true })
         local filepath = get_filepath()
         require("ever._ui.elements").new_buffer({
@@ -85,6 +86,18 @@ local function set_keymaps(bufnr)
             buffer_name = os.tmpname() .. "/" .. FILENAME_PREFIX .. filepath,
         })
         vim.cmd(string.format("G blame %s -- %s", line_data.hash, filepath))
+        -- we don't want to set the cursor outside the new buffer's line count
+        local new_cursor_line = math.min(current_cursor_line, vim.api.nvim_buf_line_count(0))
+        vim.api.nvim_win_set_cursor(0, { new_cursor_line, 0 })
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.return_to_original_file, function()
+        local current_cursor_line = vim.api.nvim_win_get_cursor(0)[1]
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+        while vim.api.nvim_buf_get_name(0):match(FILENAME_PREFIX) do
+            vim.api.nvim_buf_delete(0, { force = true })
+        end
+        vim.api.nvim_win_set_cursor(0, { current_cursor_line, 0 })
     end, keymap_opts)
 
     vim.keymap.set("n", keymaps.show, function()
