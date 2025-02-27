@@ -157,7 +157,7 @@ local function set_autocmds(bufnr)
         group = vim.api.nvim_create_augroup("EverDiffAutoDiff", { clear = true }),
     })
 
-    vim.api.nvim_create_autocmd({ "BufWipeout" }, {
+    vim.api.nvim_create_autocmd({ "BufHidden" }, {
         desc = "Close open diffs when buffer is hidden",
         buffer = bufnr,
         callback = function()

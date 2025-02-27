@@ -10,6 +10,9 @@ local M = {}
 ---@param cmd string
 ---@param opts ever.StreamLinesOpts
 function M.stream_lines(bufnr, cmd, opts)
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+    end
     local line_num = 0
     local error_code_handlers = opts.error_code_handlers or {}
     local function on_stdout(_, data, _)
