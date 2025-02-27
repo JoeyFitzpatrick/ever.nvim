@@ -9,7 +9,7 @@ local function set_keymaps(bufnr)
 end
 
 ---@param cmd string
-M.render = function(cmd)
+function M.vim_render(cmd)
     if not cmd:match("^git ") then
         cmd = "git " .. cmd
     end
@@ -17,5 +17,12 @@ M.render = function(cmd)
     set_keymaps(bufnr)
     require("ever._ui.stream").stream_lines(bufnr, cmd, {})
 end
+
+---@param cmd string
+function M.native_render(cmd)
+    require("ever._ui.elements").terminal(cmd, { insert = true, display_strategy = "full" })
+end
+
+M.render = M.native_render
 
 return M

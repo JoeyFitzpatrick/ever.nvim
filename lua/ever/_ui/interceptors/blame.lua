@@ -126,7 +126,6 @@ local function set_blame_win_width(bufnr)
 end
 
 function M.set_lines(bufnr, cmd)
-    vim.print(cmd)
     local output = require("ever._core.run_cmd").run_cmd(cmd, {})
     local lines = {}
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
