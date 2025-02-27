@@ -90,6 +90,7 @@ local _DEFAULTS = {
             commit_amend = "ca",
             commit_amend_reuse_message = "cA",
             edit_file = "e",
+            enter_staging_area = "<leader>s",
             pull = "p",
             push = "<leader>p",
             restore = "D",

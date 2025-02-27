@@ -122,6 +122,10 @@ local function set_keymaps(bufnr, opts)
         vim.api.nvim_exec2("e " .. line_data.filename, {})
     end, keymap_opts)
 
+    vim.keymap.set("n", keymaps.enter_staging_area, function()
+        vim.cmd("G difftool")
+    end, keymap_opts)
+
     vim.keymap.set("n", keymaps.scroll_diff_down, function()
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")

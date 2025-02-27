@@ -106,6 +106,7 @@
 ---@field commit_amend string
 ---@field commit_amend_reuse_message string
 ---@field edit_file string
+---@field enter_staging_area string
 ---@field pull string
 ---@field push string
 ---@field restore string

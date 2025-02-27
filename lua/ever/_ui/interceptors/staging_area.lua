@@ -36,23 +36,6 @@ local function get_diff_cmd(status, filename)
 end
 
 ---@param bufnr integer
----@param cmd string
-local function set_diff_buf_lines(bufnr, cmd)
-    -- TODO: make diff highlighting look better
-    -- Use treesitter highlighting instead of native git
-    -- Remove first char from diff lines
-    -- add signcolumns
-    -- and prevent lsp from attaching
-    if not vim.api.nvim_buf_is_valid(bufnr) then
-        return
-    end
-    local diff_lines = require("ever._core.run_cmd").run_cmd(cmd)
-    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, diff_lines)
-    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-end
-
----@param bufnr integer
 ---@param is_staged boolean
 local function set_diff_keymaps(bufnr, is_staged)
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "diff")
@@ -117,25 +100,14 @@ end
 
 ---@param bufnr integer
 ---@param cmd string
----@param filename string
 ---@param diff_type "unstaged" | "staged"
-local function setup_diff_buffer(bufnr, cmd, filename, diff_type)
+local function setup_diff_buffer(bufnr, cmd, diff_type)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
-    if diff_type == "unstaged" then
-        vim.api.nvim_open_win(bufnr, true, { split = "below", height = math.floor(vim.o.lines * 0.67) })
-        pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiffUnstaged--" .. filename .. ".git")
-    else
-        vim.api.nvim_open_win(bufnr, true, { split = "right" })
-        pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiffStaged--" .. filename .. ".git")
-    end
-
-    vim.api.nvim_set_option_value("filetype", "git", { buf = bufnr })
-    set_diff_buf_lines(bufnr, cmd)
     require("ever._core.register").register_buffer(bufnr, {
         render_fn = function()
-            set_diff_buf_lines(bufnr, cmd)
+            require("ever._ui.stream").stream_lines(bufnr, cmd, {})
         end,
     })
     set_diff_buffer_autocmds(bufnr)
@@ -164,11 +136,22 @@ local function set_autocmds(bufnr)
                 vim.api.nvim_buf_delete(DIFF_BUFNR_STAGED, { force = true })
             end
             local win = vim.api.nvim_get_current_win()
-            DIFF_BUFNR_UNSTAGED = vim.api.nvim_create_buf(false, true)
-            DIFF_BUFNR_STAGED = vim.api.nvim_create_buf(false, true)
             local diff_cmds = get_diff_cmd(line_data.status, line_data.safe_filename)
-            setup_diff_buffer(DIFF_BUFNR_UNSTAGED, diff_cmds.unstaged_diff_cmd, line_data.filename, "unstaged")
-            setup_diff_buffer(DIFF_BUFNR_STAGED, diff_cmds.staged_diff_cmd, line_data.filename, "staged")
+
+            DIFF_BUFNR_UNSTAGED = require("ever._ui.elements").new_buffer({
+                filetype = "git",
+                buffer_name = "EverDiffUnstaged--" .. line_data.filename .. ".git",
+                win_config = { split = "below", height = math.floor(vim.o.lines * 0.67) },
+            })
+            require("ever._ui.stream").stream_lines(DIFF_BUFNR_UNSTAGED, diff_cmds.unstaged_diff_cmd, {})
+            DIFF_BUFNR_STAGED = require("ever._ui.elements").new_buffer({
+                filetype = "git",
+                buffer_name = "EverDiffStaged--" .. line_data.filename .. ".git",
+                win_config = { split = "right" },
+            })
+            require("ever._ui.stream").stream_lines(DIFF_BUFNR_STAGED, diff_cmds.staged_diff_cmd, {})
+            setup_diff_buffer(DIFF_BUFNR_UNSTAGED, diff_cmds.unstaged_diff_cmd, "unstaged")
+            setup_diff_buffer(DIFF_BUFNR_STAGED, diff_cmds.staged_diff_cmd, "staged")
             vim.api.nvim_set_current_win(win)
         end,
         group = vim.api.nvim_create_augroup("EverDiffAutoDiff", { clear = true }),
