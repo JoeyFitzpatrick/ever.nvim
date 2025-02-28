@@ -164,6 +164,7 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
+    vim.api.nvim_set_option_value("wrap", false, { win = 0 })
     set_lines(bufnr, opts)
     set_keymaps(bufnr, opts)
 end
