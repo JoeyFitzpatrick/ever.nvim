@@ -25,7 +25,7 @@ function M.set_lines(bufnr, commit)
     local files = require("ever._core.run_cmd").run_cmd("git diff-tree --no-commit-id --name-only " .. commit .. " -r")
     vim.api.nvim_buf_set_lines(bufnr, files_start_line, -1, false, files)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    vim.api.nvim_win_set_cursor(0, { files_start_line, 0 })
+    vim.api.nvim_win_set_cursor(0, { math.min(files_start_line, vim.api.nvim_buf_line_count(bufnr)), 0 })
 end
 
 ---@param bufnr integer
