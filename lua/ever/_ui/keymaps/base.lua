@@ -89,9 +89,15 @@ function M.get_ui_keymaps(bufnr, ui_type)
     local mappings = require("ever._core.configuration").DATA[ui_type].keymaps
     assert(mappings ~= nil, "Called `get_ui_keymaps` with an invalid ui type: " .. ui_type)
     local HELP_FLOAT_MAP = "g?"
+
     vim.keymap.set("n", HELP_FLOAT_MAP, function()
         display_keymap_help(mappings, ui_type)
     end, { buffer = bufnr })
+
+    vim.keymap.set("n", "q", function()
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+    end, { buffer = bufnr })
+
     return mappings
 end
 

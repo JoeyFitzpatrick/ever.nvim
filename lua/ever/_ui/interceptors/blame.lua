@@ -18,10 +18,6 @@ local function set_keymaps(bufnr)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "blame")
 
-    vim.keymap.set("n", "q", function()
-        vim.api.nvim_buf_delete(bufnr, { force = true })
-    end, keymap_opts)
-
     vim.keymap.set("n", keymaps.checkout, function()
         local line_data = get_line(bufnr)
         if not line_data then
