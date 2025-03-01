@@ -1,6 +1,6 @@
 local M = {}
 
-local FILENAME_PREFIX = "ever.nvim//"
+local FILENAME_PREFIX = require("ever._constants.constants").FILENAME_PREFIX
 
 ---@param bufnr integer
 ---@param line_num? integer
