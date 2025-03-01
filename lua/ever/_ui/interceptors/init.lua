@@ -10,9 +10,6 @@ local cmd_ui_map = {
     difftool = function(cmd)
         require("ever._ui.interceptors.difftool").render(cmd)
     end,
-    grep = function(cmd)
-        require("ever._ui.interceptors.grep").render(cmd)
-    end,
     log = function(cmd)
         local bufnr = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_win_set_buf(0, bufnr)
