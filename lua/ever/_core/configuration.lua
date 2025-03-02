@@ -42,6 +42,7 @@ local _DEFAULTS = {
             delete = "db",
             log = "<enter>",
             new_branch = "n",
+            rename = "rn",
             switch = "s",
         },
     },

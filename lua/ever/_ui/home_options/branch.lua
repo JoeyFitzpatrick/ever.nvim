@@ -118,6 +118,19 @@ local function set_keymaps(bufnr, opts)
         end)
     end, keymap_opts)
 
+    vim.keymap.set("n", keymaps.rename, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.ui.input({ prompt = "New name for branch " .. line_data.branch_name .. ": " }, function(input)
+            if not input then
+                return
+            end
+            vim.cmd(string.format("G branch -m %s %s", line_data.branch_name, input))
+        end)
+    end, keymap_opts)
+
     vim.keymap.set("n", keymaps.switch, function()
         local line_data = get_line(bufnr)
         if not line_data then

@@ -19,6 +19,7 @@ return {
         delete = "Delete branch",
         log = "Show branch log",
         new_branch = "Create new branch",
+        rename = "Rename branch",
         switch = "Switch branch",
     },
     ---@type ever.CommitDetailsKeymaps

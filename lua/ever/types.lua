@@ -64,6 +64,7 @@
 ---@field delete string
 ---@field log string
 ---@field new_branch string
+---@field rename string
 ---@field switch string
 
 ---@class ever.CommitDetailsKeymaps
