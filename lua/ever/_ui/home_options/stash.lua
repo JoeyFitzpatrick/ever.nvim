@@ -65,7 +65,7 @@ local function set_keymaps(bufnr)
             return
         end
         vim.ui.select(
-            { "No", "Yes" },
+            { "Yes", "No" },
             { prompt = "Are you sure you want to drop " .. line_data.stash_index .. "? " },
             function(selection)
                 if selection == "Yes" then
