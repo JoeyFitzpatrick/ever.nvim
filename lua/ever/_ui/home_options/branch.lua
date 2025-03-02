@@ -49,23 +49,26 @@ local function set_keymaps(bufnr, opts)
 
     ---@param branch_name string
     ---@param delete_type string
-    ---@return boolean
+    ---@return ("success" | "error"), integer
     local function delete_branch(branch_name, delete_type)
-        local run_cmd = require("ever._core.run_cmd").run_hidden_cmd
+        local run_cmd = function(cmd)
+            return require("ever._core.run_cmd").run_hidden_cmd(cmd, { error_codes_to_ignore = { 1 } })
+        end
         local delete_actions = {
             local_only = function()
-                return run_cmd("git branch --delete " .. branch_name) ~= "error"
+                return run_cmd("git branch --delete " .. branch_name)
             end,
             remote_only = function()
-                return run_cmd("git push origin --delete " .. branch_name) ~= "error"
+                return run_cmd("git push origin --delete " .. branch_name)
             end,
             both = function()
                 -- Try local deletion first
-                if run_cmd("git branch --delete " .. branch_name) == "error" then
-                    return false
+                local status, code = run_cmd("git branch --delete " .. branch_name)
+                if status == "error" then
+                    return status, code
                 end
                 -- Then try remote deletion
-                return run_cmd("git push origin --delete " .. branch_name) ~= "error"
+                return run_cmd("git push origin --delete " .. branch_name)
             end,
         }
         local action_map = {
@@ -73,7 +76,8 @@ local function set_keymaps(bufnr, opts)
             ["remote"] = delete_actions.remote_only,
             ["both"] = delete_actions.both,
         }
-        return action_map[delete_type] and action_map[delete_type]() or false
+        assert(action_map[delete_type], "Attempt to delete branch with invalid delete type: " .. delete_type)
+        return action_map[delete_type]()
     end
 
     vim.keymap.set("n", keymaps.delete, function()
@@ -86,7 +90,24 @@ local function set_keymaps(bufnr, opts)
             { "local", "remote", "both" },
             { prompt = "Delete type for branch " .. line_data.branch_name .. ": " },
             function(selection)
-                if selection and delete_branch(line_data.branch_name, selection) then
+                if not selection then
+                    return
+                end
+                local status, code = delete_branch(line_data.branch_name, selection)
+                if code == 1 and status == "error" and selection ~= "remote" then
+                    vim.ui.select({ "Yes", "No" }, {
+                        prompt = "Branch "
+                            .. require("ever._core.texter").surround_with_quotes(line_data.branch_name)
+                            .. " is not fully merged. Delete anyway?",
+                    }, function(delete_unmerged_selection)
+                        if not delete_unmerged_selection or delete_unmerged_selection == "No" then
+                            return
+                        end
+                        require("ever._core.run_cmd").run_hidden_cmd("git branch -D " .. line_data.branch_name)
+                        set_lines(bufnr, opts)
+                    end)
+                end
+                if selection and status then
                     set_lines(bufnr, opts)
                 end
             end
