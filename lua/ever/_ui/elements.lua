@@ -99,31 +99,39 @@ end
 local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
     local strategies = require("ever._constants.command_strategies").STRATEGIES
     local display_strategy = parse_display_strategy(split_cmd, strategy.display_strategy)
+    local win = vim.api.nvim_get_current_win()
     if vim.tbl_contains({ "above", "below", "right", "left" }, display_strategy) then
-        vim.api.nvim_open_win(bufnr, true, { split = display_strategy })
+        local enter = true
+        if strategy.enter == false then
+            enter = false
+        end
+        win = vim.api.nvim_open_win(bufnr, enter, { split = display_strategy })
     elseif display_strategy == strategies.FULL then
         vim.api.nvim_win_set_buf(0, bufnr)
     elseif display_strategy == strategies.DYNAMIC then
-        local win = vim.api.nvim_open_win(bufnr, true, { split = "below" })
+        win = vim.api.nvim_open_win(bufnr, true, { split = "below" })
         return open_dynamic_terminal(cmd, bufnr, win, strategy)
     else
         error("Unable to determine display strategy", vim.log.levels.ERROR)
     end
-    local channel_id = vim.fn.jobstart(cmd, {
-        term = true,
-        on_exit = function()
-            if strategy.trigger_redraw then
-                require("ever._core.register").rerender_buffers()
-            end
-        end,
-    })
+    local channel_id
+    vim.api.nvim_win_call(win, function()
+        channel_id = vim.fn.jobstart(cmd, {
+            term = true,
+            on_exit = function()
+                if strategy.trigger_redraw then
+                    require("ever._core.register").rerender_buffers()
+                end
+            end,
+        })
+    end)
     return channel_id
 end
 
 --- Note that commands passed to this function should not be prefixed with "git", as it will be added.
 ---@param cmd string
 ---@param strategy? ever.Strategy
----@return integer -- The channel id of the terminal.
+---@return integer, integer -- terminal channel id, buffer id
 function M.terminal(cmd, strategy)
     cmd = "git " .. cmd
     local split_cmd = vim.split(cmd, " ")
@@ -140,7 +148,7 @@ function M.terminal(cmd, strategy)
         vim.cmd("stopinsert")
     end
     require("ever._ui.keymaps.base").set_keymaps(bufnr, { terminal_channel_id = channel_id })
-    return channel_id
+    return channel_id, bufnr
 end
 
 ---@param bufnr integer

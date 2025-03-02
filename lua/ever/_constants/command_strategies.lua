@@ -6,6 +6,7 @@
 ---@field display_strategy? ever.DisplayStrategy | ever.DisplayStrategyParser
 ---@field insert? boolean | ever.ShouldEnterInsert
 ---@field trigger_redraw? boolean
+---@field enter? boolean
 
 local M = {}
 

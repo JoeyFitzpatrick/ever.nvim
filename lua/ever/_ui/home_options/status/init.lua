@@ -88,13 +88,33 @@ local function set_keymaps(bufnr, opts)
         M.set_lines(bufnr, opts)
     end, keymap_opts)
 
+    vim.keymap.set("v", keymaps.stage, function()
+        local start_line, end_line = require("ever._ui.utils.ui_utils").get_visual_line_nums()
+        start_line = math.max(start_line, opts.start_line or 0)
+        local files = vim.api.nvim_buf_get_lines(bufnr, start_line, end_line, false)
+        local should_stage = require("ever._ui.home_options.status.status_utils").should_stage_files(files)
+        local files_as_string = ""
+        for i, file in ipairs(files) do
+            -- dont' add space for first file, and don't include status
+            files_as_string = files_as_string .. (i == 0 and "" or " ") .. file:sub(4)
+        end
+        if should_stage then
+            require("ever._core.run_cmd").run_hidden_cmd("git add " .. files_as_string)
+            M.set_lines(bufnr, opts)
+            return
+        end
+        require("ever._core.run_cmd").run_hidden_cmd("git restore --staged -- " .. files_as_string)
+        M.set_lines(bufnr, opts)
+    end, keymap_opts)
+
     vim.keymap.set("n", keymaps.stage_all, function()
-        for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)) do
-            if line:match("^.%S") then
-                require("ever._core.run_cmd").run_hidden_cmd("git add -A")
-                M.set_lines(bufnr, opts)
-                return
-            end
+        local should_stage = require("ever._ui.home_options.status.status_utils").should_stage_files(
+            vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)
+        )
+        if should_stage then
+            require("ever._core.run_cmd").run_hidden_cmd("git add -A")
+            M.set_lines(bufnr, opts)
+            return
         end
         require("ever._core.run_cmd").run_hidden_cmd("git reset")
         M.set_lines(bufnr, opts)
@@ -284,8 +304,7 @@ local function set_autocmds(bufnr)
                 DIFF_BUFNR = nil
             end
             local win = vim.api.nvim_get_current_win()
-            DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(diff_cmd)
-            DIFF_BUFNR = vim.api.nvim_get_current_buf()
+            DIFF_CHANNEL_ID, DIFF_BUFNR = require("ever._ui.elements").terminal(diff_cmd, { enter = false })
             set_diff_buffer_autocmds(DIFF_BUFNR)
             vim.api.nvim_set_current_win(win)
         end,
