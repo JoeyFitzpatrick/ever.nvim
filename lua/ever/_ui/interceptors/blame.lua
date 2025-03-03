@@ -1,6 +1,8 @@
 local M = {}
 
 local FILENAME_PREFIX = require("ever._constants.constants").FILENAME_PREFIX
+---@type table<string, integer>
+local BLAME_WINDOWS = {}
 
 ---@param bufnr integer
 ---@param line_num? integer
@@ -153,7 +155,8 @@ end
 
 ---@param blame_bufnr integer
 ---@param file_win integer
-local function set_autocmds(blame_bufnr, file_win)
+---@param blame_buffer_name string
+local function set_autocmds(blame_bufnr, file_win, blame_buffer_name)
     local previous_settings = {}
     local blame_settings = { { name = "scrollbind", value = true }, { name = "wrap", value = false } }
     for _, setting in ipairs(blame_settings) do
@@ -174,11 +177,12 @@ local function set_autocmds(blame_bufnr, file_win)
     vim.api.nvim_create_autocmd("BufHidden", {
         group = vim.api.nvim_create_augroup("EverBlameBufHidden", { clear = true }),
         buffer = blame_bufnr,
-        desc = "Reset file options for blamed filed",
+        desc = "Reset file options for blamed file",
         callback = function()
             for _, setting in ipairs(previous_settings) do
                 vim.api.nvim_set_option_value(setting.name, setting.value, { win = file_win })
             end
+            BLAME_WINDOWS[blame_buffer_name] = nil
         end,
     })
 
@@ -195,6 +199,16 @@ end
 ---@param cmd string
 M.render = function(cmd)
     local current_filename = vim.api.nvim_buf_get_name(0)
+    local blame_buffer_name = "EverBlame://" .. current_filename
+    local existing_blame_win = BLAME_WINDOWS[blame_buffer_name]
+    if existing_blame_win then
+        if vim.api.nvim_win_is_valid(existing_blame_win) then
+            vim.api.nvim_set_current_win(existing_blame_win)
+            return
+        else
+            BLAME_WINDOWS[existing_blame_win] = nil
+        end
+    end
     cmd = "git blame "
         .. table.concat(require("ever._core.configuration").DATA.blame.default_cmd_args, " ")
         .. cmd:sub(6) -- remove "blame" from command
@@ -205,11 +219,13 @@ M.render = function(cmd)
     local win = vim.api.nvim_get_current_win()
     local bufnr = require("ever._ui.elements").new_buffer({
         win_config = { split = "left", width = math.floor(vim.o.columns * 0.33) },
+        buffer_name = blame_buffer_name,
     })
+    BLAME_WINDOWS[blame_buffer_name] = vim.api.nvim_get_current_win()
     M.set_lines(bufnr, cmd)
     vim.api.nvim_set_option_value("wrap", false, { win = 0 })
     set_keymaps(bufnr)
-    set_autocmds(bufnr, win)
+    set_autocmds(bufnr, win, blame_buffer_name)
 end
 
 return M
