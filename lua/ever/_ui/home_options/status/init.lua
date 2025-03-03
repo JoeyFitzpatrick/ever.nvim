@@ -293,6 +293,9 @@ end
 
 ---@param bufnr integer
 local function set_autocmds(bufnr)
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+    end
     vim.api.nvim_create_autocmd("CursorMoved", {
         desc = "Diff the file under the cursor",
         buffer = bufnr,

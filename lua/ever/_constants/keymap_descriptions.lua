@@ -56,6 +56,8 @@ return {
         apply = "Apply stash",
         drop = "Drop stash",
         pop = "Pop stash",
+        scroll_diff_down = "Scroll diff down",
+        scroll_diff_up = "Scroll diff up",
     },
     ---@type ever.StatusKeymaps
     status = {

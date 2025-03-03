@@ -1,4 +1,13 @@
+--Stash ui
+
+---@class ever.StashLineData
+---@field stash_index string
+
 local M = {}
+
+local DIFF_BUFNR = nil
+local DIFF_CHANNEL_ID = nil
+local CURRENT_STASH_INDEX = nil
 
 --- Highlight stash lines
 ---@param bufnr integer
@@ -82,12 +91,85 @@ local function set_keymaps(bufnr)
         end
         vim.cmd("G stash pop " .. line_data.stash_index)
     end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.scroll_diff_down, function()
+        if DIFF_BUFNR and DIFF_CHANNEL_ID then
+            pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")
+        end
+    end, keymap_opts)
+
+    vim.keymap.set("n", keymaps.scroll_diff_up, function()
+        if DIFF_BUFNR and DIFF_CHANNEL_ID then
+            pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "kk")
+        end
+    end, keymap_opts)
+end
+
+local function set_diff_buffer_autocmds(diff_bufnr)
+    vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+        desc = "Stop insert mode on buf enter",
+        buffer = diff_bufnr,
+        command = "stopinsert",
+        group = vim.api.nvim_create_augroup("EverAtashUi", { clear = false }),
+    })
+    vim.api.nvim_create_autocmd("BufHidden", {
+        desc = "Clean up diff variables",
+        buffer = diff_bufnr,
+        callback = function()
+            DIFF_BUFNR = nil
+            DIFF_CHANNEL_ID = nil
+            CURRENT_DIFF_FILE = nil
+        end,
+    })
+end
+
+---@param bufnr integer
+local function set_autocmds(bufnr)
+    vim.api.nvim_create_autocmd("CursorMoved", {
+        desc = "Show changes in stash under the cursor",
+        buffer = bufnr,
+        callback = function()
+            local line_data = get_line(bufnr)
+            if not line_data or line_data.stash_index == CURRENT_STASH_INDEX then
+                return
+            end
+            CURRENT_STASH_INDEX = line_data.stash_index
+            if DIFF_BUFNR then
+                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+                DIFF_BUFNR = nil
+                DIFF_CHANNEL_ID = nil
+            end
+            local win = vim.api.nvim_get_current_win()
+            DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(
+                "stash show -p " .. line_data.stash_index,
+                { display_strategy = "right", insert = false }
+            )
+            DIFF_BUFNR = vim.api.nvim_get_current_buf()
+            set_diff_buffer_autocmds(DIFF_BUFNR)
+            vim.api.nvim_set_current_win(win)
+        end,
+        group = vim.api.nvim_create_augroup("EverStashAutoDiff", { clear = true }),
+    })
+
+    vim.api.nvim_create_autocmd("BufHidden", {
+        desc = "Close open diffs when buffer is hidden",
+        buffer = bufnr,
+        callback = function()
+            if DIFF_BUFNR then
+                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+                DIFF_BUFNR = nil
+            end
+            CURRENT_STASH_INDEX = nil
+        end,
+        group = vim.api.nvim_create_augroup("EverStashCloseAutoDiff", { clear = true }),
+    })
 end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
     set_lines(bufnr, opts)
+    set_autocmds(bufnr)
     set_keymaps(bufnr)
 end
 

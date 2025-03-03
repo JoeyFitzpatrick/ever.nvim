@@ -101,6 +101,8 @@
 ---@field apply string
 ---@field drop string
 ---@field pop string
+---@field scroll_diff_down string
+---@field scroll_diff_up string
 
 ---@class ever.StatusKeymaps
 ---@field commit string

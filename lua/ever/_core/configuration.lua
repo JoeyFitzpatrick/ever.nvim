@@ -83,6 +83,8 @@ local _DEFAULTS = {
             apply = "a",
             drop = "d",
             pop = "p",
+            scroll_diff_down = "J",
+            scroll_diff_up = "K",
         },
     },
     status = {
