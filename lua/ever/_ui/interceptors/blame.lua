@@ -181,6 +181,15 @@ local function set_autocmds(blame_bufnr, file_win)
             end
         end,
     })
+
+    vim.api.nvim_create_autocmd("WinResized", {
+        group = vim.api.nvim_create_augroup("EverBlameWinResized", { clear = true }),
+        buffer = blame_bufnr,
+        desc = "Resize blame window",
+        callback = function()
+            set_blame_win_width(blame_bufnr)
+        end,
+    })
 end
 
 ---@param cmd string
