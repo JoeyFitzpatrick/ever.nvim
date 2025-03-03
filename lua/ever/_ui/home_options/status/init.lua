@@ -41,12 +41,16 @@ function M.set_lines(bufnr, opts)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
+    local run_cmd = require("ever._core.run_cmd").run_cmd
     local start_line = opts.start_line or 0
-    local output = require("ever._core.run_cmd").run_cmd("git status --porcelain --untracked")
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
+    local stat_line = run_cmd(
+        "git diff --staged --shortstat | grep -q '^' && git diff --staged --shortstat || echo 'No files staged'"
+    )[1]
+    local files = run_cmd("git status --porcelain --untracked")
+    vim.api.nvim_buf_set_lines(bufnr, start_line - 1, -1, false, { stat_line, unpack(files) })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    highlight(bufnr, start_line, output)
+    highlight(bufnr, start_line, files)
 end
 
 ---@param bufnr integer
@@ -329,6 +333,9 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
+    if opts.start_line then
+        opts.start_line = opts.start_line + 1
+    end
     M.set_lines(bufnr, opts)
     set_autocmds(bufnr)
     set_keymaps(bufnr, opts)
