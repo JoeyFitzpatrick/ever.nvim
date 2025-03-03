@@ -146,60 +146,19 @@ local function set_diff_buffer_keymaps(bufnr)
     end, keymap_opts)
 end
 
----@param bufnr integer
----@param line_data ever.DiffLineData
-local function set_diff_buf_lines(bufnr, line_data)
-    if not vim.api.nvim_buf_is_valid(bufnr) then
-        return
-    end
-    local diff_lines = require("ever._core.run_cmd").run_cmd(get_diff_cmd(line_data.safe_filename))
-    local highlight_groups = require("ever._constants.highlight_groups").highlight_groups
-    local signcolumns = require("ever._constants.signcolumns").signcolumns
-    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    for i, line in ipairs(diff_lines) do
-        local first_char = line:sub(1, 1)
-        local is_index_line = line:match("^[+-][+-][+-] [ab]/") or line:match("^[+-][+-][+-] /dev/null")
-        local is_patch_line = is_index_line or (first_char ~= "+" and first_char ~= "-" and first_char ~= " ")
-        vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { is_patch_line and line or line:sub(2) })
-        local signcolumn_line_num = i + 1
-        if is_patch_line then
-            vim.api.nvim_buf_add_highlight(bufnr, -1, "Normal", i, 0, -1)
-        elseif first_char == "+" then
-            vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_ADD_BG, i, 0, -1)
-            vim.fn.sign_place(0, signcolumns.EVER_PLUS, signcolumns.EVER_PLUS, bufnr, { lnum = signcolumn_line_num })
-        elseif first_char == "-" then
-            vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_REMOVE_BG, i, 0, -1)
-            vim.fn.sign_place(0, signcolumns.EVER_MINUS, signcolumns.EVER_MINUS, bufnr, { lnum = signcolumn_line_num })
-        end
-    end
-    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    -- Remove any lsp that might have tried to attach to the diff buffer
-    -- We don't want any diagnostics or anything
-    vim.schedule(function()
-        for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-            vim.lsp.buf_detach_client(bufnr, client.id)
-        end
-    end)
-end
-
 ---@param bufnr integer The bufnr of the buffer that shows the diff
 ---@param line_data ever.DiffLineData Line data
 local function setup_diff_buffer(bufnr, line_data)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
-    vim.api.nvim_open_win(bufnr, false, { split = "below", height = math.floor(vim.o.lines * 0.67) })
-    pcall(vim.api.nvim_buf_set_name, bufnr, "EverDiff--" .. line_data.filename)
-
-    -- Sometimes when scrolling fast, there are some treesitter errors.
-    -- Deferring the filetype change seems to avoid this
-    vim.defer_fn(function()
-        if not vim.api.nvim_buf_is_valid(bufnr) then
-            return
-        end
-        vim.api.nvim_set_option_value("filetype", vim.filetype.match({ buf = bufnr }), { buf = bufnr })
-    end, 10)
-    set_diff_buf_lines(bufnr, line_data)
+    local cmd = get_diff_cmd(line_data.safe_filename)
+    require("ever._core.register").register_buffer(bufnr, {
+        render_fn = function()
+            require("ever._ui.stream").stream_lines(bufnr, cmd, {})
+        end,
+    })
+    require("ever._ui.stream").stream_lines(bufnr, cmd, {})
     set_diff_buffer_autocmds(bufnr)
     set_diff_buffer_keymaps(bufnr)
 end
@@ -219,6 +178,12 @@ local function set_autocmds(bufnr)
                 vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
             end
             DIFF_BUFNR = vim.api.nvim_create_buf(false, true)
+            DIFF_BUFNR = require("ever._ui.elements").new_buffer({
+                filetype = "git",
+                buffer_name = "EverDiff--" .. line_data.filename,
+                enter = false,
+                win_config = { split = "below", height = math.floor(vim.o.lines * 0.67) },
+            })
             setup_diff_buffer(DIFF_BUFNR, line_data)
         end,
         group = vim.api.nvim_create_augroup("EverDiffAutoDiff", { clear = true }),

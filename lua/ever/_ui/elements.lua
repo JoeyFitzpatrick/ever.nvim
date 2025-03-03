@@ -4,6 +4,7 @@
 ---@field filetype? string
 ---@field lines? fun(): string[]
 ---@field win_config? vim.api.keyset.win_config
+---@field enter? boolean
 ---@field buffer_name? string
 
 local M = {}
@@ -180,7 +181,11 @@ end
 function M.new_buffer(opts)
     local bufnr = vim.api.nvim_create_buf(false, true)
     if opts.win_config then
-        vim.api.nvim_open_win(bufnr, true, opts.win_config)
+        local enter = true
+        if opts.enter == false then
+            enter = false
+        end
+        vim.api.nvim_open_win(bufnr, enter, opts.win_config)
     else
         vim.api.nvim_win_set_buf(0, bufnr)
     end
