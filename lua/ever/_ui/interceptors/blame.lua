@@ -198,8 +198,12 @@ end
 
 ---@param cmd string
 M.render = function(cmd)
+    local EVER_BLAME_PREFIX = "EverBlame://"
     local current_filename = vim.api.nvim_buf_get_name(0)
-    local blame_buffer_name = "EverBlame://" .. current_filename
+    if current_filename:sub(1, #EVER_BLAME_PREFIX) == EVER_BLAME_PREFIX then
+        return
+    end
+    local blame_buffer_name = EVER_BLAME_PREFIX .. current_filename
     local existing_blame_win = BLAME_WINDOWS[blame_buffer_name]
     if existing_blame_win then
         if vim.api.nvim_win_is_valid(existing_blame_win) then
