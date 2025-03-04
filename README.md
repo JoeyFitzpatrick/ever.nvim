@@ -6,6 +6,18 @@
 | License      | [![License-MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](https://github.com/JoeyFitzpatrick/ever.nvim/blob/main/LICENSE 
 
 
+# What is Ever?
+
+Ever is a Neovim git client. It takes some ideas from [vim-fugitive](https://github.com/tpope/vim-fugitive), [lazygit](https://github.com/jesseduffield/lazygit), and [git](https://git-scm.com/) itself, and introduces some other ideas. The main features are:
+- Most valid git command can be called via command-mode, e.g. `:G commit`, like fugitive
+- Autocompletion for those commands, e.g. typing `:G switch` will cause valid branches to be autocompleted
+- Keymaps for common actions in various git contexts, e.g. `n` to create a new branch from the branch UI, like lazygit
+- Rich UIs that always show the up-to-date git status and provide context for available actions
+- Easy and straightforward customizability
+
+🚧 NOTE: this plugin is in an alpha state. API changes and bugs are expected. 🚧
+
+
 # Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
@@ -76,16 +88,79 @@
 }
 ```
 
-# Commands
-Just use a valid git command from command mode, via the `:G` command:
+# Usage
+1. To use this plugin, simply call git commands from command mode, using the `:G` command. Many commands will simply call the git command in terminal mode, with some improvements:
+* The terminal can be remove by pressing "enter", to make it convenient to remove the terminal once you're done with the output
 
-<!-- See plugin/ever.lua for details. -->
+There are some advantages to using terminal mode for these commands, as opposed to a regular buffer or printing command output:
+* Command output will sometimes be mangled when translated to a buffer or printed, this is avoided with a terminal
+* Command output keeps it's coloring
+* Existing tools such as `delta` that improve git output can still be leveraged
 
-```vim
-:G pull
-:G status
-:G commit -m "a commit message"
-```
+Note that using the `%` character will expand it to the current buffer's filename, similar to vim-fugitive, e.g. `:G log --follow %` to see commits that changed the current file.
+
+
+# Special Commands
+
+Some commands that are often used, or are normally cumbersome to use, are handled differently than just running the command in terminal mode. This typically means opening a buffer that serves as a UI for the command. Here are the special commands:
+* `git branch`
+* `git log`
+* `git commit`
+* `git blame`
+* `git stash list`
+* `git show`
+* `git {command} -h`
+* `git {command} --help`
+
+Note that for any command that brings up a UI:
+* You can close the UI by pressing `q`, in addition to the normal methods, such as `:q`
+* The jumplist still works like normal `<C-i>` and `<C-o>`
+* You can view keymaps by pressing `g?`
+
+## G
+Using the `:G` command renders a home ui, that will display some status info. This includes the git status of all changed files, a diff split to display these changes, and some keymaps to manipulate these files, such as staging/unstaging them. Use `h` and `l` to then display the UI for  `git branch`, `git log`, and `git stash`, all of which are further detailed below.
+
+### Staging Area
+By default, pressing `<leader>s` in the status tab of the home UI will open the staging area. This is the same as running `:G difftool` with no arguments. The main features here are seeing what changes are staged, what changes are unstaged, navigating between hunks, and staging/unstaging hunks and/or single lines.
+
+## G Branch
+G commands that display a list of branches, such as `:G branch`, `:G branch --all`, `:G branch --merged`, and so on, bring up a branch UI, from which keymaps can be used to view commits, rename branches, merge branches, etc. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the branch UI.
+
+G branch commands that do not display a list of branches, such as `:G branch --delete`, run the command in terminal mode, as if it were a non-special command.
+
+## G Log
+G log commands will typically open a UI. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the log UI.
+
+### G log -L
+
+G log has a `-L` flag, as shown [in the docs](https://git-scm.com/docs/git-log#Documentation/git-log.txt--Lltstartgtltendgtltfilegt). This can be used to see the commits that changed just the line numbers given, e.g. `git log -L20,40:example.lua`, to see just the commits that changed lines from 20 to 40 in `example.lua`. In many cases, this can be an extremely useful way to search for changes, as opposed to running something like `git log --follow example.lua`, which could show commits that made changes that you don't care about. With Ever, if you make a visual selection and run `:'<,'>G log`, without passing line numbers or a file name, it will pass the line numbers and file name automatically to the git command, making it much more convenient to use.
+
+## G Commit
+G commit will open an editor to create the commit message when that message is not passed to the command, e.g. `git commit` (no message, opens the editor) vs `git commit -m "some message"` (does not open the commit message editor). When the commit message editor is opened, Ever opens it in the current Neovim instance. You can write and quit the editor (`:wq`) to apply the message, or simply close the editor without saving to abort the commit due to an empty commit message. If the commit message editor doesn't need to open, the command will just run in terminal mode like most other commands.
+
+## G Blame
+Like vim-fugitive, running `:G blame` will open a blame window to the left, that uses `:h scrollbind` to sync with with the opened file. From there, many of the keymaps for the commit UI also work in the blame UI. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the blame UI.
+
+## G Stash List
+Running `:G stash list` will open a UI, in which you can view, pop, apply, and drop stashes. Other stash commands, like `:G stash show`, run in terminal mode like most other commands.
+
+## G Show
+Running `:G show` commands will just open their output in the current window. Not amazingly helpful, but sometimes nice when that's what you need. You can close this with `q` like other Ever buffers.
+
+## G Help Commands
+Running a git help command, such as `:G commit -h` or `:G log --help`, will open that help file in the current window. This way, you can use your normal vim navigation to move through the docs, versus opening a pager. You can close it by pressing `q` to return to your last buffer.
+
+# UI Management (Tabs, Windows, Buffers)
+When Ever opens a UI, this will typically either open a new buffer in the current window, or open a new window in a split. In either case, the window can be closed with the `q` keymap, which will return you to the last non-Ever buffer that was open.
+
+If you want to open something in a non-standard ui, this is supported natively via command mode:
+Open `G status` in a left split instead of a full window: `split | G status`
+Open `G branch` in a right split instead of a full window `rightbelow vsplit | G branch`
+Note that this functionality can be used in both command mode and in keymaps.
+
+# Optional Dependencies
+
+[Delta](https://github.com/dandavison/delta) - improved git diff output (used in the demos/examples)
 
 
 # Tests
