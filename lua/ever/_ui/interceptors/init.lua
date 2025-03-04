@@ -4,9 +4,6 @@ local cmd_ui_map = {
     blame = function(cmd)
         require("ever._ui.interceptors.blame").render(cmd)
     end,
-    diff = function(cmd)
-        require("ever._ui.interceptors.standard_interceptor").render(cmd)
-    end,
     difftool = function(cmd)
         require("ever._ui.interceptors.difftool").render(cmd)
     end,
@@ -18,8 +15,8 @@ local cmd_ui_map = {
     mergetool = function()
         require("ever._ui.interceptors.mergetool").render()
     end,
-    show = function(cmd)
-        require("ever._ui.interceptors.standard_interceptor").render(cmd)
+    reflog = function(cmd)
+        require("ever._ui.interceptors.reflog").render(cmd)
     end,
     staging_area = function()
         local bufnr = require("ever._ui.interceptors.staging_area").render()
@@ -30,6 +27,17 @@ local cmd_ui_map = {
         })
     end,
 }
+
+local standard_output_commands = {
+    "diff",
+    "show",
+}
+
+for _, command in ipairs(standard_output_commands) do
+    cmd_ui_map[command] = function(cmd)
+        require("ever._ui.interceptors.standard_interceptor").render(cmd)
+    end
+end
 
 ---@param cmd string
 ---@return function | nil

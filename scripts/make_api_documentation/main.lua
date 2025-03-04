@@ -357,7 +357,6 @@ local function _get_module_enabled_hooks(module_identifier)
         end, block)
     end
 
-    -- TODO: Add alias support. These lines effectively clear aliases, which is a shame.
     hooks.section_pre = function(...) -- luacheck: ignore 212 -- unused argument
     end
 

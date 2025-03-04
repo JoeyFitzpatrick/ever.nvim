@@ -51,6 +51,13 @@ return {
         revert = "Revert commit",
         show = "Show commit details",
     },
+    ---@type ever.ReflogKeymaps
+    reflog = {
+        checkout = "Checkout commit (with detached HEAD)",
+        commit_details = "Show commit details",
+        commit_info = "Show commit info",
+        show = "Show commit details",
+    },
     ---@type ever.StashKeymaps
     stash = {
         apply = "Apply stash",

@@ -19,6 +19,7 @@
 ---@field commit_details ever.CommitDetailsConfiguration
 ---@field diff ever.DiffConfiguration
 ---@field log ever.LogConfiguration
+---@field reflog ever.ReflogConfiguration
 ---@field stash ever.StashConfiguration
 ---@field status ever.StatusConfiguration
 
@@ -40,6 +41,9 @@
 
 ---@class ever.LogConfiguration
 ---@field keymaps ever.LogKeymaps
+
+---@class ever.ReflogConfiguration
+---@field keymaps ever.ReflogKeymaps
 
 ---@class ever.StashConfiguration
 ---@field keymaps ever.StashKeymaps
@@ -95,6 +99,12 @@
 ---@field rebase string
 ---@field reset string
 ---@field revert string
+---@field show string
+
+---@class ever.ReflogKeymaps
+---@field checkout string
+---@field commit_details string
+---@field commit_info string
 ---@field show string
 
 ---@class ever.StashKeymaps

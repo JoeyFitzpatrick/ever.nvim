@@ -32,6 +32,7 @@ end
 
 --- This `set_lines` is different than the others, in that it streams content into the buffer
 --- instead of writing it all at once.
+--- TODO: use standard stream for this
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 ---@return string[]

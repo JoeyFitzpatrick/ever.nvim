@@ -78,6 +78,14 @@ local _DEFAULTS = {
             show = "s",
         },
     },
+    reflog = {
+        keymaps = {
+            checkout = "c",
+            commit_details = "<enter>",
+            commit_info = "i",
+            show = "s",
+        },
+    },
     stash = {
         keymaps = {
             apply = "a",
