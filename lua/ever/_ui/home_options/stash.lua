@@ -118,7 +118,6 @@ local function set_diff_buffer_autocmds(diff_bufnr)
         callback = function()
             DIFF_BUFNR = nil
             DIFF_CHANNEL_ID = nil
-            CURRENT_DIFF_FILE = nil
         end,
     })
 end

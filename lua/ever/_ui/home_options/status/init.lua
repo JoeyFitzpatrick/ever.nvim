@@ -336,6 +336,9 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+    end
     if opts.start_line then
         opts.start_line = opts.start_line + 1
     end
