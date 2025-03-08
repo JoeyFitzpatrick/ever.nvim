@@ -26,7 +26,7 @@ end
 
 ---@param bufnr integer
 local function set_keymaps(bufnr, opts)
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "reflog")
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "reflog", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", keymaps.checkout, function()

@@ -57,7 +57,7 @@ end
 
 ---@param bufnr integer
 local function set_keymaps(bufnr)
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "stash")
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "stash", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", keymaps.apply, function()

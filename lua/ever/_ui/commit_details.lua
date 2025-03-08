@@ -44,7 +44,8 @@ end
 ---@param commit string
 local function set_keymaps(bufnr, commit)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "commit_details")
+    local keymaps =
+        require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "commit_details", { open_file_keymaps = true })
 
     vim.keymap.set("n", keymaps.open_in_current_window, function()
         local line_data = M.get_line(bufnr)

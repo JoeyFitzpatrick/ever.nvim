@@ -48,10 +48,6 @@ local _DEFAULTS = {
     },
     commit_details = {
         keymaps = {
-            open_in_current_window = "<C-w>",
-            open_in_horizontal_split = "<C-s>",
-            open_in_new_tab = "<C-t>",
-            open_in_vertical_split = "<C-v>",
             scroll_diff_down = "J",
             scroll_diff_up = "K",
             show_all_changes = "<enter>",
@@ -76,6 +72,15 @@ local _DEFAULTS = {
             reset = "rs",
             revert = "rv",
             show = "s",
+        },
+    },
+
+    open_files = {
+        keymaps = {
+            open_in_current_window = "ow",
+            open_in_horizontal_split = "oh",
+            open_in_new_tab = "ot",
+            open_in_vertical_split = "ov",
         },
     },
     reflog = {

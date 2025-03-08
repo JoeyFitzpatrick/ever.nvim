@@ -38,7 +38,7 @@ end
 ---@param bufnr integer
 ---@param is_staged boolean
 local function set_diff_keymaps(bufnr, is_staged)
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "diff")
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "diff", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", keymaps.next_hunk, function()

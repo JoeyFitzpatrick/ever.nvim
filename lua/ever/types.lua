@@ -19,6 +19,7 @@
 ---@field commit_details ever.CommitDetailsConfiguration
 ---@field diff ever.DiffConfiguration
 ---@field log ever.LogConfiguration
+---@field open_files ever.OpenFilesConfiguration
 ---@field reflog ever.ReflogConfiguration
 ---@field stash ever.StashConfiguration
 ---@field status ever.StatusConfiguration
@@ -41,6 +42,9 @@
 
 ---@class ever.LogConfiguration
 ---@field keymaps ever.LogKeymaps
+
+---@class ever.OpenFilesConfiguration
+---@field keymaps ever.OpenFilesKeymaps
 
 ---@class ever.ReflogConfiguration
 ---@field keymaps ever.ReflogKeymaps
@@ -72,10 +76,6 @@
 ---@field switch string
 
 ---@class ever.CommitDetailsKeymaps
----@field open_in_current_window string
----@field open_in_horizontal_split string
----@field open_in_new_tab string
----@field open_in_vertical_split string
 ---@field scroll_diff_down string
 ---@field scroll_diff_up string
 ---@field show_all_changes string
@@ -100,6 +100,12 @@
 ---@field reset string
 ---@field revert string
 ---@field show string
+
+---@class ever.OpenFilesKeymaps
+---@field open_in_current_window string
+---@field open_in_horizontal_split string
+---@field open_in_new_tab string
+---@field open_in_vertical_split string
 
 ---@class ever.ReflogKeymaps
 ---@field checkout string

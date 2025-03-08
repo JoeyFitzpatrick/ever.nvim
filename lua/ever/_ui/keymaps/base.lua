@@ -1,6 +1,9 @@
 ---@class ever.SetKeymapsOpts
 ---@field terminal_channel_id? integer
 
+---@class ever.GetKeymapsOpts
+---@field open_file_keymaps? boolean
+
 local M = {}
 
 local MAP_SYMBOL = "⟶"
@@ -50,10 +53,14 @@ end
 
 ---@param mappings table<string, string>
 ---@param ui_type string
-local function display_keymap_help(mappings, ui_type)
+---@param opts ever.GetKeymapsOpts
+local function display_keymap_help(mappings, ui_type, opts)
     ---@type string[]
     local keys_to_descriptions = {}
     local descriptions = require("ever._constants.keymap_descriptions")[ui_type]
+    if opts.open_file_keymaps then
+        descriptions = vim.tbl_extend("force", descriptions, require("ever._constants.keymap_descriptions").open_files)
+    end
     local max_keymap_length = get_max_keymap_length(mappings)
 
     for command, keys in pairs(mappings) do
@@ -84,14 +91,18 @@ end
 --- Get ui-specific keymaps, and set up keymap help float
 ---@param bufnr integer
 ---@param ui_type string
+---@param opts ever.GetKeymapsOpts
 ---@return table<string, string>
-function M.get_ui_keymaps(bufnr, ui_type)
+function M.get_ui_keymaps(bufnr, ui_type, opts)
     local mappings = require("ever._core.configuration").DATA[ui_type].keymaps
     assert(mappings ~= nil, "Called `get_ui_keymaps` with an invalid ui type: " .. ui_type)
+    if opts.open_file_keymaps then
+        mappings = vim.tbl_extend("force", mappings, require("ever._core.configuration").DATA["open_files"].keymaps)
+    end
     local HELP_FLOAT_MAP = "g?"
 
     vim.keymap.set("n", HELP_FLOAT_MAP, function()
-        display_keymap_help(mappings, ui_type)
+        display_keymap_help(mappings, ui_type, opts)
     end, { buffer = bufnr })
 
     vim.keymap.set("n", "q", function()
