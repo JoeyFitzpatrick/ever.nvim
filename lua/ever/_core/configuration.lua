@@ -57,8 +57,8 @@ local _DEFAULTS = {
         keymaps = {
             next_file = "<tab>",
             previous_file = "<S-tab>",
-            next_hunk = "i",
-            previous_hunk = "p",
+            next_hunk = "J",
+            previous_hunk = "K",
             stage_hunk = "sh",
             stage_line = "sl",
         },

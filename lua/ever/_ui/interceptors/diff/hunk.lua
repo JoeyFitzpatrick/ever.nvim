@@ -97,14 +97,14 @@ M.extract = function()
     local next_hunk_start, previous_hunk_start = nil, nil
     for i = hunk_start - 2, 1, -1 do -- -2 represents the line before the @@ line of the current hunk
         if is_patch_line(lines[i]) then
-            previous_hunk_start = i + 1
+            previous_hunk_start = i
             break
         end
     end
 
     local not_in_last_line = lines[hunk_end + 1] and lines[hunk_end + 2]
     if not_in_last_line and is_patch_line(lines[hunk_end + 1]) then
-        next_hunk_start = hunk_end + 2
+        next_hunk_start = hunk_end + 1
     end
 
     -- First few lines of diff are like this:
