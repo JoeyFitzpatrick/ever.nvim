@@ -23,6 +23,6 @@ function M.native_render(cmd)
     require("ever._ui.elements").terminal(cmd, { insert = true, display_strategy = "full" })
 end
 
-M.render = M.native_render
+M.render = M.vim_render
 
 return M
