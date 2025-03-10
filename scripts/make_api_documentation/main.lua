@@ -385,7 +385,6 @@ end
 ---    The found identifier. By convention it's usually `"M"` or nothing.
 ---
 local function _get_module_identifier(path) -- luacheck: ignore 212 -- unused argument
-    -- TODO: Need to replace this later
     -- Ignore weird returns
     -- Only get the last return
     return "M"
