@@ -81,11 +81,11 @@ local function display_keymap_help(mappings, ui_type, opts)
         require("ever._ui.highlight").highlight_line(bufnr, "Function", i - 1, keys_start, keys_end)
     end
 
-    local opts = { buffer = bufnr }
+    local keymap_opts = { buffer = bufnr }
 
     vim.keymap.set("n", "q", function()
         vim.api.nvim_buf_delete(bufnr, { force = true })
-    end, opts)
+    end, keymap_opts)
 end
 
 --- Get ui-specific keymaps, and set up keymap help float

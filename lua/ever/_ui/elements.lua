@@ -192,12 +192,16 @@ function M.new_buffer(opts)
     if opts.filetype then
         vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
     end
-    if opts.lines then
-        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, opts.lines())
-        vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    end
     if opts.buffer_name then
-        vim.api.nvim_buf_set_name(bufnr, opts.buffer_name)
+        local ok = pcall(vim.api.nvim_buf_set_name, bufnr, opts.buffer_name)
+        if not ok then
+            vim.cmd("e " .. opts.buffer_name)
+        else
+            if opts.lines then
+                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, opts.lines())
+                vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+            end
+        end
     end
     vim.keymap.set("n", "q", function()
         vim.api.nvim_buf_delete(bufnr, { force = true })
