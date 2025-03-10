@@ -31,7 +31,7 @@ local function highlight(bufnr, start_line, lines)
         else
             highlight_group = highlight_groups.EVER_DIFF_REMOVE
         end
-        vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_group, line_num + start_line - 1, 0, 2)
+        vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_group, line_num + start_line, 0, 2)
     end
 end
 
@@ -48,7 +48,7 @@ function M.set_lines(bufnr, opts)
         "git diff --staged --shortstat | grep -q '^' && git diff --staged --shortstat || echo 'No files staged'"
     )[1]
     local files = run_cmd("git status --porcelain --untracked")
-    vim.api.nvim_buf_set_lines(bufnr, start_line - 1, -1, false, { stat_line, unpack(files) })
+    vim.api.nvim_buf_set_lines(bufnr, math.max(0, start_line - 1), -1, false, { stat_line, unpack(files) })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     highlight(bufnr, start_line, files)
 end

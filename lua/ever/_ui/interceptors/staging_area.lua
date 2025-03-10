@@ -161,7 +161,7 @@ end
 M.render = function()
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
-    require("ever._ui.home_options.status").set_lines(bufnr, { start_line = 0 })
+    require("ever._ui.home_options.status").set_lines(bufnr, { start_line = 1 })
     set_keymaps(bufnr)
     set_autocmds(bufnr)
     return bufnr

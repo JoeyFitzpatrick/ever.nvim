@@ -22,7 +22,7 @@ local cmd_ui_map = {
         local bufnr = require("ever._ui.interceptors.staging_area").render()
         require("ever._core.register").register_buffer(bufnr, {
             render_fn = function()
-                require("ever._ui.home_options.status").set_lines(bufnr, {})
+                require("ever._ui.home_options.status").set_lines(bufnr, { start_line = 1 })
             end,
         })
     end,
