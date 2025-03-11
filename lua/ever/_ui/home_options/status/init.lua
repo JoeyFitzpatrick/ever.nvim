@@ -31,7 +31,7 @@ local function highlight(bufnr, start_line, lines)
         else
             highlight_group = highlight_groups.EVER_DIFF_REMOVE
         end
-        vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_group, line_num + start_line, 0, 2)
+        vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_group, line_num + start_line - 1, 0, 2)
     end
 end
 
@@ -71,7 +71,7 @@ end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
-local function set_keymaps(bufnr, opts)
+function M.set_keymaps(bufnr, opts)
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "status", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
@@ -82,14 +82,17 @@ local function set_keymaps(bufnr, opts)
         end
         local result
         if not require("ever._core.git").is_staged(line_data.status) then
-            result = require("ever._core.run_cmd").run_hidden_cmd("git add -- " .. line_data.filename)
+            result =
+                require("ever._core.run_cmd").run_hidden_cmd("git add -- " .. line_data.filename, { rerender = true })
         else
-            result = require("ever._core.run_cmd").run_hidden_cmd("git reset HEAD -- " .. line_data.filename)
+            result = require("ever._core.run_cmd").run_hidden_cmd(
+                "git reset HEAD -- " .. line_data.filename,
+                { rerender = true }
+            )
         end
         if result == "error" then
             return
         end
-        M.set_lines(bufnr, opts)
     end, keymap_opts)
 
     vim.keymap.set("v", keymaps.stage, function()
@@ -103,12 +106,10 @@ local function set_keymaps(bufnr, opts)
             files_as_string = files_as_string .. (i == 0 and "" or " ") .. file:sub(4)
         end
         if should_stage then
-            require("ever._core.run_cmd").run_hidden_cmd("git add " .. files_as_string)
-            M.set_lines(bufnr, opts)
+            require("ever._core.run_cmd").run_hidden_cmd("git add " .. files_as_string, { rerender = true })
             return
         end
-        require("ever._core.run_cmd").run_hidden_cmd("git restore --staged -- " .. files_as_string)
-        M.set_lines(bufnr, opts)
+        require("ever._core.run_cmd").run_hidden_cmd("git restore --staged -- " .. files_as_string, { rerender = true })
     end, keymap_opts)
 
     vim.keymap.set("n", keymaps.stage_all, function()
@@ -116,12 +117,10 @@ local function set_keymaps(bufnr, opts)
             vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)
         )
         if should_stage then
-            require("ever._core.run_cmd").run_hidden_cmd("git add -A")
-            M.set_lines(bufnr, opts)
+            require("ever._core.run_cmd").run_hidden_cmd("git add -A", { rerender = true })
             return
         end
-        require("ever._core.run_cmd").run_hidden_cmd("git reset")
-        M.set_lines(bufnr, opts)
+        require("ever._core.run_cmd").run_hidden_cmd("git reset", { rerender = true })
     end, keymap_opts)
 
     local keymap_to_command_map = {
@@ -198,8 +197,7 @@ local function set_keymaps(bufnr, opts)
                 elseif selection == "Soft reset" then
                     cmd = "git reset --soft HEAD"
                 end
-                require("ever._core.run_cmd").run_hidden_cmd(cmd)
-                M.set_lines(bufnr, opts)
+                require("ever._core.run_cmd").run_hidden_cmd(cmd, { rerender = true })
             end
         )
     end, keymap_opts)
@@ -247,7 +245,6 @@ local function set_keymaps(bufnr, opts)
                     vim.cmd("G " .. cmd .. " -m " .. require("ever._core.texter").surround_with_quotes(input))
                 end
             end)
-            M.set_lines(bufnr, opts)
         end)
     end, keymap_opts)
 end
@@ -344,7 +341,7 @@ function M.render(bufnr, opts)
     end
     M.set_lines(bufnr, opts)
     set_autocmds(bufnr)
-    set_keymaps(bufnr, opts)
+    M.set_keymaps(bufnr, opts)
 end
 
 function M.cleanup(bufnr)

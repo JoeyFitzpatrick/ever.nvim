@@ -46,6 +46,9 @@ M.run_hidden_cmd = function(cmd, opts)
         end
         return "error", error_code
     end
+    if opts.rerender then
+        require("ever._core.register").rerender_buffers()
+    end
     return "success", error_code
 end
 

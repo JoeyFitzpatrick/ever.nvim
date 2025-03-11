@@ -1,3 +1,5 @@
+-- Staging area render
+
 local M = {}
 
 local DIFF_BUFNR_UNSTAGED = nil
@@ -150,19 +152,19 @@ local function set_autocmds(bufnr)
     })
 end
 
-local function set_keymaps(bufnr)
-    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-    vim.keymap.set("n", "q", function()
-        vim.api.nvim_buf_delete(bufnr, { force = true })
-    end, keymap_opts)
+---@param bufnr integer
+---@param opts ever.UiRenderOpts
+local function set_keymaps(bufnr, opts)
+    require("ever._ui.home_options.status").set_keymaps(bufnr, opts)
 end
 
 ---@return integer -- created bufnr
 M.render = function()
+    local opts = { start_line = 1 }
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
-    require("ever._ui.home_options.status").set_lines(bufnr, { start_line = 1 })
-    set_keymaps(bufnr)
+    require("ever._ui.home_options.status").set_lines(bufnr, opts)
+    set_keymaps(bufnr, opts)
     set_autocmds(bufnr)
     return bufnr
 end
