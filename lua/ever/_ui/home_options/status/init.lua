@@ -140,6 +140,14 @@ function M.set_keymaps(bufnr, opts)
         end, keymap_opts)
     end
 
+    set("n", keymaps.diff_file, function()
+        local line_data = M.get_line(bufnr)
+        if not line_data then
+            return
+        end
+        vim.api.nvim_exec2("G diff " .. line_data.filename, {})
+    end, keymap_opts)
+
     set("n", keymaps.edit_file, function()
         local line_data = M.get_line(bufnr)
         if not line_data then

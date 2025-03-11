@@ -106,6 +106,7 @@ local _DEFAULTS = {
             commit = "co",
             commit_amend = "ca",
             commit_amend_reuse_message = "cA",
+            diff_file = "d",
             edit_file = "<enter>",
             enter_staging_area = "<leader>s",
             pull = "p",
