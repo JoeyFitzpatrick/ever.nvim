@@ -8,7 +8,7 @@
 
 # What is Ever?
 
-Ever is a Neovim git client. It takes some ideas from [vim-fugitive](https://github.com/tpope/vim-fugitive), [lazygit](https://github.com/jesseduffield/lazygit), and [git](https://git-scm.com/) itself, and introduces some other ideas. The main features are:
+Ever is a Neovim git client. It takes some ideas from [vim-fugitive](https://github.com/tpope/vim-fugitive), [lazygit](https://github.com/jesseduffield/lazygit), [magit](https://magit.vc/), and [git](https://git-scm.com/) itself, and introduces some other ideas. The main features are:
 - Most valid git command can be called via command-mode, e.g. `:G commit`, like fugitive
 - Autocompletion for those commands, e.g. typing `:G switch` will cause valid branches to be autocompleted
 - Keymaps for common actions in various git contexts, e.g. `n` to create a new branch from the branch UI, like lazygit
@@ -28,6 +28,8 @@ Ever is a Neovim git client. It takes some ideas from [vim-fugitive](https://git
 }
 ```
 
+Note: lazy loading is handled internally, so it is not required to lazy load Ever. It loads in less than 1ms on my machine. With that being said, if you really want to lazy load Ever, you should be able to lazy load it however you normally lazy load plugins.
+
 
 # Configuration
 (These are default values)
@@ -40,49 +42,7 @@ Ever is a Neovim git client. It takes some ideas from [vim-fugitive](https://git
     "JoeyFitzpatrick/ever.nvim",
     config = function()
         vim.g.ever_configuration = {
-            cmdparse = {
-                auto_complete = { display = { help_flag = true } },
-            },
-            commands = {
-                goodnight_moon = { read = { phrase = "A good book" } },
-                hello_world = {
-                    say = { ["repeat"] = 1, style = "lowercase" },
-                },
-            },
-            logging = {
-                level = "info",
-                use_console = false,
-                use_file = false,
-            },
-            tools = {
-                lualine = {
-                    arbitrary_thing = {
-                        color = "Visual",
-                        text = " Arbitrary Thing",
-                    },
-                    copy_logs = {
-                        color = "Comment",
-                        text = "󰈔 Copy Logs",
-                    },
-                    goodnight_moon = {
-                        color = "Question",
-                        text = " Goodnight moon",
-                    },
-                    hello_world = {
-                        color = "Title",
-                        text = " Hello, World!",
-                    },
-                },
-                telescope = {
-                    goodnight_moon = {
-                        { "Foo Book", "Author A" },
-                        { "Bar Book Title", "John Doe" },
-                        { "Fizz Drink", "Some Name" },
-                        { "Buzz Bee", "Cool Person" },
-                    },
-                    hello_world = { "Hi there!", "Hello, Sailor!", "What's up, doc?" },
-                },
-            },
+            -- TODO: add config here
         }
     end
 }

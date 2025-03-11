@@ -21,6 +21,7 @@ M.DATA = {}
 local _DEFAULTS = {
     home = {
         keymaps = {
+            -- NOTE: setting a keymap to nil disables it, e.g. `next = nil`
             next = "l",
             previous = "h",
         },
