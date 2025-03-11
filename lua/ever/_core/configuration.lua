@@ -25,6 +25,12 @@ local _DEFAULTS = {
             previous = "h",
         },
     },
+    auto_display = {
+        keymaps = {
+            scroll_diff_down = "J",
+            scroll_diff_up = "K",
+        },
+    },
     blame = {
         default_cmd_args = { " --date=format-local:'%Y/%m/%d %I:%M %p'" },
         keymaps = {
@@ -48,8 +54,6 @@ local _DEFAULTS = {
     },
     commit_details = {
         keymaps = {
-            scroll_diff_down = "J",
-            scroll_diff_up = "K",
             show_all_changes = "<enter>",
         },
     },
@@ -74,7 +78,6 @@ local _DEFAULTS = {
             show = "s",
         },
     },
-
     open_files = {
         keymaps = {
             open_in_current_window = "ow",
@@ -96,8 +99,6 @@ local _DEFAULTS = {
             apply = "a",
             drop = "d",
             pop = "p",
-            scroll_diff_down = "J",
-            scroll_diff_up = "K",
         },
     },
     status = {
@@ -110,8 +111,6 @@ local _DEFAULTS = {
             pull = "p",
             push = "<leader>p",
             restore = "D",
-            scroll_diff_down = "J",
-            scroll_diff_up = "K",
             stage = "s",
             stage_all = "a",
             stash = "S",

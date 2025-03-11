@@ -88,16 +88,21 @@ local function replace_conflict(strategy)
 end
 
 local function set_keymaps()
-    vim.keymap.set("n", "<Plug>(Ever-resolve-base)", function()
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
+
+    set("n", "<Plug>(Ever-resolve-base)", function()
         replace_conflict("base")
     end, { noremap = true, silent = true })
-    vim.keymap.set("n", "<Plug>(Ever-resolve-ours)", function()
+
+    set("n", "<Plug>(Ever-resolve-ours)", function()
         replace_conflict("ours")
     end, { noremap = true, silent = true })
-    vim.keymap.set("n", "<Plug>(Ever-resolve-theirs)", function()
+
+    set("n", "<Plug>(Ever-resolve-theirs)", function()
         replace_conflict("theirs")
     end, { noremap = true, silent = true })
-    vim.keymap.set("n", "<Plug>(Ever-resolve-all)", function()
+
+    set("n", "<Plug>(Ever-resolve-all)", function()
         replace_conflict("all")
     end, { noremap = true, silent = true })
 end

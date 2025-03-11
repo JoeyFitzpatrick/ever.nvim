@@ -46,6 +46,7 @@ end
 local function set_keymaps(bufnr, opts)
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "branch", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     ---@param branch_name string
     ---@param delete_type string
@@ -80,7 +81,7 @@ local function set_keymaps(bufnr, opts)
         return action_map[delete_type]()
     end
 
-    vim.keymap.set("n", keymaps.delete, function()
+    set("n", keymaps.delete, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -114,7 +115,7 @@ local function set_keymaps(bufnr, opts)
         )
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.log, function()
+    set("n", keymaps.log, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -122,7 +123,7 @@ local function set_keymaps(bufnr, opts)
         vim.cmd("G log " .. line_data.branch_name)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.new_branch, function()
+    set("n", keymaps.new_branch, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -139,7 +140,7 @@ local function set_keymaps(bufnr, opts)
         end)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.rename, function()
+    set("n", keymaps.rename, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -152,7 +153,7 @@ local function set_keymaps(bufnr, opts)
         end)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.switch, function()
+    set("n", keymaps.switch, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return

@@ -6,6 +6,7 @@
 ---@module 'ever.types'
 
 ---@class ever.Configuration
+---@field auto_display ever.AutoDisplayConfiguration
 ---@field blame ever.BlameConfiguration
 ---@field home ever.HomeConfiguration
 ---@field branch ever.BranchConfiguration
@@ -23,6 +24,9 @@
 
 ---@class ever.HomeConfiguration
 ---@field keymaps ever.HomeKeymaps
+
+---@class ever.AutoDisplayConfiguration
+---@field keymaps ever.AutoDisplayKeymaps
 
 ---@class ever.BranchConfiguration
 ---@field keymaps ever.BranchKeymaps
@@ -52,6 +56,10 @@
 ---@field next string
 ---@field previous string
 
+---@class ever.AutoDisplayKeymaps
+---@field scroll_diff_down string
+---@field scroll_diff_up string
+
 ---@class ever.BlameKeymaps
 ---@field checkout string
 ---@field diff_file string
@@ -69,8 +77,6 @@
 ---@field switch string
 
 ---@class ever.CommitDetailsKeymaps
----@field scroll_diff_down string
----@field scroll_diff_up string
 ---@field show_all_changes string
 
 ---@class ever.DiffKeymaps
@@ -82,8 +88,6 @@
 ---@field stage_line string
 
 ---@class ever.DifftoolKeymaps
----@field scroll_diff_down string
----@field scroll_diff_up string
 
 ---@class ever.LogKeymaps
 ---@field checkout string
@@ -110,8 +114,6 @@
 ---@field apply string
 ---@field drop string
 ---@field pop string
----@field scroll_diff_down string
----@field scroll_diff_up string
 
 ---@class ever.StatusKeymaps
 ---@field commit string
@@ -122,8 +124,6 @@
 ---@field pull string
 ---@field push string
 ---@field restore string
----@field scroll_diff_down string
----@field scroll_diff_up string
 ---@field stage string
 ---@field stage_all string
 ---@field stash string

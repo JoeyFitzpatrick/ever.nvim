@@ -44,10 +44,14 @@ end
 ---@param commit string
 local function set_keymaps(bufnr, commit)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-    local keymaps =
-        require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "commit_details", { open_file_keymaps = true })
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(
+        bufnr,
+        "commit_details",
+        { open_file_keymaps = true, auto_display_keymaps = true }
+    )
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    vim.keymap.set("n", keymaps.open_in_current_window, function()
+    set("n", keymaps.open_in_current_window, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
             return
@@ -55,7 +59,7 @@ local function set_keymaps(bufnr, commit)
         require("ever._core.open_file").open_file_in_current_window(line_data.filename, commit)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.open_in_horizontal_split, function()
+    set("n", keymaps.open_in_horizontal_split, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
             return
@@ -67,7 +71,7 @@ local function set_keymaps(bufnr, commit)
         require("ever._core.open_file").open_file_in_split(line_data.filename, commit, "below")
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.open_in_new_tab, function()
+    set("n", keymaps.open_in_new_tab, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
             return
@@ -75,7 +79,7 @@ local function set_keymaps(bufnr, commit)
         require("ever._core.open_file").open_file_in_tab(line_data.filename, commit)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.open_in_vertical_split, function()
+    set("n", keymaps.open_in_vertical_split, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
             return
@@ -87,19 +91,19 @@ local function set_keymaps(bufnr, commit)
         require("ever._core.open_file").open_file_in_split(line_data.filename, commit, "right")
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.scroll_diff_down, function()
+    set("n", keymaps.scroll_diff_down, function()
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")
         end
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.scroll_diff_up, function()
+    set("n", keymaps.scroll_diff_up, function()
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "kk")
         end
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.show_all_changes, function()
+    set("n", keymaps.show_all_changes, function()
         require("ever._ui.elements").new_buffer({
             filetype = "git",
             lines = function()

@@ -72,10 +72,13 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.set_keymaps(bufnr, opts)
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "status", {})
+    local default_ui_keymap_opts = { auto_display_keymaps = true }
+    local ui_keymap_opts = vim.tbl_extend("force", default_ui_keymap_opts, opts.keymap_opts or {})
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "status", ui_keymap_opts)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    vim.keymap.set("n", keymaps.stage, function()
+    set("n", keymaps.stage, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
             return
@@ -95,7 +98,7 @@ function M.set_keymaps(bufnr, opts)
         end
     end, keymap_opts)
 
-    vim.keymap.set("v", keymaps.stage, function()
+    set("v", keymaps.stage, function()
         local start_line, end_line = require("ever._ui.utils.ui_utils").get_visual_line_nums()
         start_line = math.max(start_line, opts.start_line or 0)
         local files = vim.api.nvim_buf_get_lines(bufnr, start_line, end_line, false)
@@ -112,7 +115,7 @@ function M.set_keymaps(bufnr, opts)
         require("ever._core.run_cmd").run_hidden_cmd("git restore --staged -- " .. files_as_string, { rerender = true })
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.stage_all, function()
+    set("n", keymaps.stage_all, function()
         local should_stage = require("ever._ui.home_options.status.status_utils").should_stage_files(
             vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)
         )
@@ -132,12 +135,12 @@ function M.set_keymaps(bufnr, opts)
     }
 
     for _, mapping in ipairs(keymap_to_command_map) do
-        vim.keymap.set("n", mapping.keymap, function()
+        set("n", mapping.keymap, function()
             vim.cmd("G " .. mapping.command)
         end, keymap_opts)
     end
 
-    vim.keymap.set("n", keymaps.edit_file, function()
+    set("n", keymaps.edit_file, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
             return
@@ -145,23 +148,23 @@ function M.set_keymaps(bufnr, opts)
         vim.api.nvim_exec2("e " .. line_data.filename, {})
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.enter_staging_area, function()
+    set("n", keymaps.enter_staging_area, function()
         vim.cmd("G difftool")
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.scroll_diff_down, function()
+    set("n", keymaps.scroll_diff_down, function()
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")
         end
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.scroll_diff_up, function()
+    set("n", keymaps.scroll_diff_up, function()
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "kk")
         end
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.restore, function()
+    set("n", keymaps.restore, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
             return
@@ -202,7 +205,7 @@ function M.set_keymaps(bufnr, opts)
         )
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.stash, function()
+    set("n", keymaps.stash, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
             return

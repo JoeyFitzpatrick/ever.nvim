@@ -19,8 +19,9 @@ end
 local function set_keymaps(bufnr)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "blame", {})
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    vim.keymap.set("n", keymaps.checkout, function()
+    set("n", keymaps.checkout, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -29,7 +30,7 @@ local function set_keymaps(bufnr)
         vim.cmd("G checkout " .. line_data.hash)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.commit_details, function()
+    set("n", keymaps.commit_details, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -38,7 +39,7 @@ local function set_keymaps(bufnr)
         require("ever._ui.commit_details").render(line_data.hash)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.commit_info, function()
+    set("n", keymaps.commit_info, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -59,7 +60,7 @@ local function set_keymaps(bufnr)
         return vim.fn.expand("%:.")
     end
 
-    vim.keymap.set("n", keymaps.diff_file, function()
+    set("n", keymaps.diff_file, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -68,7 +69,7 @@ local function set_keymaps(bufnr)
         vim.cmd(string.format("G show %s -- %s", line_data.hash, get_filepath()))
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.reblame, function()
+    set("n", keymaps.reblame, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -89,7 +90,7 @@ local function set_keymaps(bufnr)
         vim.api.nvim_win_set_cursor(0, { new_cursor_line, 0 })
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.return_to_original_file, function()
+    set("n", keymaps.return_to_original_file, function()
         local current_cursor_line = vim.api.nvim_win_get_cursor(0)[1]
         vim.api.nvim_buf_delete(bufnr, { force = true })
         while vim.api.nvim_buf_get_name(0):match(FILENAME_PREFIX) do
@@ -98,7 +99,7 @@ local function set_keymaps(bufnr)
         vim.api.nvim_win_set_cursor(0, { current_cursor_line, 0 })
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.show, function()
+    set("n", keymaps.show, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return

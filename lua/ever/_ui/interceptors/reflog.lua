@@ -28,8 +28,9 @@ end
 local function set_keymaps(bufnr)
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "reflog", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    vim.keymap.set("n", keymaps.checkout, function()
+    set("n", keymaps.checkout, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -37,7 +38,7 @@ local function set_keymaps(bufnr)
         vim.cmd("G checkout " .. line_data.hash)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.commit_details, function()
+    set("n", keymaps.commit_details, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -45,7 +46,7 @@ local function set_keymaps(bufnr)
         require("ever._ui.commit_details").render(line_data.hash)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.commit_info, function()
+    set("n", keymaps.commit_info, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -57,7 +58,7 @@ local function set_keymaps(bufnr)
         require("ever._ui.elements").terminal("log -n 1 " .. line_data.hash, { display_strategy = "full" })
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.show, function()
+    set("n", keymaps.show, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return

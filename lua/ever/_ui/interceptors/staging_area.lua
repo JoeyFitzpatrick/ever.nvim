@@ -43,10 +43,10 @@ local function set_diff_keymaps(bufnr, is_staged)
     require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "diff", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-
     require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    vim.keymap.set("n", keymaps.stage_hunk, function()
+    set("n", keymaps.stage_hunk, function()
         local hunk = require("ever._ui.interceptors.diff.hunk").extract()
         if not hunk then
             return
@@ -60,7 +60,7 @@ local function set_diff_keymaps(bufnr, is_staged)
         require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_lines, rerender = true })
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.stage_line, function()
+    set("n", keymaps.stage_line, function()
         local hunk = require("ever._ui.interceptors.diff.hunk").extract()
         if not hunk or not hunk.patch_single_line then
             return
@@ -155,6 +155,7 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 local function set_keymaps(bufnr, opts)
+    opts.keymap_opts = { auto_display_keymaps = false }
     require("ever._ui.home_options.status").set_keymaps(bufnr, opts)
 end
 

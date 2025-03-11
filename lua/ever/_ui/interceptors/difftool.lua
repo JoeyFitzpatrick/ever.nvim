@@ -106,8 +106,9 @@ local function set_diff_buffer_keymaps(bufnr)
     require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
     local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "diff", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    vim.keymap.set("n", "q", function()
+    set("n", "q", function()
         local upper_win = vim.fn.winnr("k")
         if upper_win == 0 then
             return
@@ -115,8 +116,9 @@ local function set_diff_buffer_keymaps(bufnr)
         local win = vim.fn.win_getid(upper_win)
         vim.api.nvim_set_current_win(win)
         vim.api.nvim_buf_delete(0, { force = true })
-    end)
-    vim.keymap.set("n", keymaps.next_file, function()
+    end, keymap_opts)
+
+    set("n", keymaps.next_file, function()
         local upper_win = vim.fn.winnr("k")
         if upper_win == 0 then
             return
@@ -131,7 +133,7 @@ local function set_diff_buffer_keymaps(bufnr)
         end)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.previous_file, function()
+    set("n", keymaps.previous_file, function()
         local upper_win = vim.fn.winnr("k")
         if upper_win == 0 then
             return

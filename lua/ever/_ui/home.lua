@@ -7,10 +7,11 @@
 ---@class ever.UiRenderOpts
 ---@field start_line? integer
 ---@field cmd? string -- The command used for this UI
+---@field keymap_opts? ever.GetKeymapsOpts
 
 local M = {}
 
--- includes padding (two lines currently)
+-- includes padding
 local TAB_HEIGHT = 4
 
 --- Creates tabs for home UI
@@ -170,12 +171,14 @@ local function create_and_render_buffer(tab, indices)
     })
 
     local keymaps = require("ever._core.configuration").DATA.home.keymaps
-    vim.keymap.set("n", "q", function()
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
+
+    set("n", "q", function()
         tab_cleanup_map[tabs.current_option](bufnr)
         vim.api.nvim_buf_delete(bufnr, { force = true })
     end, { buffer = bufnr })
 
-    vim.keymap.set("n", keymaps.next, function()
+    set("n", keymaps.next, function()
         local old_bufnr = bufnr
         tab_cleanup_map[tabs.current_option](old_bufnr)
         tabs:cycle_tab("forward")
@@ -183,7 +186,7 @@ local function create_and_render_buffer(tab, indices)
         vim.api.nvim_buf_delete(old_bufnr, { force = true })
     end, { buffer = bufnr })
 
-    vim.keymap.set("n", keymaps.previous, function()
+    set("n", keymaps.previous, function()
         local old_bufnr = bufnr
         tab_cleanup_map[tabs.current_option](old_bufnr)
         tabs:cycle_tab("back")

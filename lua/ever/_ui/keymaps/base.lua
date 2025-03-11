@@ -3,6 +3,7 @@
 
 ---@class ever.GetKeymapsOpts
 ---@field open_file_keymaps? boolean
+---@field auto_display_keymaps? boolean
 
 local M = {}
 
@@ -98,6 +99,9 @@ function M.get_ui_keymaps(bufnr, ui_type, opts)
     assert(mappings ~= nil, "Called `get_ui_keymaps` with an invalid ui type: " .. ui_type)
     if opts.open_file_keymaps then
         mappings = vim.tbl_extend("force", mappings, require("ever._core.configuration").DATA["open_files"].keymaps)
+    end
+    if opts.auto_display_keymaps then
+        mappings = vim.tbl_extend("force", mappings, require("ever._core.configuration").DATA["auto_display"].keymaps)
     end
     local HELP_FLOAT_MAP = "g?"
 

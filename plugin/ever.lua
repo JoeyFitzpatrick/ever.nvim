@@ -32,12 +32,3 @@ end, {
     end,
     range = true,
 })
-
-vim.keymap.set("n", "<Plug>(EverSayHi)", function()
-    local configuration = require("ever._core.configuration")
-    local ever = require("plugin.ever")
-
-    configuration.initialize_data_if_needed()
-
-    ever.run_hello_world_say_word("Hi!")
-end, { desc = "Say hi to the user." })

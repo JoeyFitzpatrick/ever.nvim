@@ -57,10 +57,11 @@ end
 
 ---@param bufnr integer
 local function set_keymaps(bufnr)
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "stash", {})
+    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "stash", { auto_display_keymaps = true })
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    vim.keymap.set("n", keymaps.apply, function()
+    set("n", keymaps.apply, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -68,7 +69,7 @@ local function set_keymaps(bufnr)
         vim.cmd("G stash apply " .. line_data.stash_index)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.drop, function()
+    set("n", keymaps.drop, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -84,7 +85,7 @@ local function set_keymaps(bufnr)
         )
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.pop, function()
+    set("n", keymaps.pop, function()
         local line_data = get_line(bufnr)
         if not line_data then
             return
@@ -92,13 +93,13 @@ local function set_keymaps(bufnr)
         vim.cmd("G stash pop " .. line_data.stash_index)
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.scroll_diff_down, function()
+    set("n", keymaps.scroll_diff_down, function()
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")
         end
     end, keymap_opts)
 
-    vim.keymap.set("n", keymaps.scroll_diff_up, function()
+    set("n", keymaps.scroll_diff_up, function()
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "kk")
         end
