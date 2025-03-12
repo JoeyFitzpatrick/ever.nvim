@@ -11,6 +11,7 @@
 ---@field home ever.HomeConfiguration
 ---@field branch ever.BranchConfiguration
 ---@field commit_details ever.CommitDetailsConfiguration
+---@field commit_popup ever.CommitPopupConfiguration
 ---@field diff ever.DiffConfiguration
 ---@field log ever.LogConfiguration
 ---@field open_files ever.OpenFilesConfiguration
@@ -33,6 +34,9 @@
 
 ---@class ever.CommitDetailsConfiguration
 ---@field keymaps ever.CommitDetailsKeymaps
+
+---@class ever.CommitPopupConfiguration
+---@field keymaps ever.CommitPopupKeymaps
 
 ---@class ever.DiffConfiguration
 ---@field keymaps ever.DiffKeymaps
@@ -79,6 +83,10 @@
 ---@class ever.CommitDetailsKeymaps
 ---@field show_all_changes string
 
+---@class ever.CommitPopupKeymaps
+---@field commit_amend string
+---@field commit_amend_reuse_message string
+
 ---@class ever.DiffKeymaps
 ---@field next_file string
 ---@field previous_file string
@@ -119,6 +127,7 @@
 ---@field commit string
 ---@field commit_amend string
 ---@field commit_amend_reuse_message string
+---@field commit_popup string
 ---@field diff_file string
 ---@field edit_file string
 ---@field enter_staging_area string

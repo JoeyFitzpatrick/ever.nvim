@@ -58,6 +58,12 @@ local _DEFAULTS = {
             show_all_changes = "<enter>",
         },
     },
+    commit_popup = {
+        keymaps = {
+            commit_amend = "a",
+            commit_amend_reuse_message = "A",
+        },
+    },
     diff = {
         keymaps = {
             next_file = "<tab>",
@@ -107,6 +113,7 @@ local _DEFAULTS = {
             commit = "co",
             commit_amend = "ca",
             commit_amend_reuse_message = "cA",
+            commit_popup = "<leader>c",
             diff_file = "d",
             edit_file = "<enter>",
             enter_staging_area = "<leader>s",

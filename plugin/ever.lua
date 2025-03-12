@@ -32,3 +32,5 @@ end, {
     end,
     range = true,
 })
+
+require("ever._ui.popups.plug_mappings").setup_plug_mappings()

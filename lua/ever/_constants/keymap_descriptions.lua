@@ -74,6 +74,7 @@ return {
         commit = "Commit changes",
         commit_amend = "Amend commit",
         commit_amend_reuse_message = "Amend commit reusing message",
+        commit_popup = "Open commit command popup",
         diff_file = "Diff file",
         edit_file = "Edit file",
         enter_staging_area = "Enter staging area (stage hunks/lines)",

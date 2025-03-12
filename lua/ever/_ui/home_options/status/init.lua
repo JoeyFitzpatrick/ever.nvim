@@ -140,6 +140,8 @@ function M.set_keymaps(bufnr, opts)
         end, keymap_opts)
     end
 
+    set("n", keymaps.commit_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_COMMIT_POPUP, keymap_opts)
+
     set("n", keymaps.diff_file, function()
         local line_data = M.get_line(bufnr)
         if not line_data then
