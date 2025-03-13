@@ -118,6 +118,25 @@ Open `G status` in a left split instead of a full window: `split | G status`
 Open `G branch` in a right split instead of a full window `rightbelow vsplit | G branch`
 Note that this functionality can be used in both command mode and in keymaps.
 
+# Plug mappings
+Ever provides some plug mappings, so you can conveniently create your own mappings for some actions if you want. To use such a mapping, you can do something like this:
+
+```lua
+-- Keymap to display the commit popup
+vim.keymap.set("n", "<leader>gc", "<Plug>(Ever-commit-popup)")
+```
+
+### Merge conflict mappings
+Ever doesn't have an integrated merge conflict resolution solution currently, so in the meantime, we have these mappings:
+<Plug>(Ever-resolve-base): when the cursor is on a merge conflict, keep the "base" code
+<Plug>(Ever-resolve-ours): when the cursor is on a merge conflict, keep the "ours" code
+<Plug>(Ever-resolve-theirs): when the cursor is on a merge conflict, keep the "theirs" code
+<Plug>(Ever-resolve-all): when the cursor is on a merge conflict, keep all code
+
+### Popup mappings
+<Plug>(Ever-commit-popup): display the commit popup
+
+
 # Optional Dependencies
 
 [Delta](https://github.com/dandavison/delta) - improved git diff output (used in the demos/examples)
