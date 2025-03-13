@@ -86,6 +86,7 @@
 ---@class ever.CommitPopupKeymaps
 ---@field commit_amend string
 ---@field commit_amend_reuse_message string
+---@field commit_dry_run string
 
 ---@class ever.DiffKeymaps
 ---@field next_file string

@@ -28,6 +28,12 @@ return {
         scroll_diff_up = "Scroll diff up",
         show_all_changes = "Show all changes from this commit in a single buffer",
     },
+    ---@type ever.CommitPopupKeymaps
+    commit_popup = {
+        commit_amend = "Amend commit",
+        commit_amend_reuse_message = "Amend commit reusing message",
+        commit_dry_run = "Run dry run commit",
+    },
     ---@type ever.DiffKeymaps
     diff = {
         next_file = "Go to next file",

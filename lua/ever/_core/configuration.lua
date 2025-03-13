@@ -62,6 +62,7 @@ local _DEFAULTS = {
         keymaps = {
             commit_amend = "a",
             commit_amend_reuse_message = "A",
+            commit_dry_run = "d",
         },
     },
     diff = {
