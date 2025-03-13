@@ -84,6 +84,7 @@
 ---@field show_all_changes string
 
 ---@class ever.CommitPopupKeymaps
+---@field commit string
 ---@field commit_amend string
 ---@field commit_amend_reuse_message string
 ---@field commit_dry_run string
@@ -125,9 +126,6 @@
 ---@field pop string
 
 ---@class ever.StatusKeymaps
----@field commit string
----@field commit_amend string
----@field commit_amend_reuse_message string
 ---@field commit_popup string
 ---@field diff_file string
 ---@field edit_file string

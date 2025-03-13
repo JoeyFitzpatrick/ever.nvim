@@ -7,6 +7,7 @@ local function set_keymaps(bufnr)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     local keymap_command_map = {
+        [keymaps.commit] = "G commit",
         [keymaps.commit_amend] = "G commit --amend",
         [keymaps.commit_amend_reuse_message] = "G commit --amend --reuse-message HEAD --no-verify",
         [keymaps.commit_dry_run] = "G commit --dry-run",

@@ -30,6 +30,7 @@ return {
     },
     ---@type ever.CommitPopupKeymaps
     commit_popup = {
+        commit = "Regular commit",
         commit_amend = "Amend commit",
         commit_amend_reuse_message = "Amend commit reusing message",
         commit_dry_run = "Run dry run commit",
@@ -77,9 +78,6 @@ return {
     },
     ---@type ever.StatusKeymaps
     status = {
-        commit = "Commit changes",
-        commit_amend = "Amend commit",
-        commit_amend_reuse_message = "Amend commit reusing message",
         commit_popup = "Open commit command popup",
         diff_file = "Diff file",
         edit_file = "Edit file",

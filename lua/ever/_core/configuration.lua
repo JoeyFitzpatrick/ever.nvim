@@ -60,6 +60,7 @@ local _DEFAULTS = {
     },
     commit_popup = {
         keymaps = {
+            commit = "o",
             commit_amend = "a",
             commit_amend_reuse_message = "A",
             commit_dry_run = "d",
@@ -111,10 +112,7 @@ local _DEFAULTS = {
     },
     status = {
         keymaps = {
-            commit = "co",
-            commit_amend = "ca",
-            commit_amend_reuse_message = "cA",
-            commit_popup = "<leader>c",
+            commit_popup = "c",
             diff_file = "d",
             edit_file = "<enter>",
             enter_staging_area = "<leader>s",
