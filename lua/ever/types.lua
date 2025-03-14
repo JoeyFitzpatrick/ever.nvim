@@ -17,6 +17,7 @@
 ---@field open_files ever.OpenFilesConfiguration
 ---@field reflog ever.ReflogConfiguration
 ---@field stash ever.StashConfiguration
+---@field stash_popup ever.StashPopupConfiguration
 ---@field status ever.StatusConfiguration
 
 ---@class ever.BlameConfiguration
@@ -52,6 +53,9 @@
 
 ---@class ever.StashConfiguration
 ---@field keymaps ever.StashKeymaps
+
+---@class ever.StashPopupConfiguration
+---@field keymaps ever.StashPopupKeymaps
 
 ---@class ever.StatusConfiguration
 ---@field keymaps ever.StatusKeymaps
@@ -125,6 +129,10 @@
 ---@field drop string
 ---@field pop string
 
+---@class ever.StashPopupKeymaps
+---@field stash_all string
+---@field stash_staged string
+
 ---@class ever.StatusKeymaps
 ---@field commit_popup string
 ---@field diff_file string
@@ -135,4 +143,4 @@
 ---@field restore string
 ---@field stage string
 ---@field stage_all string
----@field stash string
+---@field stash_popup string

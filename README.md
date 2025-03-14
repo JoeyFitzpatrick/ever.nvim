@@ -135,6 +135,7 @@ Ever doesn't have an integrated merge conflict resolution solution currently, so
 
 ### Popup mappings
 <Plug>(Ever-commit-popup): display the commit popup
+<Plug>(Ever-stash-popup): display the stash popup
 
 
 # Optional Dependencies

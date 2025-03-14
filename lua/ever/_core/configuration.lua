@@ -110,6 +110,12 @@ local _DEFAULTS = {
             pop = "p",
         },
     },
+    stash_popup = {
+        keymaps = {
+            stash_all = "a",
+            stash_staged = "s",
+        },
+    },
     status = {
         keymaps = {
             commit_popup = "c",
@@ -121,7 +127,7 @@ local _DEFAULTS = {
             restore = "D",
             stage = "s",
             stage_all = "a",
-            stash = "S",
+            stash_popup = "S",
         },
     },
 }

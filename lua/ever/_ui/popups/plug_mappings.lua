@@ -2,6 +2,7 @@ local M = {}
 
 M.MAPPINGS = {
     EVER_COMMIT_POPUP = "<Plug>(Ever-commit-popup)",
+    EVER_STASH_POPUP = "<Plug>(Ever-stash-popup)",
 }
 
 local function set_autocmds(bufnr)
@@ -17,6 +18,10 @@ end
 function M.setup_plug_mappings()
     vim.keymap.set("n", M.MAPPINGS.EVER_COMMIT_POPUP, function()
         local bufnr = require("ever._ui.popups.commit_popup").render()
+        set_autocmds(bufnr)
+    end)
+    vim.keymap.set("n", M.MAPPINGS.EVER_STASH_POPUP, function()
+        local bufnr = require("ever._ui.popups.stash_popup").render()
         set_autocmds(bufnr)
     end)
 end

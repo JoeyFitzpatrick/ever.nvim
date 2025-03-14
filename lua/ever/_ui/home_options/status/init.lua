@@ -212,51 +212,7 @@ function M.set_keymaps(bufnr, opts)
         )
     end, keymap_opts)
 
-    set("n", keymaps.stash, function()
-        local line_data = M.get_line(bufnr)
-        if not line_data then
-            return
-        end
-
-        local filename = line_data.safe_filename
-        local STASH_OPTIONS = {
-            JUST_THIS_FILE = "Stash just this file",
-            ALL_CHANGES = "Stash all changes",
-            STAGED_CHANGES = "Stash staged changes",
-        }
-        vim.ui.select({
-            STASH_OPTIONS.JUST_THIS_FILE,
-            STASH_OPTIONS.ALL_CHANGES,
-            STASH_OPTIONS.STAGED_CHANGES,
-        }, { prompt = "Git stash options: " }, function(selection)
-            local cmd
-            if selection == STASH_OPTIONS.JUST_THIS_FILE then
-                if not filename then
-                    return
-                end
-                cmd = "stash push " .. filename
-            elseif selection == STASH_OPTIONS.ALL_CHANGES then
-                cmd = "stash --include-untracked"
-            elseif selection == STASH_OPTIONS.STAGED_CHANGES then
-                cmd = "stash push --staged"
-                -- TODO: support stashing unstaged changes
-                -- This can be done by committing staged changes,
-                -- stashing remaining changes,
-                -- and resetting to previous commit
-            end
-            -- Get the stash name
-            vim.ui.input({ prompt = "Stash message: " }, function(input)
-                if not input then
-                    return
-                end
-                if input:match("^%s*$") then
-                    vim.cmd("G " .. cmd)
-                else
-                    vim.cmd("G " .. cmd .. " -m " .. require("ever._core.texter").surround_with_quotes(input))
-                end
-            end)
-        end)
-    end, keymap_opts)
+    set("n", keymaps.stash_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_STASH_POPUP, keymap_opts)
 end
 
 --- Worth noting we don't include "git" in the string

@@ -76,6 +76,11 @@ return {
         scroll_diff_down = "Scroll diff down",
         scroll_diff_up = "Scroll diff up",
     },
+    ---@type ever.StashPopupKeymaps
+    stash_popup = {
+        stash_all = "Stash all changes",
+        stash_staged = "Stash staged changes",
+    },
     ---@type ever.StatusKeymaps
     status = {
         commit_popup = "Open commit command popup",
@@ -89,6 +94,6 @@ return {
         scroll_diff_up = "Scroll diff up",
         stage = "Stage file",
         stage_all = "Stage all files",
-        stash = "Stash changes",
+        stash_popup = "Open stash command popup",
     },
 }
