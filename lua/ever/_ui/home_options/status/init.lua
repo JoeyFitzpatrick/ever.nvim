@@ -356,7 +356,7 @@ end
 
 function M.cleanup(bufnr)
     require("ever._core.register").deregister_buffer(bufnr)
-    if DIFF_BUFNR then
+    if DIFF_BUFNR and vim.api.nvim_buf_is_valid(DIFF_BUFNR) then
         vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
         DIFF_BUFNR = nil
     end

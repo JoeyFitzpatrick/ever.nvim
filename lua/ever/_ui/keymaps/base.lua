@@ -2,6 +2,7 @@
 ---@field terminal_channel_id? integer
 
 ---@class ever.GetKeymapsOpts
+---@field popup? boolean
 ---@field open_file_keymaps? boolean
 ---@field auto_display_keymaps? boolean
 
@@ -103,11 +104,13 @@ function M.get_ui_keymaps(bufnr, ui_type, opts)
     if opts.auto_display_keymaps then
         mappings = vim.tbl_extend("force", mappings, require("ever._core.configuration").DATA["auto_display"].keymaps)
     end
-    local HELP_FLOAT_MAP = "g?"
+    if not opts.popup then
+        local HELP_FLOAT_MAP = "g?"
 
-    vim.keymap.set("n", HELP_FLOAT_MAP, function()
-        display_keymap_help(mappings, ui_type, opts)
-    end, { buffer = bufnr })
+        vim.keymap.set("n", HELP_FLOAT_MAP, function()
+            display_keymap_help(mappings, ui_type, opts)
+        end, { buffer = bufnr })
+    end
 
     vim.keymap.set("n", "q", function()
         vim.api.nvim_buf_delete(bufnr, { force = true })
