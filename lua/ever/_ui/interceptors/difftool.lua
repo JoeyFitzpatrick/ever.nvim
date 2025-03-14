@@ -104,7 +104,7 @@ end
 ---@param bufnr integer The bufnr of the buffer that shows the diff
 local function set_diff_buffer_keymaps(bufnr)
     require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "diff", {})
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "diff", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 

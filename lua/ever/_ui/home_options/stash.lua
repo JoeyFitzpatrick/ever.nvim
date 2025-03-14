@@ -57,7 +57,7 @@ end
 
 ---@param bufnr integer
 local function set_keymaps(bufnr)
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "stash", { auto_display_keymaps = true })
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "stash", { auto_display_keymaps = true })
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 

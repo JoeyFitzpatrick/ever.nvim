@@ -95,7 +95,7 @@ end
 ---@param ui_type string
 ---@param opts ever.GetKeymapsOpts
 ---@return table<string, string>
-function M.get_ui_keymaps(bufnr, ui_type, opts)
+function M.get_keymaps(bufnr, ui_type, opts)
     local mappings = require("ever._core.configuration").DATA[ui_type].keymaps
     assert(mappings ~= nil, "Called `get_ui_keymaps` with an invalid ui type: " .. ui_type)
     if opts.open_file_keymaps then

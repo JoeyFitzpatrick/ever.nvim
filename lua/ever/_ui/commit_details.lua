@@ -44,7 +44,7 @@ end
 ---@param commit string
 local function set_keymaps(bufnr, commit)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(
         bufnr,
         "commit_details",
         { open_file_keymaps = true, auto_display_keymaps = true }

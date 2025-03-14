@@ -44,7 +44,7 @@ end
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 local function set_keymaps(bufnr, opts)
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "branch", {})
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "branch", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 

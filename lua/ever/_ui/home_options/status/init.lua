@@ -74,7 +74,7 @@ end
 function M.set_keymaps(bufnr, opts)
     local default_ui_keymap_opts = { auto_display_keymaps = true }
     local ui_keymap_opts = vim.tbl_extend("force", default_ui_keymap_opts, opts.keymap_opts or {})
-    local keymaps = require("ever._ui.keymaps.base").get_ui_keymaps(bufnr, "status", ui_keymap_opts)
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "status", ui_keymap_opts)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
