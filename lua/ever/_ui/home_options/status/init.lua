@@ -311,6 +311,8 @@ function M.render(bufnr, opts)
 end
 
 function M.cleanup(bufnr)
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusAutoDiff" })
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusCloseAutoDiff" })
     require("ever._core.register").deregister_buffer(bufnr)
     if DIFF_BUFNR and vim.api.nvim_buf_is_valid(DIFF_BUFNR) then
         vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
@@ -318,8 +320,6 @@ function M.cleanup(bufnr)
     end
     DIFF_CHANNEL_ID = nil
     CURRENT_DIFF_FILE = nil
-    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusAutoDiff" })
-    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverStatusCloseAutoDiff" })
 end
 
 return M

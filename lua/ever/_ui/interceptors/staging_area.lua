@@ -171,22 +171,16 @@ M.render = function()
 end
 
 function M.cleanup(bufnr)
-    if DIFF_BUFNR_UNSTAGED then
-        vim.api.nvim_buf_delete(DIFF_BUFNR_UNSTAGED, { force = true })
-        DIFF_BUFNR_UNSTAGED = nil
-    end
-    if DIFF_BUFNR_STAGED and vim.api.nvim_buf_is_valid(DIFF_BUFNR_STAGED) then
-        vim.api.nvim_buf_delete(DIFF_BUFNR_STAGED, { force = true })
-        DIFF_BUFNR_STAGED = nil
-    end
     CURRENT_DIFF_FILE = nil
     vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverDiffAutoDiff" })
     vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverDiffCloseAutoDiff" })
     if DIFF_BUFNR_UNSTAGED then
         require("ever._core.register").deregister_buffer(DIFF_BUFNR_UNSTAGED)
+        DIFF_BUFNR_UNSTAGED = nil
     end
     if DIFF_BUFNR_STAGED then
         require("ever._core.register").deregister_buffer(DIFF_BUFNR_STAGED)
+        DIFF_BUFNR_STAGED = nil
     end
     require("ever._core.register").deregister_buffer(bufnr)
 end

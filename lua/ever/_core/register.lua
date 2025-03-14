@@ -15,6 +15,9 @@ end
 ---@param bufnr integer
 function M.deregister_buffer(bufnr)
     M.buffers[bufnr] = nil
+    if vim.api.nvim_buf_is_valid(bufnr) then
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+    end
 end
 
 ---@param bufnr? integer

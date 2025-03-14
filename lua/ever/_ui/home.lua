@@ -175,7 +175,6 @@ local function create_and_render_buffer(tab, indices)
 
     set("n", "q", function()
         tab_cleanup_map[tabs.current_option](bufnr)
-        vim.api.nvim_buf_delete(bufnr, { force = true })
     end, { buffer = bufnr })
 
     set("n", keymaps.next, function()
@@ -183,7 +182,6 @@ local function create_and_render_buffer(tab, indices)
         tab_cleanup_map[tabs.current_option](old_bufnr)
         tabs:cycle_tab("forward")
         create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
-        vim.api.nvim_buf_delete(old_bufnr, { force = true })
     end, { buffer = bufnr })
 
     set("n", keymaps.previous, function()
@@ -191,7 +189,6 @@ local function create_and_render_buffer(tab, indices)
         tab_cleanup_map[tabs.current_option](old_bufnr)
         tabs:cycle_tab("back")
         create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
-        vim.api.nvim_buf_delete(old_bufnr, { force = true })
     end, { buffer = bufnr })
 end
 

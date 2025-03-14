@@ -86,7 +86,7 @@ local function display_keymap_help(mappings, ui_type, opts)
     local keymap_opts = { buffer = bufnr }
 
     vim.keymap.set("n", "q", function()
-        vim.api.nvim_buf_delete(bufnr, { force = true })
+        require("ever._core.register").deregister_buffer(bufnr)
     end, keymap_opts)
 end
 
@@ -113,7 +113,7 @@ function M.get_keymaps(bufnr, ui_type, opts)
     end
 
     vim.keymap.set("n", "q", function()
-        vim.api.nvim_buf_delete(bufnr, { force = true })
+        require("ever._core.register").deregister_buffer(bufnr)
     end, { buffer = bufnr })
 
     return mappings
