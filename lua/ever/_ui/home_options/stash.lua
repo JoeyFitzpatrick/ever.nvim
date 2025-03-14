@@ -93,6 +93,19 @@ local function set_keymaps(bufnr)
         vim.cmd("G stash pop " .. line_data.stash_index)
     end, keymap_opts)
 
+    set("n", keymaps.show, function()
+        local line_data = get_line(bufnr)
+        if not line_data then
+            return
+        end
+        if DIFF_BUFNR then
+            vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+            DIFF_BUFNR = nil
+        end
+        CURRENT_STASH_INDEX = nil
+        vim.cmd("G stash show -p " .. line_data.stash_index)
+    end, keymap_opts)
+
     set("n", keymaps.scroll_diff_down, function()
         if DIFF_BUFNR and DIFF_CHANNEL_ID then
             pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")

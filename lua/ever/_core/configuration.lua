@@ -108,6 +108,7 @@ local _DEFAULTS = {
             apply = "a",
             drop = "d",
             pop = "p",
+            show = "<enter>",
         },
     },
     stash_popup = {

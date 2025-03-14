@@ -128,6 +128,7 @@
 ---@field apply string
 ---@field drop string
 ---@field pop string
+---@field show string
 
 ---@class ever.StashPopupKeymaps
 ---@field stash_all string
