@@ -103,7 +103,7 @@ local function set_keymaps(bufnr)
             DIFF_BUFNR = nil
         end
         CURRENT_STASH_INDEX = nil
-        vim.cmd("G stash show -p " .. line_data.stash_index)
+        require("ever._ui.commit_details").render(line_data.stash_index, true)
     end, keymap_opts)
 
     set("n", keymaps.scroll_diff_down, function()

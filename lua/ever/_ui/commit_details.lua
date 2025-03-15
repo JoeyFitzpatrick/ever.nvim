@@ -17,15 +17,15 @@ function M.set_lines(bufnr, commit)
         return
     end
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    local commit_data = require("ever._core.run_cmd").run_cmd("git log -n 1 " .. commit)
+    local commit_data = require("ever._core.run_cmd").run_cmd("git show --stat " .. commit)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, commit_data)
-    vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { "" })
-
-    local files_start_line = #commit_data + 2
-    local files = require("ever._core.run_cmd").run_cmd("git diff-tree --no-commit-id --name-only " .. commit .. " -r")
-    vim.api.nvim_buf_set_lines(bufnr, files_start_line, -1, false, files)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    vim.api.nvim_win_set_cursor(0, { math.min(files_start_line, vim.api.nvim_buf_line_count(bufnr)), 0 })
+    for i, line in ipairs(commit_data) do
+        if line:match("^%s%S") then
+            vim.api.nvim_win_set_cursor(0, { i, 0 })
+            return
+        end
+    end
 end
 
 ---@param bufnr integer
@@ -33,8 +33,9 @@ end
 ---@return ever.CommitDetailsLineData | nil
 function M.get_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
-    local filename = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
-    if not filename or filename == "" then
+    local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
+    local filename = line:match("%S+", 1)
+    if not filename then
         return nil
     end
     return { filename = filename, safe_filename = "'" .. filename .. "'" }
@@ -104,12 +105,7 @@ local function set_keymaps(bufnr, commit)
     end, keymap_opts)
 
     set("n", keymaps.show_all_changes, function()
-        require("ever._ui.elements").new_buffer({
-            filetype = "git",
-            lines = function()
-                return require("ever._core.run_cmd").run_cmd("git show " .. commit)
-            end,
-        })
+        vim.cmd("G show " .. commit)
     end, keymap_opts)
 end
 
@@ -133,7 +129,8 @@ end
 
 ---@param bufnr integer
 ---@param commit string
-local function set_autocmds(bufnr, commit)
+---@param is_stash? boolean
+local function set_autocmds(bufnr, commit, is_stash)
     vim.api.nvim_create_autocmd("CursorMoved", {
         desc = "Diff the file under the cursor",
         buffer = bufnr,
@@ -149,10 +146,11 @@ local function set_autocmds(bufnr, commit)
                 DIFF_CHANNEL_ID = nil
             end
             local win = vim.api.nvim_get_current_win()
-            DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(
-                "show " .. commit .. " -- " .. line_data.safe_filename,
-                { display_strategy = "right", insert = false }
-            )
+            local cmd = "show -p " .. commit .. " -- " .. line_data.safe_filename
+            if is_stash then
+                cmd = string.format("diff %s^1 %s -- %s", commit, commit, line_data.safe_filename)
+            end
+            DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(cmd, { display_strategy = "right", insert = false })
             DIFF_BUFNR = vim.api.nvim_get_current_buf()
             set_diff_buffer_autocmds(DIFF_BUFNR)
             vim.api.nvim_set_current_win(win)
@@ -176,12 +174,13 @@ local function set_autocmds(bufnr, commit)
 end
 
 ---@param commit string
-function M.render(commit)
+---@param is_stash? boolean
+function M.render(commit, is_stash)
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
     M.set_lines(bufnr, commit)
     vim.api.nvim_set_option_value("filetype", "git", { buf = bufnr })
-    set_autocmds(bufnr, commit)
+    set_autocmds(bufnr, commit, is_stash)
     set_keymaps(bufnr, commit)
 end
 
