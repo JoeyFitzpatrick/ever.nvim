@@ -118,6 +118,14 @@ Open `G status` in a left split instead of a full window: `split | G status`
 Open `G branch` in a right split instead of a full window `rightbelow vsplit | G branch`
 Note that this functionality can be used in both command mode and in keymaps.
 
+### Auto-display
+Some UIs, such as the status UI, will automatically display another window in a split when moving the cursor in the main window.
+* The status UI displays a diff for the file under the cursor
+* The commit details UI displays a diff for the file under the cursor for the given commit
+* The stash UI displays a diff for the entire stash under the cursor
+
+To toggle the auto-display, enter the toggle keymap. This is `<tab>` by default, and can be changed in the configuration. You can find this keymap by pressing the `g?` keymap.
+
 # Plug mappings
 Ever provides some plug mappings, so you can conveniently create your own mappings for some actions if you want. To use such a mapping, you can do something like this:
 
