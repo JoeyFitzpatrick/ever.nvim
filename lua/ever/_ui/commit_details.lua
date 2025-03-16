@@ -9,7 +9,7 @@ local M = {}
 local DIFF_BUFNR = nil
 local DIFF_CHANNEL_ID = nil
 local CURRENT_DIFF_FILE = nil
-local DISPLAY_AUTODIFF = true
+local DISPLAY_AUTODIFF = require("ever._core.configuration").DATA["commit_details"].auto_display_on
 
 ---@param bufnr integer
 ---@param commit string

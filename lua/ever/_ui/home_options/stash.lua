@@ -8,7 +8,7 @@ local M = {}
 local DIFF_BUFNR = nil
 local DIFF_CHANNEL_ID = nil
 local CURRENT_STASH_INDEX = nil
-local DISPLAY_AUTODIFF = true
+local DISPLAY_AUTODIFF = require("ever._core.configuration").DATA["stash"].auto_display_on
 
 --- Highlight stash lines
 ---@param bufnr integer

@@ -55,6 +55,7 @@ local _DEFAULTS = {
         },
     },
     commit_details = {
+        auto_display_on = true,
         keymaps = {
             show_all_changes = "<enter>",
         },
@@ -105,6 +106,7 @@ local _DEFAULTS = {
         },
     },
     stash = {
+        auto_display_on = true,
         keymaps = {
             apply = "a",
             drop = "d",
@@ -119,6 +121,7 @@ local _DEFAULTS = {
         },
     },
     status = {
+        auto_display_on = true,
         keymaps = {
             commit_popup = "c",
             diff_file = "d",

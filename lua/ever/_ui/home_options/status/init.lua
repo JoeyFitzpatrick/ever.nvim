@@ -10,7 +10,7 @@ local M = {}
 local DIFF_BUFNR = nil
 local DIFF_CHANNEL_ID = nil
 local CURRENT_DIFF_FILE = nil
-local DISPLAY_AUTODIFF = true
+local DISPLAY_AUTODIFF = require("ever._core.configuration").DATA["status"].auto_display_on
 
 local function get_status(line)
     return line:sub(1, 2)

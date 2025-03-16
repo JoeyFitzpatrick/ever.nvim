@@ -35,6 +35,7 @@
 
 ---@class ever.CommitDetailsConfiguration
 ---@field keymaps ever.CommitDetailsKeymaps
+---@field auto_display_on boolean
 
 ---@class ever.CommitPopupConfiguration
 ---@field keymaps ever.CommitPopupKeymaps
@@ -53,12 +54,14 @@
 
 ---@class ever.StashConfiguration
 ---@field keymaps ever.StashKeymaps
+---@field auto_display_on boolean
 
 ---@class ever.StashPopupConfiguration
 ---@field keymaps ever.StashPopupKeymaps
 
 ---@class ever.StatusConfiguration
 ---@field keymaps ever.StatusKeymaps
+---@field auto_display_on boolean
 
 ---@class ever.HomeKeymaps
 ---@field next string
