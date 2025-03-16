@@ -67,6 +67,7 @@
 ---@class ever.AutoDisplayKeymaps
 ---@field scroll_diff_down string
 ---@field scroll_diff_up string
+---@field toggle_auto_display string
 
 ---@class ever.BlameKeymaps
 ---@field checkout string

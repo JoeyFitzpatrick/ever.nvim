@@ -9,6 +9,7 @@ local M = {}
 local DIFF_BUFNR = nil
 local DIFF_CHANNEL_ID = nil
 local CURRENT_DIFF_FILE = nil
+local DISPLAY_AUTODIFF = true
 
 ---@param bufnr integer
 ---@param commit string
@@ -43,7 +44,8 @@ end
 
 ---@param bufnr integer
 ---@param commit string
-local function set_keymaps(bufnr, commit)
+---@param is_stash? boolean
+local function set_keymaps(bufnr, commit, is_stash)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local keymaps = require("ever._ui.keymaps.base").get_keymaps(
         bufnr,
@@ -51,6 +53,17 @@ local function set_keymaps(bufnr, commit)
         { open_file_keymaps = true, auto_display_keymaps = true }
     )
     local set = require("ever._ui.keymaps.set").safe_set_keymap
+
+    set("n", keymaps.toggle_auto_display, function()
+        if DISPLAY_AUTODIFF then
+            require("ever._core.register").deregister_buffer(DIFF_BUFNR)
+            DIFF_BUFNR = nil
+            DISPLAY_AUTODIFF = false
+        else
+            DISPLAY_AUTODIFF = true
+            M._display_auto_display(bufnr, commit, is_stash)
+        end
+    end, keymap_opts)
 
     set("n", keymaps.open_in_current_window, function()
         local line_data = M.get_line(bufnr)
@@ -127,6 +140,28 @@ local function set_diff_buffer_autocmds(diff_bufnr)
     })
 end
 
+function M._display_auto_display(bufnr, commit, is_stash)
+    local line_data = M.get_line(bufnr)
+    if not line_data or line_data.filename == CURRENT_DIFF_FILE then
+        return
+    end
+    CURRENT_DIFF_FILE = line_data.filename
+    if DIFF_BUFNR then
+        vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+        DIFF_BUFNR = nil
+        DIFF_CHANNEL_ID = nil
+    end
+    local win = vim.api.nvim_get_current_win()
+    local cmd = "show -p " .. commit .. " -- " .. line_data.safe_filename
+    if is_stash then
+        cmd = string.format("diff %s^1 %s -- %s", commit, commit, line_data.safe_filename)
+    end
+    DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(cmd, { display_strategy = "right", insert = false })
+    DIFF_BUFNR = vim.api.nvim_get_current_buf()
+    set_diff_buffer_autocmds(DIFF_BUFNR)
+    vim.api.nvim_set_current_win(win)
+end
+
 ---@param bufnr integer
 ---@param commit string
 ---@param is_stash? boolean
@@ -135,25 +170,10 @@ local function set_autocmds(bufnr, commit, is_stash)
         desc = "Diff the file under the cursor",
         buffer = bufnr,
         callback = function()
-            local line_data = M.get_line(bufnr)
-            if not line_data or line_data.filename == CURRENT_DIFF_FILE then
+            if not DISPLAY_AUTODIFF then
                 return
             end
-            CURRENT_DIFF_FILE = line_data.filename
-            if DIFF_BUFNR then
-                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
-                DIFF_BUFNR = nil
-                DIFF_CHANNEL_ID = nil
-            end
-            local win = vim.api.nvim_get_current_win()
-            local cmd = "show -p " .. commit .. " -- " .. line_data.safe_filename
-            if is_stash then
-                cmd = string.format("diff %s^1 %s -- %s", commit, commit, line_data.safe_filename)
-            end
-            DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(cmd, { display_strategy = "right", insert = false })
-            DIFF_BUFNR = vim.api.nvim_get_current_buf()
-            set_diff_buffer_autocmds(DIFF_BUFNR)
-            vim.api.nvim_set_current_win(win)
+            M._display_auto_display(bufnr, commit, is_stash)
         end,
         group = vim.api.nvim_create_augroup("EverCommitDetailsAutoDiff", { clear = true }),
     })
@@ -181,7 +201,7 @@ function M.render(commit, is_stash)
     M.set_lines(bufnr, commit)
     vim.api.nvim_set_option_value("filetype", "git", { buf = bufnr })
     set_autocmds(bufnr, commit, is_stash)
-    set_keymaps(bufnr, commit)
+    set_keymaps(bufnr, commit, is_stash)
 end
 
 function M.cleanup(bufnr)

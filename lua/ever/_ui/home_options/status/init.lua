@@ -10,6 +10,7 @@ local M = {}
 local DIFF_BUFNR = nil
 local DIFF_CHANNEL_ID = nil
 local CURRENT_DIFF_FILE = nil
+local DISPLAY_AUTODIFF = true
 
 local function get_status(line)
     return line:sub(1, 2)
@@ -77,6 +78,17 @@ function M.set_keymaps(bufnr, opts)
     local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "status", ui_keymap_opts)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
+
+    set("n", keymaps.toggle_auto_display, function()
+        if DISPLAY_AUTODIFF then
+            require("ever._core.register").deregister_buffer(DIFF_BUFNR)
+            DIFF_BUFNR = nil
+            DISPLAY_AUTODIFF = false
+        else
+            DISPLAY_AUTODIFF = true
+            M._display_auto_display(bufnr)
+        end
+    end, keymap_opts)
 
     set("n", keymaps.stage, function()
         local line_data = M.get_line(bufnr)
@@ -254,6 +266,23 @@ local function set_diff_buffer_autocmds(diff_bufnr)
     })
 end
 
+function M._display_auto_display(bufnr)
+    local line_data = M.get_line(bufnr)
+    if not line_data or line_data.filename == CURRENT_DIFF_FILE then
+        return
+    end
+    local diff_cmd = get_diff_cmd(line_data.status, line_data.safe_filename)
+    CURRENT_DIFF_FILE = line_data.filename
+    if DIFF_BUFNR then
+        vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
+        DIFF_BUFNR = nil
+    end
+    local win = vim.api.nvim_get_current_win()
+    DIFF_CHANNEL_ID, DIFF_BUFNR = require("ever._ui.elements").terminal(diff_cmd, { enter = false })
+    set_diff_buffer_autocmds(DIFF_BUFNR)
+    vim.api.nvim_set_current_win(win)
+end
+
 ---@param bufnr integer
 local function set_autocmds(bufnr)
     if not vim.api.nvim_buf_is_valid(bufnr) then
@@ -263,20 +292,10 @@ local function set_autocmds(bufnr)
         desc = "Diff the file under the cursor",
         buffer = bufnr,
         callback = function()
-            local line_data = M.get_line(bufnr)
-            if not line_data or line_data.filename == CURRENT_DIFF_FILE then
+            if not DISPLAY_AUTODIFF then
                 return
             end
-            local diff_cmd = get_diff_cmd(line_data.status, line_data.safe_filename)
-            CURRENT_DIFF_FILE = line_data.filename
-            if DIFF_BUFNR then
-                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
-                DIFF_BUFNR = nil
-            end
-            local win = vim.api.nvim_get_current_win()
-            DIFF_CHANNEL_ID, DIFF_BUFNR = require("ever._ui.elements").terminal(diff_cmd, { enter = false })
-            set_diff_buffer_autocmds(DIFF_BUFNR)
-            vim.api.nvim_set_current_win(win)
+            M._display_auto_display(bufnr)
         end,
         group = vim.api.nvim_create_augroup("EverStatusAutoDiff", { clear = true }),
     })

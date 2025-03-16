@@ -125,6 +125,7 @@ local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
                 end
             end,
         })
+        vim.opt_local.number = false
     end)
     return channel_id
 end

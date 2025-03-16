@@ -4,6 +4,12 @@ return {
         next = "Move to next item",
         previous = "Move to previous item",
     },
+    ---@type ever.AutoDisplayKeymaps
+    auto_display = {
+        scroll_diff_down = "Scroll auto-display window down",
+        scroll_diff_up = "Scroll auto-display window up",
+        toggle_auto_display = "Toggle auto-display window",
+    },
     ---@type ever.BlameKeymaps
     blame = {
         checkout = "Checkout commit (with detached HEAD)",
@@ -24,8 +30,6 @@ return {
     },
     ---@type ever.CommitDetailsKeymaps
     commit_details = {
-        scroll_diff_down = "Scroll diff down",
-        scroll_diff_up = "Scroll diff up",
         show_all_changes = "Show all changes from this commit in a single buffer",
     },
     ---@type ever.CommitPopupKeymaps
@@ -89,8 +93,6 @@ return {
         pull = "Pull changes",
         push = "Push changes",
         restore = "Restore file",
-        scroll_diff_down = "Scroll diff down",
-        scroll_diff_up = "Scroll diff up",
         stage = "Stage file",
         stage_all = "Stage all files",
         stash_popup = "Open stash command popup",

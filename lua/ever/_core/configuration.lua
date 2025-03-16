@@ -30,6 +30,7 @@ local _DEFAULTS = {
         keymaps = {
             scroll_diff_down = "J",
             scroll_diff_up = "K",
+            toggle_auto_display = "<tab>",
         },
     },
     blame = {
