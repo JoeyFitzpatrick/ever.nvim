@@ -8,7 +8,7 @@ local M = {}
 --- Runs a command and returns the output.
 ---@param cmd string -- Command to run
 ---@param opts? ever.RunCmdOpts -- options, such as special error handling
----@return string[] -- command output
+---@return string[], integer -- command output, error code
 M.run_cmd = function(cmd, opts)
     opts = opts or {}
     local output
@@ -20,7 +20,7 @@ M.run_cmd = function(cmd, opts)
     if opts.rerender then
         require("ever._core.register").rerender_buffers()
     end
-    return output
+    return output, vim.v.shell_error
 end
 
 --- Runs a command that doesn't display output.
