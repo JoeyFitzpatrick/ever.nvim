@@ -7,6 +7,7 @@
 ---@field insert? boolean | ever.ShouldEnterInsert
 ---@field trigger_redraw? boolean
 ---@field enter? boolean
+---@field win_size? number
 
 local M = {}
 

@@ -106,7 +106,17 @@ local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
         if strategy.enter == false then
             enter = false
         end
-        win = vim.api.nvim_open_win(bufnr, enter, { split = display_strategy })
+        if strategy.win_size then
+            if vim.tbl_contains({ "above", "below" }, strategy.display_strategy) then
+                local height = math.floor(vim.o.lines * strategy.win_size)
+                win = vim.api.nvim_open_win(bufnr, enter, { split = display_strategy, height = height })
+            else
+                local width = math.floor(vim.o.columns * strategy.win_size)
+                win = vim.api.nvim_open_win(bufnr, enter, { split = display_strategy, width = width })
+            end
+        else
+            win = vim.api.nvim_open_win(bufnr, enter, { split = display_strategy })
+        end
     elseif display_strategy == strategies.FULL then
         vim.api.nvim_win_set_buf(0, bufnr)
     elseif display_strategy == strategies.DYNAMIC then

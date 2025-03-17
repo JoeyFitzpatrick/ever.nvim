@@ -41,7 +41,7 @@ function M.set_lines(bufnr, commit)
         return
     end
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    local commit_data = require("ever._core.run_cmd").run_cmd("git show --stat=10000 " .. commit)
+    local commit_data = require("ever._core.run_cmd").run_cmd("git show --stat=10000 --stat-graph-width=40 " .. commit)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, commit_data)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     for i, line in ipairs(commit_data) do
@@ -182,7 +182,8 @@ function M._display_auto_display(bufnr, commit, is_stash)
     if is_stash then
         cmd = string.format("diff %s^1 %s -- %s", commit, commit, line_data.safe_filename)
     end
-    DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(cmd, { display_strategy = "right", insert = false })
+    DIFF_CHANNEL_ID =
+        require("ever._ui.elements").terminal(cmd, { display_strategy = "below", win_size = 0.67, insert = false })
     DIFF_BUFNR = vim.api.nvim_get_current_buf()
     set_diff_buffer_autocmds(DIFF_BUFNR)
     vim.api.nvim_set_current_win(win)
