@@ -12,6 +12,29 @@ local CURRENT_DIFF_FILE = nil
 local DISPLAY_AUTODIFF = require("ever._core.configuration").DATA["commit_details"].auto_display_on
 
 ---@param bufnr integer
+---@param i integer
+---@param line string
+local function highlight_line(bufnr, i, line)
+    local start = line:find("|")
+    if not start then
+        return
+    end
+    local num_lines_changed_start, num_lines_changed_end = line:find("%d+", start)
+    require("ever._ui.highlight").highlight_line(
+        bufnr,
+        "Keyword",
+        i - 1,
+        num_lines_changed_start,
+        num_lines_changed_end
+    )
+    local hl_groups = require("ever._constants.highlight_groups").highlight_groups
+    local plus_start, plus_end = line:find("%++", start)
+    require("ever._ui.highlight").highlight_line(bufnr, hl_groups.EVER_DIFF_ADD, i - 1, plus_start, plus_end)
+    local minus_start, minus_end = line:find("%-+", start)
+    require("ever._ui.highlight").highlight_line(bufnr, hl_groups.EVER_DIFF_REMOVE, i - 1, minus_start, minus_end)
+end
+
+---@param bufnr integer
 ---@param commit string
 function M.set_lines(bufnr, commit)
     if not vim.api.nvim_buf_is_valid(bufnr) then
@@ -21,6 +44,9 @@ function M.set_lines(bufnr, commit)
     local commit_data = require("ever._core.run_cmd").run_cmd("git show --stat " .. commit)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, commit_data)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    for i, line in ipairs(commit_data) do
+        highlight_line(bufnr, i, line)
+    end
     for i, line in ipairs(commit_data) do
         if line:match("^%s%S") then
             vim.api.nvim_win_set_cursor(0, { i, 0 })
