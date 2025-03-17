@@ -85,6 +85,8 @@
 ---@field delete string
 ---@field log string
 ---@field new_branch string
+---@field pull string
+---@field push string
 ---@field rename string
 ---@field switch string
 
@@ -111,6 +113,8 @@
 ---@field checkout string
 ---@field commit_details string
 ---@field commit_info string
+---@field pull string
+---@field push string
 ---@field rebase string
 ---@field reset string
 ---@field revert string

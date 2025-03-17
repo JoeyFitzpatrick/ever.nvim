@@ -115,6 +115,17 @@ local function set_keymaps(bufnr, opts)
         )
     end, keymap_opts)
 
+    local keymap_to_command_map = {
+        { keymap = keymaps.pull, command = "pull" },
+        { keymap = keymaps.push, command = "push" },
+    }
+
+    for _, mapping in ipairs(keymap_to_command_map) do
+        set("n", mapping.keymap, function()
+            vim.cmd("G " .. mapping.command)
+        end, keymap_opts)
+    end
+
     set("n", keymaps.log, function()
         local line_data = get_line(bufnr)
         if not line_data then

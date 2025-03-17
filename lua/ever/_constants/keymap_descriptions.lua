@@ -1,3 +1,6 @@
+local PULL_DESCRIPTION = "Pull changes"
+local PUSH_DESCRIPTION = "Push changes"
+
 return {
     ---@type ever.HomeKeymaps
     home = {
@@ -25,6 +28,8 @@ return {
         delete = "Delete branch",
         log = "Show branch log",
         new_branch = "Create new branch",
+        pull = PULL_DESCRIPTION,
+        push = PUSH_DESCRIPTION,
         rename = "Rename branch",
         switch = "Switch branch",
     },
@@ -53,6 +58,8 @@ return {
         checkout = "Checkout commit (with detached HEAD)",
         commit_details = "Show commit details",
         commit_info = "Show commit info",
+        pull = PULL_DESCRIPTION,
+        push = PUSH_DESCRIPTION,
         rebase = "Rebase",
         reset = "Reset",
         revert = "Revert commit",
@@ -90,8 +97,8 @@ return {
         diff_file = "Diff file",
         edit_file = "Edit file",
         enter_staging_area = "Enter staging area (stage hunks/lines)",
-        pull = "Pull changes",
-        push = "Push changes",
+        pull = PULL_DESCRIPTION,
+        push = PUSH_DESCRIPTION,
         restore = "Restore file",
         stage = "Stage file",
         stage_all = "Stage all files",
