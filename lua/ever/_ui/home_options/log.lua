@@ -36,7 +36,7 @@ local DEFAULT_LOG_FORMAT = "--pretty='format:%h %<(25)%cr %<(25)%an %<(25)%s'"
 ---@return string
 function M._parse_log_cmd(args)
     local cmd_with_format = "git log " .. DEFAULT_LOG_FORMAT
-    if not args or args == "" then
+    if not args or args:match("log%s-$") then
         return cmd_with_format
     end
     return "git " .. args -- args already starts with "log "
