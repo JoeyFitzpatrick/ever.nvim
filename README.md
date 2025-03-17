@@ -91,6 +91,8 @@ G branch commands that do not display a list of branches, such as `:G branch --d
 ## G Log
 G log commands will typically open a UI. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the log UI.
 
+When using the `:G log` command without arguments, a default [`--pretty`](https://git-scm.com/docs/pretty-formats) option is passed to the `log` command to change how the output looks. Passing any arguments to `:G log` causes this `--pretty` option to not be added to the `log` command.
+
 ### G log -L
 
 G log has a `-L` flag, as shown [in the docs](https://git-scm.com/docs/git-log#Documentation/git-log.txt--Lltstartgtltendgtltfilegt). This can be used to see the commits that changed just the line numbers given, e.g. `git log -L20,40:example.lua`, to see just the commits that changed lines from 20 to 40 in `example.lua`. In many cases, this can be an extremely useful way to search for changes, as opposed to running something like `git log --follow example.lua`, which could show commits that made changes that you don't care about. With Ever, if you make a visual selection and run `:'<,'>G log`, without passing line numbers or a file name, it will pass the line numbers and file name automatically to the git command, making it much more convenient to use.
