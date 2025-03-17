@@ -3,6 +3,7 @@
 ---@field transform_line? fun(line: string): string
 ---@field highlight_line? fun(bufnr: integer, line: string, line_num: integer)
 ---@field on_exit? fun(bufnr: integer)
+---@field filetype? string
 
 local M = {}
 
@@ -12,6 +13,9 @@ local M = {}
 function M.stream_lines(bufnr, cmd, opts)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
+    end
+    if opts.filetype then
+        vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
     end
     local line_num = 0
     local error_code_handlers = opts.error_code_handlers or {}
