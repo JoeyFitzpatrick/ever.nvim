@@ -41,7 +41,7 @@ function M.set_lines(bufnr, commit)
         return
     end
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    local commit_data = require("ever._core.run_cmd").run_cmd("git show --stat " .. commit)
+    local commit_data = require("ever._core.run_cmd").run_cmd("git show --stat=10000 " .. commit)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, commit_data)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     for i, line in ipairs(commit_data) do
