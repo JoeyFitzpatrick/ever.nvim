@@ -5,11 +5,6 @@
 
 local M = {}
 
-local DIFF_BUFNR = nil
-local DIFF_CHANNEL_ID = nil
-local CURRENT_STASH_INDEX = nil
-local DISPLAY_AUTODIFF = require("ever._core.configuration").DATA["stash"].auto_display_on
-
 --- Highlight stash lines
 ---@param bufnr integer
 ---@param start_line integer
@@ -62,18 +57,6 @@ local function set_keymaps(bufnr)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    set("n", keymaps.toggle_auto_display, function()
-        if DISPLAY_AUTODIFF then
-            require("ever._core.register").deregister_buffer(DIFF_BUFNR)
-            DIFF_BUFNR = nil
-            DISPLAY_AUTODIFF = false
-            CURRENT_STASH_INDEX = nil
-        else
-            DISPLAY_AUTODIFF = true
-            M._display_auto_display(bufnr)
-        end
-    end, keymap_opts)
-
     set("n", keymaps.apply, function()
         local line_data = get_line(bufnr)
         if not line_data then
@@ -111,98 +94,32 @@ local function set_keymaps(bufnr)
         if not line_data then
             return
         end
-        if DIFF_BUFNR then
-            vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
-            DIFF_BUFNR = nil
-        end
-        CURRENT_STASH_INDEX = nil
         require("ever._ui.commit_details").render(line_data.stash_index, true)
     end, keymap_opts)
-
-    set("n", keymaps.scroll_diff_down, function()
-        if DIFF_BUFNR and DIFF_CHANNEL_ID then
-            pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "jj")
-        end
-    end, keymap_opts)
-
-    set("n", keymaps.scroll_diff_up, function()
-        if DIFF_BUFNR and DIFF_CHANNEL_ID then
-            pcall(vim.api.nvim_chan_send, DIFF_CHANNEL_ID, "kk")
-        end
-    end, keymap_opts)
-end
-
-local function set_diff_buffer_autocmds(diff_bufnr)
-    vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-        desc = "Stop insert mode on buf enter",
-        buffer = diff_bufnr,
-        command = "stopinsert",
-        group = vim.api.nvim_create_augroup("EverAtashUi", { clear = false }),
-    })
-    vim.api.nvim_create_autocmd("BufHidden", {
-        desc = "Clean up diff variables",
-        buffer = diff_bufnr,
-        callback = function()
-            DIFF_BUFNR = nil
-            DIFF_CHANNEL_ID = nil
-        end,
-    })
-end
-
-function M._display_auto_display(bufnr)
-    local line_data = get_line(bufnr)
-    if not line_data or line_data.stash_index == CURRENT_STASH_INDEX then
-        return
-    end
-    CURRENT_STASH_INDEX = line_data.stash_index
-    if DIFF_BUFNR then
-        vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
-        DIFF_BUFNR = nil
-        DIFF_CHANNEL_ID = nil
-    end
-    local win = vim.api.nvim_get_current_win()
-    DIFF_CHANNEL_ID = require("ever._ui.elements").terminal(
-        "stash show -p " .. line_data.stash_index,
-        { display_strategy = "right", insert = false }
-    )
-    DIFF_BUFNR = vim.api.nvim_get_current_buf()
-    set_diff_buffer_autocmds(DIFF_BUFNR)
-    vim.api.nvim_set_current_win(win)
-end
-
----@param bufnr integer
-local function set_autocmds(bufnr)
-    vim.api.nvim_create_autocmd("CursorMoved", {
-        desc = "Show changes in stash under the cursor",
-        buffer = bufnr,
-        callback = function()
-            if not DISPLAY_AUTODIFF then
-                return
-            end
-            M._display_auto_display(bufnr)
-        end,
-        group = vim.api.nvim_create_augroup("EverStashAutoDiff", { clear = true }),
-    })
-
-    vim.api.nvim_create_autocmd("BufHidden", {
-        desc = "Close open diffs when buffer is hidden",
-        buffer = bufnr,
-        callback = function()
-            if DIFF_BUFNR then
-                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
-                DIFF_BUFNR = nil
-            end
-            CURRENT_STASH_INDEX = nil
-        end,
-        group = vim.api.nvim_create_augroup("EverStashCloseAutoDiff", { clear = true }),
-    })
 end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
     set_lines(bufnr, opts)
-    set_autocmds(bufnr)
+    require("ever._ui.auto_display").create_auto_display(bufnr, "stash", {
+        generate_cmd = function()
+            local line_data = get_line(bufnr)
+            if not line_data then
+                return
+            end
+            return "stash show -p " .. line_data.stash_index
+        end,
+        get_current_diff = function()
+            local line_data = get_line(bufnr)
+            if not line_data then
+                return
+            end
+            return line_data.stash_index
+        end,
+        strategy = { display_strategy = "right", insert = false, trigger_redraw = false },
+    })
+
     set_keymaps(bufnr)
 end
 

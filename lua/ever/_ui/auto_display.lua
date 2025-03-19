@@ -1,6 +1,6 @@
 ---@class ever.AutoDisplayOpts
 ---@field generate_cmd fun(bufnr: integer): string?
----@field get_current_diff fun(bufnr: integer): string
+---@field get_current_diff fun(bufnr: integer): string?
 ---@field strategy ever.Strategy
 
 local M = {}
@@ -64,6 +64,9 @@ local function render_auto_display(bufnr, ui_type, auto_display_opts)
         return
     end
     local diff_cmd = auto_display_opts.generate_cmd(bufnr)
+    if not diff_cmd then
+        return
+    end
     state.current_diff = current_diff
     if state.diff_bufnr then
         vim.api.nvim_buf_delete(state.diff_bufnr, { force = true })

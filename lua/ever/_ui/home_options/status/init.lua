@@ -239,7 +239,11 @@ function M.render(bufnr, opts)
             return get_diff_cmd(line_data.status, line_data.safe_filename)
         end,
         get_current_diff = function()
-            return M.get_line(bufnr).safe_filename
+            local line_data = M.get_line(bufnr)
+            if not line_data then
+                return
+            end
+            return line_data.safe_filename
         end,
         strategy = { enter = false },
     })
