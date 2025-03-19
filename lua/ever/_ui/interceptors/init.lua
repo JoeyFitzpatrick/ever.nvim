@@ -24,6 +24,7 @@ local cmd_ui_map = {
             render_fn = function()
                 require("ever._ui.home_options.status").set_lines(bufnr, { start_line = 1 })
             end,
+            state = {},
         })
     end,
 }

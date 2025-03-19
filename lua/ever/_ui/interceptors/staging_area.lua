@@ -86,6 +86,7 @@ local function setup_diff_buffer(bufnr, cmd, diff_type)
         render_fn = function()
             require("ever._ui.stream").stream_lines(bufnr, cmd, {})
         end,
+        state = {},
     })
     set_diff_buffer_autocmds(bufnr)
     if diff_type == "unstaged" then

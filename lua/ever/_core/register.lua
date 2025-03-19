@@ -1,5 +1,6 @@
 ---@class ever.RegisterOpts
 ---@field render_fn fun()
+---@field state table<string, any>
 
 local M = {}
 

@@ -159,16 +159,18 @@ local function create_and_render_buffer(tab, indices)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, tabs_text)
 
     local ui_render = tab_render_map[tab]
+    require("ever._core.register").register_buffer(bufnr, {
+        render_fn = function()
+            ui_render(bufnr, { start_line = TAB_HEIGHT })
+        end,
+        state = {},
+    })
+
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     ui_render(bufnr, { start_line = TAB_HEIGHT })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     vim.api.nvim_win_set_cursor(0, { math.min(vim.api.nvim_buf_line_count(bufnr), 5), 0 })
     highlight_tabs(bufnr, indices)
-    require("ever._core.register").register_buffer(bufnr, {
-        render_fn = function()
-            ui_render(bufnr, { start_line = TAB_HEIGHT })
-        end,
-    })
 
     local keymaps = require("ever._core.configuration").DATA.home.keymaps
     local set = require("ever._ui.keymaps.set").safe_set_keymap
