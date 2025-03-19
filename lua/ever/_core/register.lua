@@ -1,6 +1,6 @@
 ---@class ever.RegisterOpts
----@field render_fn fun()
----@field state table<string, any>
+---@field render_fn? fun()
+---@field state? table<string, any>
 
 local M = {}
 
@@ -10,6 +10,9 @@ M.buffers = {}
 ---@param bufnr integer
 ---@param opts ever.RegisterOpts
 function M.register_buffer(bufnr, opts)
+    if not opts.state then
+        opts.state = {}
+    end
     M.buffers[bufnr] = opts
 end
 
@@ -31,7 +34,7 @@ function M.rerender_buffers(bufnr)
         M.buffers[bufnr].render_fn(bufnr)
     end
     for buf, opts in pairs(M.buffers) do
-        if buf ~= bufnr then
+        if buf ~= bufnr and opts.render_fn then
             vim.schedule(opts.render_fn)
         end
     end

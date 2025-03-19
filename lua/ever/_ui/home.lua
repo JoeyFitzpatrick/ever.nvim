@@ -163,7 +163,6 @@ local function create_and_render_buffer(tab, indices)
         render_fn = function()
             ui_render(bufnr, { start_line = TAB_HEIGHT })
         end,
-        state = {},
     })
 
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })

@@ -144,14 +144,26 @@ end
 function M.create_auto_display(bufnr, ui_type, auto_display_opts)
     local register = require("ever._core.register")
     if not register.buffers[bufnr] then
-        return
+        register.register_buffer(bufnr, {})
     end
     assert(require("ever._core.configuration").DATA[ui_type], "Couldn't find config for ui type: " .. ui_type)
 
     local buf = require("ever._core.register").buffers[bufnr]
-    clear_state(buf.state, ui_type)
+    if buf then
+        clear_state(buf.state, ui_type)
+    end
     set_keymaps(bufnr, ui_type, auto_display_opts)
     set_autocmds(bufnr, ui_type, auto_display_opts)
+end
+
+---@param bufnr integer
+---@param ui_type string
+function M.close_auto_display(bufnr, ui_type)
+    local buf = require("ever._core.register").buffers[bufnr]
+    if not buf then
+        return
+    end
+    clear_state(buf.state, ui_type)
 end
 
 return M
