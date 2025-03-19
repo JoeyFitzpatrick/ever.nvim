@@ -13,6 +13,7 @@
 ---@field commit_details ever.CommitDetailsConfiguration
 ---@field commit_popup ever.CommitPopupConfiguration
 ---@field diff ever.DiffConfiguration
+---@field difftool ever.DifftoolConfiguration
 ---@field log ever.LogConfiguration
 ---@field open_files ever.OpenFilesConfiguration
 ---@field reflog ever.ReflogConfiguration
@@ -42,6 +43,9 @@
 
 ---@class ever.DiffConfiguration
 ---@field keymaps ever.DiffKeymaps
+
+---@class ever.DifftoolConfiguration
+---@field auto_display_on boolean
 
 ---@class ever.LogConfiguration
 ---@field keymaps ever.LogKeymaps

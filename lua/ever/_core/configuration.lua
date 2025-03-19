@@ -80,6 +80,9 @@ local _DEFAULTS = {
             stage_line = "sl",
         },
     },
+    difftool = {
+        auto_display_on = true,
+    },
     log = {
         keymaps = {
             checkout = "c",

@@ -4,11 +4,6 @@
 
 local M = {}
 
-local DIFF_BUFNR = nil
-local CURRENT_DIFF_FILE = nil
----@type string
-local COMMITS_TO_DIFF = ""
-
 ---@param cmd string
 ---@return string
 function M._get_commits_to_diff(cmd)
@@ -25,14 +20,10 @@ function M._get_commits_to_diff(cmd)
     return commits
 end
 
---- This sets COMMITS_TO_DIFF, which is used to derive commands to see what files to diff and create diff commands.
-local function set_commits_to_diff(cmd)
-    COMMITS_TO_DIFF = M._get_commits_to_diff(cmd)
-end
-
+---@param commits_to_diff string
 ---@return string[]
-local function get_diff_files()
-    local diff_cmd = string.format("git diff --name-status %s", COMMITS_TO_DIFF)
+local function get_diff_files(commits_to_diff)
+    local diff_cmd = string.format("git diff --name-status %s", commits_to_diff)
     local diff_stat_cmd = diff_cmd:gsub("%-%-name%-status", "--numstat", 1)
     local diff_files = require("ever._core.run_cmd").run_cmd(diff_cmd)
     local diff_stats = require("ever._core.run_cmd").run_cmd(diff_stat_cmd)
@@ -83,129 +74,6 @@ local function get_line(bufnr, line_num)
     return { filename = filename, safe_filename = "'" .. filename .. "'" }
 end
 
---- Uses COMMITS_TO_DIFF to create a command to diff a file between commits
----@param filename string
----@return string
-local function get_diff_cmd(filename)
-    return string.format("git diff %s -- %s", COMMITS_TO_DIFF, filename)
-end
-
-local function set_diff_buffer_autocmds(diff_bufnr)
-    vim.api.nvim_create_autocmd("BufHidden", {
-        desc = "Clean up autodiff variables and buffer",
-        buffer = diff_bufnr,
-        callback = function()
-            DIFF_BUFNR = nil
-            CURRENT_DIFF_FILE = nil
-        end,
-    })
-end
-
----@param bufnr integer The bufnr of the buffer that shows the diff
-local function set_diff_buffer_keymaps(bufnr)
-    require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
-    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "diff", {})
-    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-    local set = require("ever._ui.keymaps.set").safe_set_keymap
-
-    set("n", "q", function()
-        local upper_win = vim.fn.winnr("k")
-        if upper_win == 0 then
-            return
-        end
-        local win = vim.fn.win_getid(upper_win)
-        vim.api.nvim_set_current_win(win)
-        vim.api.nvim_buf_delete(0, { force = true })
-    end, keymap_opts)
-
-    set("n", keymaps.next_file, function()
-        local upper_win = vim.fn.winnr("k")
-        if upper_win == 0 then
-            return
-        end
-        local win = vim.fn.win_getid(upper_win)
-        vim.api.nvim_set_current_win(win)
-        local cursor_pos = vim.api.nvim_win_get_cursor(win)
-        vim.api.nvim_win_set_cursor(win, { cursor_pos[1] + 1, cursor_pos[2] })
-        vim.schedule(function()
-            local lower_win = vim.fn.win_getid(vim.fn.winnr("j"))
-            vim.api.nvim_set_current_win(lower_win)
-        end)
-    end, keymap_opts)
-
-    set("n", keymaps.previous_file, function()
-        local upper_win = vim.fn.winnr("k")
-        if upper_win == 0 then
-            return
-        end
-        local win = vim.fn.win_getid(upper_win)
-        vim.api.nvim_set_current_win(win)
-        local cursor_pos = vim.api.nvim_win_get_cursor(win)
-        vim.api.nvim_win_set_cursor(win, { cursor_pos[1] - 1, cursor_pos[2] })
-        vim.schedule(function()
-            local lower_win = vim.fn.win_getid(vim.fn.winnr("j"))
-            vim.api.nvim_set_current_win(lower_win)
-        end)
-    end, keymap_opts)
-end
-
----@param bufnr integer The bufnr of the buffer that shows the diff
----@param line_data ever.DiffLineData Line data
-local function setup_diff_buffer(bufnr, line_data)
-    if not vim.api.nvim_buf_is_valid(bufnr) then
-        return
-    end
-    local cmd = get_diff_cmd(line_data.safe_filename)
-    require("ever._core.register").register_buffer(bufnr, {
-        render_fn = function()
-            require("ever._ui.stream").stream_lines(bufnr, cmd, {})
-        end,
-    })
-    require("ever._ui.stream").stream_lines(bufnr, cmd, {})
-    set_diff_buffer_autocmds(bufnr)
-    set_diff_buffer_keymaps(bufnr)
-end
-
----@param bufnr integer
-local function set_autocmds(bufnr)
-    vim.api.nvim_create_autocmd("CursorMoved", {
-        desc = "Diff the file under the cursor",
-        buffer = bufnr,
-        callback = function()
-            local line_data = get_line(bufnr)
-            if not line_data or line_data.filename == CURRENT_DIFF_FILE then
-                return
-            end
-            CURRENT_DIFF_FILE = line_data.filename
-            if DIFF_BUFNR and vim.api.nvim_buf_is_valid(DIFF_BUFNR) then
-                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
-            end
-            DIFF_BUFNR = vim.api.nvim_create_buf(false, true)
-            DIFF_BUFNR = require("ever._ui.elements").new_buffer({
-                filetype = "git",
-                buffer_name = "EverDiff--" .. line_data.filename,
-                enter = false,
-                win_config = { split = "below", height = math.floor(vim.o.lines * 0.67) },
-            })
-            setup_diff_buffer(DIFF_BUFNR, line_data)
-        end,
-        group = vim.api.nvim_create_augroup("EverDiffAutoDiff", { clear = true }),
-    })
-
-    vim.api.nvim_create_autocmd({ "BufWipeout" }, {
-        desc = "Close open diffs when buffer is hidden",
-        buffer = bufnr,
-        callback = function()
-            if DIFF_BUFNR and vim.api.nvim_buf_is_valid(DIFF_BUFNR) then
-                vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
-                DIFF_BUFNR = nil
-            end
-            CURRENT_DIFF_FILE = nil
-        end,
-        group = vim.api.nvim_create_augroup("EverDiffCloseAutoDiff", { clear = true }),
-    })
-end
-
 local function set_keymaps(bufnr)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
@@ -218,23 +86,33 @@ end
 M.render = function(cmd)
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, bufnr)
-    set_commits_to_diff(cmd)
+    local commits_to_diff = M._get_commits_to_diff(cmd)
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_diff_files())
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_diff_files(commits_to_diff))
     highlight(bufnr)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     set_keymaps(bufnr)
-    set_autocmds(bufnr)
+    require("ever._ui.auto_display").create_auto_display(bufnr, "difftool", {
+        generate_cmd = function()
+            local line_data = get_line(bufnr)
+            if not line_data then
+                return
+            end
+            return string.format("diff %s -- %s", commits_to_diff, line_data.safe_filename)
+        end,
+        get_current_diff = function()
+            local line_data = get_line(bufnr)
+            if not line_data then
+                return
+            end
+            return line_data.safe_filename
+        end,
+        strategy = { display_strategy = "below", win_size = 0.67 },
+    })
 end
 
 function M.cleanup(bufnr)
-    if DIFF_BUFNR then
-        vim.api.nvim_buf_delete(DIFF_BUFNR, { force = true })
-        DIFF_BUFNR = nil
-    end
-    CURRENT_DIFF_FILE = nil
-    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverDiffAutoDiff" })
-    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverDiffCloseAutoDiff" })
+    require("ever._core.register").deregister_buffer(bufnr)
 end
 
 return M

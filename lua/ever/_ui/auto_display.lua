@@ -146,6 +146,7 @@ function M.create_auto_display(bufnr, ui_type, auto_display_opts)
     if not register.buffers[bufnr] then
         register.register_buffer(bufnr, {})
     end
+    -- We need this check to ensure that we have an "auto_display_on" toggle in config
     assert(require("ever._core.configuration").DATA[ui_type], "Couldn't find config for ui type: " .. ui_type)
 
     local buf = require("ever._core.register").buffers[bufnr]
