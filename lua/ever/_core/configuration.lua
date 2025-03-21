@@ -47,7 +47,7 @@ local _DEFAULTS = {
     },
     branch = {
         keymaps = {
-            delete = "db",
+            delete = "d",
             log = "<enter>",
             new_branch = "n",
             pull = "p",
