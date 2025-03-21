@@ -126,7 +126,8 @@ function M.render(commit, is_stash)
             if not line_data then
                 return
             end
-            local cmd = "show -p " .. commit .. " -- " .. line_data.safe_filename
+            -- the -m flag diffs both merge commits and normal commits
+            local cmd = "show -m " .. commit .. " -- " .. line_data.safe_filename
             if is_stash then
                 cmd = string.format("diff %s^1 %s -- %s", commit, commit, line_data.safe_filename)
             end
