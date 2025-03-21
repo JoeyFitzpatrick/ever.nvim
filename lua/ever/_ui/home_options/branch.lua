@@ -21,6 +21,10 @@ end
 ---@return string[]
 local function set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
+    -- if cmd is nil, the default command is "git branch"
+    if not opts.cmd then
+        opts.cmd = "branch"
+    end
     local output = require("ever._core.run_cmd").run_cmd(string.format("git %s", opts.cmd))
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
@@ -132,7 +136,6 @@ local function set_keymaps(bufnr, opts)
             return
         end
         local log_bufnr = require("ever._ui.elements").new_buffer({ buffer_name = "EverLog-" .. os.tmpname() })
-        vim.print(line_data.branch_name)
         require("ever._ui.home_options.log").render(
             log_bufnr,
             { start_line = 0, cmd = "log " .. line_data.branch_name }

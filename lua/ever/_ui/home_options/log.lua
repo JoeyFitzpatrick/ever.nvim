@@ -35,8 +35,12 @@ local DEFAULT_LOG_FORMAT = "--pretty='format:%h %<(25)%cr %<(25)%an %<(25)%s'"
 ---@param args? string
 ---@return string
 function M._parse_log_cmd(args)
+    -- if cmd is nil, the default command is "git log" with special format
+    if not args then
+        return string.format("git log %s", DEFAULT_LOG_FORMAT)
+    end
     local cmd_with_format = string.format("git %s %s", args, DEFAULT_LOG_FORMAT)
-    if not args or args:match("log%s-$") then
+    if args:match("log%s-$") then
         return cmd_with_format
     end
     -- This checks whether a flag that starts with "-" is present
@@ -147,7 +151,7 @@ local function set_keymaps(bufnr, opts)
         if not line_data then
             return
         end
-        require("ever._ui.commit_details").render(line_data.hash)
+        require("ever._ui.commit_details").render(line_data.hash, {})
     end, keymap_opts)
 
     set("n", keymaps.commit_info, function()
