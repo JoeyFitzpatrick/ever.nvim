@@ -4,12 +4,15 @@ local cmd_ui_map = {
     blame = function(cmd)
         require("ever._ui.interceptors.blame").render(cmd)
     end,
+    branch = function(cmd)
+        local bufnr = require("ever._ui.elements").new_buffer({ buffer_name = "EverBranch-" .. os.tmpname() })
+        require("ever._ui.home_options.branch").render(bufnr, { start_line = 0, cmd = cmd })
+    end,
     difftool = function(cmd)
         require("ever._ui.interceptors.difftool").render(cmd)
     end,
     log = function(cmd)
-        local bufnr = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_win_set_buf(0, bufnr)
+        local bufnr = require("ever._ui.elements").new_buffer({ buffer_name = "EverLog-" .. os.tmpname() })
         require("ever._ui.home_options.log").render(bufnr, { start_line = 0, cmd = cmd })
     end,
     mergetool = function()
