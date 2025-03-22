@@ -145,8 +145,4 @@ function M.render(commit, is_stash)
     set_keymaps(bufnr, commit)
 end
 
-function M.cleanup(bufnr)
-    require("ever._core.register").deregister_buffer(bufnr)
-end
-
 return M

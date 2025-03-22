@@ -170,19 +170,4 @@ M.render = function()
     return bufnr
 end
 
-function M.cleanup(bufnr)
-    CURRENT_DIFF_FILE = nil
-    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverDiffAutoDiff" })
-    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "EverDiffCloseAutoDiff" })
-    if DIFF_BUFNR_UNSTAGED then
-        require("ever._core.register").deregister_buffer(DIFF_BUFNR_UNSTAGED)
-        DIFF_BUFNR_UNSTAGED = nil
-    end
-    if DIFF_BUFNR_STAGED then
-        require("ever._core.register").deregister_buffer(DIFF_BUFNR_STAGED)
-        DIFF_BUFNR_STAGED = nil
-    end
-    require("ever._core.register").deregister_buffer(bufnr)
-end
-
 return M

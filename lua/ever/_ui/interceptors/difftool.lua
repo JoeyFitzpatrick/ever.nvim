@@ -111,8 +111,4 @@ M.render = function(cmd)
     })
 end
 
-function M.cleanup(bufnr)
-    require("ever._core.register").deregister_buffer(bufnr)
-end
-
 return M

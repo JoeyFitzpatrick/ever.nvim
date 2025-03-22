@@ -136,21 +136,6 @@ local tab_render_map = {
     end,
 }
 
-local tab_cleanup_map = {
-    Status = function(bufnr)
-        require("ever._ui.home_options.status").cleanup(bufnr)
-    end,
-    Branch = function(bufnr)
-        require("ever._ui.home_options.branch").cleanup(bufnr)
-    end,
-    Log = function(bufnr)
-        require("ever._ui.home_options.log").cleanup(bufnr)
-    end,
-    Stash = function(bufnr)
-        require("ever._ui.home_options.stash").cleanup(bufnr)
-    end,
-}
-
 ---@param tab ever.TabOption
 ---@param indices ever.TabHighlightIndices[]
 local function create_and_render_buffer(tab, indices)
@@ -175,19 +160,19 @@ local function create_and_render_buffer(tab, indices)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", "q", function()
-        tab_cleanup_map[tabs.current_option](bufnr)
+        require("ever._core.register").deregister_buffer(bufnr)
     end, { buffer = bufnr })
 
     set("n", keymaps.next, function()
         local old_bufnr = bufnr
-        tab_cleanup_map[tabs.current_option](old_bufnr)
+        require("ever._core.register").deregister_buffer(old_bufnr)
         tabs:cycle_tab("forward")
         create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
     end, { buffer = bufnr })
 
     set("n", keymaps.previous, function()
         local old_bufnr = bufnr
-        tab_cleanup_map[tabs.current_option](old_bufnr)
+        require("ever._core.register").deregister_buffer(old_bufnr)
         tabs:cycle_tab("back")
         create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
     end, { buffer = bufnr })
