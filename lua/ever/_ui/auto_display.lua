@@ -9,8 +9,8 @@ local M = {}
 ---@param ui_type string
 ---@param display_auto_display? boolean
 local function clear_state(state, ui_type, display_auto_display)
-    if state.diff_bufnr then
-        require("ever._core.register").deregister_buffer(state.diff_bufnr)
+    if state.diff_bufnr and vim.api.nvim_buf_is_valid(state.diff_bufnr) then
+        vim.api.nvim_buf_delete(state.diff_bufnr, { force = true })
     end
     state.diff_bufnr = nil
     state.diff_channel_id = nil

@@ -23,6 +23,10 @@ function M.deregister_buffer(bufnr)
     end
     M.buffers[bufnr] = nil
     if vim.api.nvim_buf_is_valid(bufnr) then
+        -- Navigate to previous buffer before removing this buffer
+        -- This is to prevent issues where calling deregister in a
+        -- split or tab closes that split or tab
+        vim.cmd("b#")
         vim.api.nvim_buf_delete(bufnr, { force = true })
     end
 end
