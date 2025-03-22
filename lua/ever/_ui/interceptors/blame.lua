@@ -176,9 +176,8 @@ local function set_autocmds(blame_bufnr, file_win, blame_buffer_name)
         vim.api.nvim_set_option_value(setting.name, setting.value, { win = file_win }) -- set value in file window
         vim.api.nvim_set_option_value(setting.name, setting.value, { win = 0 }) -- set value in blame window
     end
-    local file_win_line_num = vim.api.nvim_win_get_cursor(file_win)[1]
-    vim.api.nvim_win_set_cursor(0, { file_win_line_num, 0 })
-    vim.cmd("syncbind")
+    vim.wo.number = false
+    vim.wo.relativenumber = false
 
     vim.api.nvim_create_autocmd("BufHidden", {
         group = vim.api.nvim_create_augroup("EverBlameBufHidden", { clear = true }),
@@ -226,7 +225,9 @@ M.render = function(cmd)
     if not cmd:match("%-%- %S+") then
         cmd = cmd .. " -- " .. current_filename
     end
-    local win = vim.api.nvim_get_current_win()
+    local file_win = vim.api.nvim_get_current_win()
+    local original_cursor_pos = vim.api.nvim_win_get_cursor(file_win)
+    local file_win_line_num = vim.fn.line("w0", file_win)
     local bufnr = require("ever._ui.elements").new_buffer({
         win_config = { split = "left", width = math.floor(vim.o.columns * 0.33) },
         buffer_name = blame_buffer_name,
@@ -235,7 +236,20 @@ M.render = function(cmd)
     M.set_lines(bufnr, cmd)
     vim.api.nvim_set_option_value("wrap", false, { win = 0 })
     set_keymaps(bufnr)
-    set_autocmds(bufnr, win, blame_buffer_name)
+    set_autocmds(bufnr, file_win, blame_buffer_name)
+
+    local ok = pcall(function()
+        local blame_win_initial_line = file_win_line_num
+            + vim.api.nvim_get_option_value("scrolloff", { win = file_win })
+        vim.api.nvim_win_set_cursor(0, { blame_win_initial_line, 0 })
+    end)
+    if not ok then
+        vim.api.nvim_win_set_cursor(0, { file_win_line_num, 0 })
+    end
+    vim.cmd.normal("zt!")
+    vim.api.nvim_win_set_cursor(0, original_cursor_pos)
+    vim.api.nvim_win_set_cursor(file_win, original_cursor_pos)
+    vim.cmd("syncbind")
 end
 
 return M
