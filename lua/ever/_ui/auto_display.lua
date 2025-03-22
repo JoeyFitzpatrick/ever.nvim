@@ -34,7 +34,7 @@ local function set_diff_buffer_autocmds(diff_bufnr, original_bufnr, ui_type)
         desc = "Close open diffs when buffer is hidden",
         buffer = original_bufnr,
         callback = function()
-            require("ever._core.register").deregister_buffer(diff_bufnr)
+            require("ever._core.register").deregister_buffer(diff_bufnr, {})
             local buf = require("ever._core.register").buffers[original_bufnr]
             if buf then
                 clear_state(buf.state, ui_type)

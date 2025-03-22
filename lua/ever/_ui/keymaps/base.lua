@@ -5,6 +5,7 @@
 ---@field popup? boolean
 ---@field open_file_keymaps? boolean
 ---@field auto_display_keymaps? boolean
+---@field close_split_on_close? boolean
 
 local M = {}
 
@@ -90,7 +91,7 @@ local function display_keymap_help(mappings, ui_type, opts)
     local keymap_opts = { buffer = bufnr }
 
     vim.keymap.set("n", "q", function()
-        require("ever._core.register").deregister_buffer(bufnr)
+        require("ever._core.register").deregister_buffer(bufnr, {})
     end, keymap_opts)
 end
 
@@ -117,7 +118,7 @@ function M.get_keymaps(bufnr, ui_type, opts)
     end
 
     vim.keymap.set("n", "q", function()
-        require("ever._core.register").deregister_buffer(bufnr)
+        require("ever._core.register").deregister_buffer(bufnr, { close_split_on_close = opts.close_split_on_close })
     end, { buffer = bufnr })
 
     return mappings

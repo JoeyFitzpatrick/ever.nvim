@@ -2,6 +2,9 @@
 ---@field render_fn? fun()
 ---@field state? table<string, any>
 
+---@class ever.DeregisterOpts
+---@field close_split_on_close? boolean
+
 local M = {}
 
 ---@type table<integer, ever.RegisterOpts>
@@ -17,16 +20,19 @@ function M.register_buffer(bufnr, opts)
 end
 
 ---@param bufnr? integer
-function M.deregister_buffer(bufnr)
+---@param opts ever.DeregisterOpts
+function M.deregister_buffer(bufnr, opts)
     if not bufnr then
         return
     end
     M.buffers[bufnr] = nil
     if vim.api.nvim_buf_is_valid(bufnr) then
-        -- Navigate to previous buffer before removing this buffer
-        -- This is to prevent issues where calling deregister in a
-        -- split or tab closes that split or tab
-        vim.cmd("b#")
+        if not opts.close_split_on_close then
+            -- Navigate to previous buffer before removing this buffer.
+            -- This is to prevent issues where calling deregister in a
+            -- split or tab closes that split or tab.
+            vim.cmd("b#")
+        end
         vim.api.nvim_buf_delete(bufnr, { force = true })
     end
 end

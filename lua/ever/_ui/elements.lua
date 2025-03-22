@@ -215,7 +215,7 @@ function M.new_buffer(opts)
         end
     end
     vim.keymap.set("n", "q", function()
-        require("ever._core.register").deregister_buffer(bufnr)
+        require("ever._core.register").deregister_buffer(bufnr, {})
     end, { buffer = bufnr })
     return bufnr
 end

@@ -18,7 +18,7 @@ end
 
 local function set_keymaps(bufnr)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "blame", {})
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "blame", { close_split_on_close = true })
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", keymaps.checkout, function()
