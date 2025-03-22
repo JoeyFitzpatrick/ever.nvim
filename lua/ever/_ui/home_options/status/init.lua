@@ -31,6 +31,17 @@ local function highlight(bufnr, start_line, lines)
     end
 end
 
+-- Git sorts files by status, and when a status changes by (un)staging,
+-- it can re-order the files, which we don't want.
+-- Instead, sort by the filepaths.
+-- NOTE: this function sorts the input table in place.
+---@param files string[]
+function M._sort_status_files(files)
+    table.sort(files, function(left, right)
+        return left:sub(4) < right:sub(4)
+    end)
+end
+
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 function M.set_lines(bufnr, opts)
@@ -44,6 +55,7 @@ function M.set_lines(bufnr, opts)
         "git diff --staged --shortstat | grep -q '^' && git diff --staged --shortstat || echo 'No files staged'"
     )[1]
     local files = run_cmd("git status --porcelain --untracked")
+    M._sort_status_files(files)
     vim.api.nvim_buf_set_lines(bufnr, math.max(0, start_line - 1), -1, false, { stat_line, unpack(files) })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     highlight(bufnr, start_line, files)
