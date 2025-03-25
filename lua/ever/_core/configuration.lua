@@ -68,6 +68,7 @@ local _DEFAULTS = {
             commit_amend = "a",
             commit_amend_reuse_message = "A",
             commit_dry_run = "d",
+            commit_no_verify = "n",
         },
     },
     diff = {

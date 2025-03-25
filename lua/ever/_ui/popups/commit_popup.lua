@@ -11,6 +11,7 @@ local function set_keymaps(bufnr)
         [keymaps.commit_amend] = "G commit --amend",
         [keymaps.commit_amend_reuse_message] = "G commit --amend --reuse-message HEAD --no-verify",
         [keymaps.commit_dry_run] = "G commit --dry-run",
+        [keymaps.commit_no_verify] = "G commit --no-verify",
     }
 
     for keys, command in pairs(keymap_command_map) do
