@@ -1,5 +1,6 @@
 -- Staging area render
 
+--remove this comment
 local M = {}
 
 local DIFF_BUFNR_UNSTAGED = nil
@@ -76,15 +77,47 @@ local function set_diff_keymaps(bufnr, is_staged)
 end
 
 ---@param bufnr integer
+---@param win integer
 ---@param cmd string
 ---@param diff_type "unstaged" | "staged"
-local function setup_diff_buffer(bufnr, cmd, diff_type)
+local function setup_diff_buffer(bufnr, win, cmd, diff_type)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
     require("ever._core.register").register_buffer(bufnr, {
         render_fn = function()
+            local win_valid, original_cursor_pos = pcall(vim.api.nvim_win_get_cursor, win)
             require("ever._ui.stream").stream_lines(bufnr, cmd, {})
+            vim.defer_fn(function()
+                if not win_valid then
+                    return
+                end
+                local ok = pcall(vim.api.nvim_win_set_cursor, win, original_cursor_pos)
+                local cursor_start_pos
+                if ok then
+                    cursor_start_pos = original_cursor_pos[1]
+                else
+                    cursor_start_pos = 0
+                end
+                pcall(function()
+                    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, cursor_start_pos + 6, false)
+                    for i = cursor_start_pos, 1, -1 do
+                        local line = lines[i]
+                        if line:match("^@@") then
+                            vim.api.nvim_win_set_cursor(win, { i, 0 })
+                            return
+                        end
+                    end
+                    for i = cursor_start_pos, cursor_start_pos + 6 do
+                        local line = lines[i]
+                        if line:match("^@@") then
+                            vim.api.nvim_win_set_cursor(win, { i, 0 })
+                            return
+                        end
+                    end
+                    vim.api.nvim_win_set_cursor(win, { cursor_start_pos, 0 })
+                end)
+            end, 50)
         end,
     })
     set_diff_buffer_autocmds(bufnr)
@@ -115,20 +148,23 @@ local function set_autocmds(bufnr)
             local win = vim.api.nvim_get_current_win()
             local diff_cmds = get_diff_cmd(line_data.status, line_data.safe_filename)
 
-            DIFF_BUFNR_UNSTAGED = require("ever._ui.elements").new_buffer({
+            local unstaged_win
+            DIFF_BUFNR_UNSTAGED, unstaged_win = require("ever._ui.elements").new_buffer({
                 filetype = "git",
                 buffer_name = "EverDiffUnstaged--" .. line_data.filename .. ".git",
                 win_config = { split = "below", height = math.floor(vim.o.lines * 0.67) },
             })
             require("ever._ui.stream").stream_lines(DIFF_BUFNR_UNSTAGED, diff_cmds.unstaged_diff_cmd, {})
-            DIFF_BUFNR_STAGED = require("ever._ui.elements").new_buffer({
+
+            local staged_win
+            DIFF_BUFNR_STAGED, staged_win = require("ever._ui.elements").new_buffer({
                 filetype = "git",
                 buffer_name = "EverDiffStaged--" .. line_data.filename .. ".git",
                 win_config = { split = "right" },
             })
             require("ever._ui.stream").stream_lines(DIFF_BUFNR_STAGED, diff_cmds.staged_diff_cmd, {})
-            setup_diff_buffer(DIFF_BUFNR_UNSTAGED, diff_cmds.unstaged_diff_cmd, "unstaged")
-            setup_diff_buffer(DIFF_BUFNR_STAGED, diff_cmds.staged_diff_cmd, "staged")
+            setup_diff_buffer(DIFF_BUFNR_UNSTAGED, unstaged_win, diff_cmds.unstaged_diff_cmd, "unstaged")
+            setup_diff_buffer(DIFF_BUFNR_STAGED, staged_win, diff_cmds.staged_diff_cmd, "staged")
             vim.api.nvim_set_current_win(win)
         end,
         group = vim.api.nvim_create_augroup("EverDiffAutoDiff", { clear = true }),
@@ -162,8 +198,9 @@ end
 ---@return integer -- created bufnr
 M.render = function()
     local opts = { start_line = 1 }
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, bufnr)
+    local bufnr = require("ever._ui.elements").new_buffer({
+        buffer_name = "EverStagingArea",
+    })
     require("ever._ui.home_options.status").set_lines(bufnr, opts)
     set_keymaps(bufnr, opts)
     set_autocmds(bufnr)
@@ -171,3 +208,4 @@ M.render = function()
 end
 
 return M
+--remove this comment

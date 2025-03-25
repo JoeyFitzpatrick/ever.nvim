@@ -188,17 +188,19 @@ function M.float(bufnr, float_opts)
 end
 
 ---@param opts ever.ElementNewBufferOpts -- opts for new buffer
----@return integer -- buffer id
+---@return integer, integer -- buffer id, window id
 function M.new_buffer(opts)
     local bufnr = vim.api.nvim_create_buf(false, true)
+    local win
     if opts.win_config then
         local enter = true
         if opts.enter == false then
             enter = false
         end
-        vim.api.nvim_open_win(bufnr, enter, opts.win_config)
+        win = vim.api.nvim_open_win(bufnr, enter, opts.win_config)
     else
-        vim.api.nvim_win_set_buf(0, bufnr)
+        win = vim.api.nvim_get_current_win()
+        vim.api.nvim_win_set_buf(win, bufnr)
     end
     if opts.filetype then
         vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
@@ -217,7 +219,7 @@ function M.new_buffer(opts)
     vim.keymap.set("n", "q", function()
         require("ever._core.register").deregister_buffer(bufnr, {})
     end, { buffer = bufnr })
-    return bufnr
+    return bufnr, win
 end
 
 return M
