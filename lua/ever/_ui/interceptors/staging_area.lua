@@ -1,6 +1,5 @@
 -- Staging area render
 
---remove this comment
 local M = {}
 
 local DIFF_BUFNR_UNSTAGED = nil
@@ -100,15 +99,11 @@ local function setup_diff_buffer(bufnr, win, cmd, diff_type)
                     cursor_start_pos = 0
                 end
                 pcall(function()
+                    local start = cursor_start_pos
+                    local stop = 5 -- Always the location of a hunk start (@@) if there is one
+                    local step = start < stop and 1 or -1 -- Always move towards stop from start
                     local lines = vim.api.nvim_buf_get_lines(bufnr, 0, cursor_start_pos + 6, false)
-                    for i = cursor_start_pos, 1, -1 do
-                        local line = lines[i]
-                        if line:match("^@@") then
-                            vim.api.nvim_win_set_cursor(win, { i, 0 })
-                            return
-                        end
-                    end
-                    for i = cursor_start_pos, cursor_start_pos + 6 do
+                    for i = start, stop, step do
                         local line = lines[i]
                         if line:match("^@@") then
                             vim.api.nvim_win_set_cursor(win, { i, 0 })
@@ -117,7 +112,7 @@ local function setup_diff_buffer(bufnr, win, cmd, diff_type)
                     end
                     vim.api.nvim_win_set_cursor(win, { cursor_start_pos, 0 })
                 end)
-            end, 50)
+            end, 100)
         end,
     })
     set_diff_buffer_autocmds(bufnr)
@@ -208,4 +203,3 @@ M.render = function()
 end
 
 return M
---remove this comment
