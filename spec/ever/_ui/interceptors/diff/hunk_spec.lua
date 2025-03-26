@@ -105,10 +105,6 @@ describe("diff extractor", function()
         table.insert(expected, "") -- we need to insert an empty line to ensure the patch applies correctly
         assert.are.same(expected, extract().patch_lines)
     end)
-    it("should return nil for single patch line when cursor is on ineligible line", function()
-        place_cursor_on_line(5)
-        assert.are.same(nil, extract().patch_single_line)
-    end)
     it("should return correct next hunk line", function()
         place_cursor_on_line(6)
         assert.are.equal(14, extract().next_hunk_start)
@@ -124,26 +120,6 @@ describe("diff extractor", function()
     it("should return nil previous hunk line when it isn't found", function()
         place_cursor_on_line(6)
         assert.are.equal(nil, extract().previous_hunk_start)
-    end)
-end)
-
-describe("get single line patch", function()
-    local get_single_line_patch = require("ever._ui.interceptors.diff.hunk")._get_single_line_patch
-    it("should return a correct patch line when adding a line", function()
-        local result = get_single_line_patch(
-            "@@ -15,30 +15,12 @@ local function is_patch_line(line)",
-            "+---@param line_to_apply string"
-        )
-        local expected = "@@ -15,30 +15,31 @@ local function is_patch_line(line)"
-        assert.are.equal(expected, result)
-    end)
-    it("should return a correct patch line when removing a line", function()
-        local result = get_single_line_patch(
-            "@@ -15,30 +15,12 @@ local function is_patch_line(line)",
-            "----@param line_to_apply string"
-        )
-        local expected = "@@ -15,30 +15,29 @@ local function is_patch_line(line)"
-        assert.are.equal(expected, result)
     end)
 end)
 

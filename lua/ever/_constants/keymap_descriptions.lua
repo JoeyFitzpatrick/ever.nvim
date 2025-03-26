@@ -51,8 +51,7 @@ return {
         previous_file = "Go to previous file",
         next_hunk = "Move to next hunk",
         previous_hunk = "Move to previous hunk",
-        stage_hunk = "Stage hunk",
-        stage_line = "Stage line",
+        stage = "Stage hunk under cursor or visually selected lines",
     },
     ---@type ever.LogKeymaps
     log = {

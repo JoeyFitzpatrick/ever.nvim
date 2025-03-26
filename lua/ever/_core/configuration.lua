@@ -77,8 +77,7 @@ local _DEFAULTS = {
             previous_file = "<S-tab>",
             next_hunk = "J",
             previous_hunk = "K",
-            stage_hunk = "sh",
-            stage_line = "sl",
+            stage = "s",
         },
     },
     difftool = {

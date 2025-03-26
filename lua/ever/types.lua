@@ -109,8 +109,7 @@
 ---@field previous_file string
 ---@field next_hunk string
 ---@field previous_hunk string
----@field stage_hunk string
----@field stage_line string
+---@field stage string
 
 ---@class ever.DifftoolKeymaps
 

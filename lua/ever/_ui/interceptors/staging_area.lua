@@ -46,7 +46,7 @@ local function set_diff_keymaps(bufnr, is_staged)
     require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    set("n", keymaps.stage_hunk, function()
+    set("n", keymaps.stage, function()
         local hunk = require("ever._ui.interceptors.diff.hunk").extract()
         if not hunk then
             return
@@ -60,21 +60,7 @@ local function set_diff_keymaps(bufnr, is_staged)
         require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_lines, rerender = true })
     end, keymap_opts)
 
-    set("n", keymaps.stage_line, function()
-        local hunk = require("ever._ui.interceptors.diff.hunk").extract()
-        if not hunk or not hunk.patch_single_line then
-            return
-        end
-        local cmd
-        if is_staged then
-            cmd = "git apply --reverse --cached --whitespace=nowarn -"
-        else
-            cmd = "git apply --cached --whitespace=nowarn -"
-        end
-        require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_single_line, rerender = true })
-    end, keymap_opts)
-
-    set("v", keymaps.stage_line, function()
+    set("v", keymaps.stage, function()
         local hunk = require("ever._ui.interceptors.diff.hunk").extract()
         if not hunk then
             return
