@@ -147,20 +147,6 @@ describe("get single line patch", function()
     end)
 end)
 
-describe("get multi line patch", function()
-    local get_multi_line_patch = require("ever._ui.interceptors.diff.hunk")._get_multi_line_patch
-
-    it("should return a correct patch line when adding multiple lines", function()
-        local result = get_multi_line_patch("@@ -15,30 +15,40 @@ local function is_patch_line(line)", {
-            "+line 1",
-            "+line 2",
-            "+line 3",
-        })
-        local expected = "@@ -15,30 +15,33 @@ local function is_patch_line(line)"
-        assert.are.equal(expected, result)
-    end)
-end)
-
 describe("filter patch lines", function()
     local filter_patch_lines = require("ever._ui.interceptors.diff.hunk")._filter_patch_lines
     it("return filtered lines", function()

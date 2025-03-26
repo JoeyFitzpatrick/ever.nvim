@@ -83,6 +83,8 @@ Using the `:G` command renders a home ui, that will display some status info. Th
 ### Staging Area
 By default, pressing `<leader>s` in the status tab of the home UI will open the staging area. This is the same as running `:G difftool` with no arguments. The main features here are seeing what changes are staged, what changes are unstaged, navigating between hunks, and staging/unstaging hunks and/or single lines.
 
+Note that you can select lines visually (either visual mode or linewise-visual mode) and use the "stage line" keymap to (un)stage selected lines.
+
 ## G Branch
 G commands that display a list of branches, such as `:G branch`, `:G branch --all`, `:G branch --merged`, and so on, bring up a branch UI, from which keymaps can be used to view commits, rename branches, merge branches, etc. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the branch UI.
 

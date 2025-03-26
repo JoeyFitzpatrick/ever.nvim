@@ -47,7 +47,8 @@ end
 M._get_multi_line_patch = function(patch_line, line_nums)
     local first, last = line_nums[1], line_nums[2]
     local lines_to_apply = vim.api.nvim_buf_get_lines(0, first - 1, last, false)
-    local old_start, old_count, new_start, new_count, context = patch_line:match("@@ %-(%d+),(%d+) %+(%d+),(%d+) @@(.*)$")
+    local old_start, old_count, new_start, new_count, context =
+        patch_line:match("@@ %-(%d+),(%d+) %+(%d+),(%d+) @@(.*)$")
     if not old_start or not old_count or not new_start or not new_count then
         return nil
     end
@@ -78,7 +79,7 @@ end
 ---@param patched_line_num integer | integer[]
 M._filter_patch_lines = function(lines, patched_line_num)
         if type(patched_line_num) == "number" then
-                patched_line_num = {patched_line_num, patched_line_num}
+                patched_line_num = {patched_line_num - 1, patched_line_num}
         end
         local new_lines = {}
         for i, line in ipairs(lines) do
@@ -186,7 +187,8 @@ M.extract = function()
     end
 
     local first, last = require("ever._ui.utils.ui_utils").get_visual_line_nums()
-    local patch_multiple_lines = { lines[3], lines[4], M._get_multi_line_patch(lines[hunk_start - 1], {first + 1, last}) }
+    local patch_multiple_lines =
+        { lines[3], lines[4], M._get_multi_line_patch(lines[hunk_start - 1], {first + 1, last}) }
     local patch_context_lines = {}
     for i = hunk_start, hunk_end do
             table.insert(patch_context_lines, lines[i])
