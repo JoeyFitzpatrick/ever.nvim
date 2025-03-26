@@ -3,7 +3,7 @@
 ---@field state? table<string, any>
 
 ---@class ever.DeregisterOpts
----@field close_split_on_close? boolean
+---@field skip_go_to_last_buffer? boolean
 
 local M = {}
 
@@ -27,7 +27,7 @@ function M.deregister_buffer(bufnr, opts)
     end
     M.buffers[bufnr] = nil
     if vim.api.nvim_buf_is_valid(bufnr) then
-        if not opts.close_split_on_close then
+        if not opts.skip_go_to_last_buffer then
             -- Navigate to previous buffer before removing this buffer.
             -- This is to prevent issues where calling deregister in a
             -- split or tab closes that split or tab.
