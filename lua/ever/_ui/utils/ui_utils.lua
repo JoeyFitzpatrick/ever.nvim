@@ -1,5 +1,6 @@
 local M = {}
 
+---@return integer, integer
 function M.get_visual_line_nums()
     -- move back to normal mode to access most recent visual line nums
     -- this is a workaround, as 'getpos' won't return correct lines until visual mode is exited

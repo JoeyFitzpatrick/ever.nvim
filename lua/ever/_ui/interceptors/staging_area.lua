@@ -73,6 +73,23 @@ local function set_diff_keymaps(bufnr, is_staged)
         end
         require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_single_line, rerender = true })
     end, keymap_opts)
+
+    set("v", keymaps.stage_line, function()
+        local hunk = require("ever._ui.interceptors.diff.hunk").extract()
+        if not hunk then
+            return
+        end
+
+        local cmd
+        if is_staged then
+            cmd = "git apply --reverse --cached --whitespace=nowarn -"
+        else
+            cmd = "git apply --cached --whitespace=nowarn -"
+        end
+        local output =
+            require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_multiple_lines, rerender = true })
+        vim.print(output)
+    end, keymap_opts)
 end
 
 ---@param bufnr integer
