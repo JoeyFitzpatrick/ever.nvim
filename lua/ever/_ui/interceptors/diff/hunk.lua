@@ -68,9 +68,7 @@ M._get_multi_line_patch = function(patch_line, line_nums)
 
     new_count = new_count + added - removed
 
-    local new_patch_line = string.format("@@ -%d,%d +%d,%d @@%s",
-        old_start, old_count, new_start, new_count, context
-    )
+    local new_patch_line = string.format("@@ -%d,%d +%d,%d @@%s", old_start, old_count, new_start, new_count, context)
 
     return new_patch_line
 end
@@ -78,26 +76,23 @@ end
 ---@param lines string[]
 ---@param patched_line_num integer | integer[]
 M._filter_patch_lines = function(lines, patched_line_num)
-        if type(patched_line_num) == "number" then
-                patched_line_num = {patched_line_num - 1, patched_line_num}
+    if type(patched_line_num) == "number" then
+        patched_line_num = { patched_line_num - 1, patched_line_num }
+    end
+    local new_lines = {}
+    for i, line in ipairs(lines) do
+        if i > patched_line_num[1] and i <= patched_line_num[2] then
+            table.insert(new_lines, line)
+        else
+            local first_char = line:sub(1, 1)
+            if first_char == "-" then
+                table.insert(new_lines, " " .. line:sub(2))
+            elseif first_char ~= "+" then
+                table.insert(new_lines, line)
+            end
         end
-        local new_lines = {}
-        for i, line in ipairs(lines) do
-                if i > patched_line_num[1] and i <= patched_line_num[2] then
-                        table.insert(new_lines, line)
-                        goto continue
-                end
-                local first_char = line:sub(1, 1)
-                if first_char == "+" then
-                        goto continue
-                elseif first_char == "-" then
-                        table.insert(new_lines, " " .. line:sub(2))
-                else
-                        table.insert(new_lines, line)
-                end
-                ::continue::
-        end
-        return new_lines
+    end
+    return new_lines
 end
 
 --- Returns info on a diff hunk
@@ -188,14 +183,14 @@ M.extract = function()
 
     local first, last = require("ever._ui.utils.ui_utils").get_visual_line_nums()
     local patch_multiple_lines =
-        { lines[3], lines[4], M._get_multi_line_patch(lines[hunk_start - 1], {first + 1, last}) }
+        { lines[3], lines[4], M._get_multi_line_patch(lines[hunk_start - 1], { first + 1, last }) }
     local patch_context_lines = {}
     for i = hunk_start, hunk_end do
-            table.insert(patch_context_lines, lines[i])
+        table.insert(patch_context_lines, lines[i])
     end
-    patch_context_lines = M._filter_patch_lines(patch_context_lines, {first - hunk_start + 1, last - hunk_start + 1})
+    patch_context_lines = M._filter_patch_lines(patch_context_lines, { first - hunk_start + 1, last - hunk_start + 1 })
     for _, line in ipairs(patch_context_lines) do
-            table.insert(patch_multiple_lines, line)
+        table.insert(patch_multiple_lines, line)
     end
     table.insert(patch_multiple_lines, "")
 
@@ -212,4 +207,3 @@ M.extract = function()
 end
 
 return M
-
