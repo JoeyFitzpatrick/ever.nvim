@@ -18,6 +18,18 @@ local function is_patch_line(line)
     return line:sub(1, 2) == "@@"
 end
 
+---@param char string
+---@return "add" | "remove" | "unchanged"
+local function get_line_type(char)
+    if char == "-" then
+        return "remove"
+    elseif char == "+" then
+        return "add"
+    else
+        return "unchanged"
+    end
+end
+
 --- Update the patch line for a range of lines
 --- For adding lines, remove any lines that start with +, and remove the starting - from any lines
 ---@param patch_line string
@@ -32,23 +44,18 @@ M._get_patch = function(patch_line, line_nums)
         return nil
     end
 
-    old_start, old_count = tonumber(old_start), tonumber(old_count)
-    new_start, new_count = tonumber(old_start), tonumber(old_count)
+    new_count = tonumber(old_count)
 
-    local added, removed = 0, 0
     for _, line in ipairs(lines_to_apply) do
-        local first_char = line:sub(1, 1)
-        if first_char == "+" then
-            added = added + 1
-        elseif first_char == "-" then
-            removed = removed + 1
+        local line_type = get_line_type(line:sub(1, 1))
+        if line_type == "add" then
+            new_count = new_count + 1
+        elseif line_type == "remove" then
+            new_count = new_count - 1
         end
     end
 
-    new_count = new_count + added - removed
-
     local new_patch_line = string.format("@@ -%d,%d +%d,%d @@%s", old_start, old_count, new_start, new_count, context)
-
     return new_patch_line
 end
 
@@ -63,15 +70,21 @@ M._filter_patch_lines = function(lines, patched_line_num)
         if i > patched_line_num[1] and i <= patched_line_num[2] then
             table.insert(new_lines, line)
         else
-            local first_char = line:sub(1, 1)
-            if first_char == "-" then
+            local line_type = get_line_type(line:sub(1, 1))
+            if line_type == "remove" then
                 table.insert(new_lines, " " .. line:sub(2))
-            elseif first_char ~= "+" then
+            elseif line_type == "unchanged" then
                 table.insert(new_lines, line)
             end
         end
     end
     return new_lines
+end
+
+--- This is needed for a patch to be valid according to git
+---@param lines string[]
+local function add_empty_line_for_patch(lines)
+    table.insert(lines, "")
 end
 
 --- Returns info on a diff hunk
@@ -101,8 +114,8 @@ M.extract = function()
     end
 
     for i = hunk_start, hunk_end, 1 do
-        local first_char = lines[i]:sub(1, 1)
-        if first_char == "+" or first_char == "-" then
+        local line_type = get_line_type(lines[i]:sub(1, 1))
+        if line_type ~= "unchanged" then
             hunk_first_changed_line = i
             break
         end
@@ -137,8 +150,7 @@ M.extract = function()
         table.insert(patch_lines, lines[i])
     end
 
-    -- TODO: figure out why this is needed to make applying patches not fail due to corrupt patch errors
-    table.insert(patch_lines, "")
+    add_empty_line_for_patch(patch_lines)
 
     local first, last = require("ever._ui.utils.ui_utils").get_visual_line_nums()
     local patch_multiple_lines = { lines[3], lines[4], M._get_patch(lines[hunk_start - 1], { first + 1, last }) }
@@ -150,7 +162,7 @@ M.extract = function()
     for _, line in ipairs(patch_context_lines) do
         table.insert(patch_multiple_lines, line)
     end
-    table.insert(patch_multiple_lines, "")
+    add_empty_line_for_patch(patch_multiple_lines)
 
     return {
         hunk_start = hunk_start,
