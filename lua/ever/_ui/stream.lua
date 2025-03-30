@@ -1,5 +1,5 @@
 ---@class ever.StreamLinesOpts
----@field error_code_handlers? table<integer, function>
+---@field silent? boolean
 ---@field transform_line? fun(line: string): string
 ---@field highlight_line? fun(bufnr: integer, line: string, line_num: integer)
 ---@field on_exit? fun(bufnr: integer)
@@ -19,7 +19,6 @@ function M.stream_lines(bufnr, cmd, opts)
         vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
     end
     local line_num = 0
-    local error_code_handlers = opts.error_code_handlers or {}
     local function on_stdout(_, data, _)
         if data then
             -- Populate the buffer with the incoming lines
@@ -64,18 +63,11 @@ function M.stream_lines(bufnr, cmd, opts)
         on_stdout = function(...)
             pcall(on_stdout, ...)
         end,
-        -- on_stderr = function(code, output, _)
-        --     if not error_code_handlers[code] then
-        --         -- Handle stderr the same way for simplicity
-        --         pcall(on_stdout, code, output)
-        --     end
-        -- end,
         on_exit = function(_, code, _)
-            if not error_code_handlers[code] then
-                pcall(on_exit, code)
-            else
-                error_code_handlers[code]()
+            if opts.silent then
+                return
             end
+            pcall(on_exit, code)
         end,
     })
 end

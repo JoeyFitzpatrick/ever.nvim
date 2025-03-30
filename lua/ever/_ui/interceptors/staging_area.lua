@@ -87,7 +87,7 @@ local function setup_diff_buffer(bufnr, win, cmd, diff_type)
     require("ever._core.register").register_buffer(bufnr, {
         render_fn = function()
             local win_valid, original_cursor_pos = pcall(vim.api.nvim_win_get_cursor, win)
-            require("ever._ui.stream").stream_lines(bufnr, cmd, {})
+            require("ever._ui.stream").stream_lines(bufnr, cmd, { silent = true })
             vim.defer_fn(function()
                 if not win_valid then
                     return
@@ -150,7 +150,9 @@ local function set_autocmds(bufnr)
                 buffer_name = "EverDiffUnstaged--" .. line_data.filename .. ".git",
                 win_config = { split = "below", height = math.floor(vim.o.lines * 0.67) },
             })
-            require("ever._ui.stream").stream_lines(DIFF_BUFNR_UNSTAGED, diff_cmds.unstaged_diff_cmd, {})
+            require("ever._ui.stream").stream_lines(DIFF_BUFNR_UNSTAGED, diff_cmds.unstaged_diff_cmd, {
+                silent = true,
+            })
 
             local staged_win
             DIFF_BUFNR_STAGED, staged_win = require("ever._ui.elements").new_buffer({
@@ -158,7 +160,7 @@ local function set_autocmds(bufnr)
                 buffer_name = "EverDiffStaged--" .. line_data.filename .. ".git",
                 win_config = { split = "right" },
             })
-            require("ever._ui.stream").stream_lines(DIFF_BUFNR_STAGED, diff_cmds.staged_diff_cmd, {})
+            require("ever._ui.stream").stream_lines(DIFF_BUFNR_STAGED, diff_cmds.staged_diff_cmd, { silent = true })
             setup_diff_buffer(DIFF_BUFNR_UNSTAGED, unstaged_win, diff_cmds.unstaged_diff_cmd, "unstaged")
             setup_diff_buffer(DIFF_BUFNR_STAGED, staged_win, diff_cmds.staged_diff_cmd, "staged")
             vim.api.nvim_set_current_win(win)
