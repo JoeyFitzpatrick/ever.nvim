@@ -1,12 +1,8 @@
--- TODO: make all of this not complete shit
--- Really the code works, but it's completely unreadable
-
 ---@class ever.Hunk
 ---@field hunk_start integer
 ---@field hunk_end integer
----@field hunk_first_changed_line integer
 ---@field patch_lines string[]
----@field patch_multiple_lines? string[]
+---@field patch_selected_lines? string[]
 ---@field next_hunk_start? integer
 ---@field previous_hunk_start? integer
 
@@ -35,9 +31,9 @@ end
 ---@param patch_line string
 ---@param line_nums integer[]
 ---@return string?
-M._get_patch = function(patch_line, line_nums)
+M._get_patch_line = function(patch_line, line_nums)
     local first, last = line_nums[1], line_nums[2]
-    local lines_to_apply = vim.api.nvim_buf_get_lines(0, first - 1, last, false)
+    local lines_to_apply = vim.api.nvim_buf_get_lines(0, first, last, false)
     local old_start, old_count, new_start, new_count, context =
         patch_line:match("@@ %-(%d+),(%d+) %+(%d+),(%d+) @@(.*)$")
     if not old_start or not old_count or not new_start or not new_count then
@@ -55,26 +51,30 @@ M._get_patch = function(patch_line, line_nums)
         end
     end
 
-    local new_patch_line = string.format("@@ -%d,%d +%d,%d @@%s", old_start, old_count, new_start, new_count, context)
+    -- We want the old start to be the old start and new start for this patch
+    local new_patch_line = string.format("@@ -%d,%d +%d,%d @@%s", old_start, old_count, old_start, new_count, context)
     return new_patch_line
 end
 
 ---@param lines string[]
----@param patched_line_num integer | integer[]
-M._filter_patch_lines = function(lines, patched_line_num)
-    if type(patched_line_num) == "number" then
-        patched_line_num = { patched_line_num - 1, patched_line_num }
-    end
+---@param patched_line_nums integer[]
+---@param is_staged boolean
+M._filter_patch_lines = function(lines, patched_line_nums, is_staged)
     local new_lines = {}
     for i, line in ipairs(lines) do
-        if i > patched_line_num[1] and i <= patched_line_num[2] then
+        if i >= patched_line_nums[1] and i <= patched_line_nums[2] then
             table.insert(new_lines, line)
         else
             local line_type = get_line_type(line:sub(1, 1))
-            if line_type == "remove" then
-                table.insert(new_lines, " " .. line:sub(2))
-            elseif line_type == "unchanged" then
+            if line_type == "unchanged" then
                 table.insert(new_lines, line)
+                -- If working on staged file,
+                -- remove "-" lines, and turn "+" lines into " " lines
+                -- otherwise, remove "+" lines, and turn "-" lines into " " lines
+            elseif line_type == "add" and is_staged then
+                table.insert(new_lines, " " .. line:sub(2))
+            elseif line_type == "remove" and not is_staged then
+                table.insert(new_lines, " " .. line:sub(2))
             end
         end
     end
@@ -88,8 +88,9 @@ local function add_empty_line_for_patch(lines)
 end
 
 --- Returns info on a diff hunk
+---@param is_staged? boolean
 ---@return ever.Hunk | nil
-M.extract = function()
+M.extract = function(is_staged)
     local line_num = vim.api.nvim_win_get_cursor(0)[1]
     local hunk_start, hunk_end, hunk_first_changed_line = nil, nil, nil
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
@@ -153,23 +154,26 @@ M.extract = function()
     add_empty_line_for_patch(patch_lines)
 
     local first, last = require("ever._ui.utils.ui_utils").get_visual_line_nums()
-    local patch_multiple_lines = { lines[3], lines[4], M._get_patch(lines[hunk_start - 1], { first + 1, last }) }
+    local patch_selected_lines = { lines[3], lines[4], M._get_patch_line(lines[hunk_start - 1], { first, last }) }
     local patch_context_lines = {}
     for i = hunk_start, hunk_end do
         table.insert(patch_context_lines, lines[i])
     end
-    patch_context_lines = M._filter_patch_lines(patch_context_lines, { first - hunk_start + 1, last - hunk_start + 1 })
-    for _, line in ipairs(patch_context_lines) do
-        table.insert(patch_multiple_lines, line)
+    if is_staged == nil then
+        is_staged = false
     end
-    add_empty_line_for_patch(patch_multiple_lines)
+    patch_context_lines =
+        M._filter_patch_lines(patch_context_lines, { first - hunk_start + 2, last - hunk_start + 1 }, is_staged)
+    for _, line in ipairs(patch_context_lines) do
+        table.insert(patch_selected_lines, line)
+    end
+    add_empty_line_for_patch(patch_selected_lines)
 
     return {
         hunk_start = hunk_start,
         hunk_end = hunk_end,
-        hunk_first_changed_line = hunk_first_changed_line,
         patch_lines = patch_lines,
-        patch_multiple_lines = patch_multiple_lines,
+        patch_selected_lines = patch_selected_lines,
         next_hunk_start = next_hunk_start,
         previous_hunk_start = previous_hunk_start,
     }

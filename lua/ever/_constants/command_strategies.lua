@@ -28,7 +28,7 @@ M.default = {
 }
 
 M.add = {
-    display_strategy = M.STRATEGIES.DYNAMIC,
+    display_strategy = M.STRATEGIES.BELOW,
     trigger_redraw = true,
 }
 

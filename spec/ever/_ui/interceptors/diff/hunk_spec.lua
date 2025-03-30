@@ -75,18 +75,6 @@ describe("diff extractor", function()
         place_cursor_on_line(30)
         assert.are.equal(36, extract().hunk_end)
     end)
-    it("should return correct hunk first changed line when cursor above changed line", function()
-        place_cursor_on_line(6)
-        assert.are.equal(9, extract().hunk_first_changed_line)
-    end)
-    it("should return correct hunk first changed line when cursor on changed line", function()
-        place_cursor_on_line(9)
-        assert.are.equal(9, extract().hunk_first_changed_line)
-    end)
-    it("should return correct hunk first changed line when cursor after changed line", function()
-        place_cursor_on_line(10)
-        assert.are.equal(9, extract().hunk_first_changed_line)
-    end)
     it("should return correct patch lines when cursor is in first hunk", function()
         place_cursor_on_line(6)
         local expected = {}
@@ -144,7 +132,7 @@ describe("filter patch lines", function()
             "-    -- Validate if the line number is within bounds",
             "-    if line_num == nil or new_start == nil or new_count == nil then",
         }
-        local result = filter_patch_lines(lines, 4)
+        local result = filter_patch_lines(lines, { 4, 4 }, false)
         local expected = {
             'return line:sub(1, 2) == "@@"',
             "end",
