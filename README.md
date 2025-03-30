@@ -81,9 +81,9 @@ Note that for any command that brings up a UI:
 Using the `:G` command renders a home ui, that will display some status info. This includes the git status of all changed files, a diff split to display these changes, and some keymaps to manipulate these files, such as staging/unstaging them. Use `h` and `l` to then display the UI for  `git branch`, `git log`, and `git stash`, all of which are further detailed below.
 
 ### Staging Area
-By default, pressing `<leader>s` in the status tab of the home UI will open the staging area. This is the same as running `:G difftool` with no arguments. The main features here are seeing what changes are staged, what changes are unstaged, navigating between hunks, and staging/unstaging hunks and/or single lines.
+By default, pressing `<leader>s` in the status tab of the home UI will open the staging area. This is the same as running `:G difftool` with no arguments. The main features here are seeing what changes are staged, what changes are unstaged, navigating between hunks, (un)staging visually selected lines, and (un)staging hunks.
 
-Note that you can select lines visually (either visual mode or linewise-visual mode) and use the "stage line" keymap to (un)stage selected lines.
+Note that you can select lines with either visual mode or linewise-visual mode, and use the "stage" keymap (`s` by default) to (un)stage selected lines. If you want to (un)stage single lines at a time, you can use `vs`, to visually select a line and immediately (un)stage it.
 
 ## G Branch
 G commands that display a list of branches, such as `:G branch`, `:G branch --all`, `:G branch --merged`, and so on, bring up a branch UI, from which keymaps can be used to view commits, rename branches, merge branches, etc. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the branch UI.
