@@ -8,11 +8,15 @@ local M = {}
 ---@param lines string[]
 local function highlight(bufnr, start_line, lines)
     local highlight_groups = require("ever._constants.highlight_groups").highlight_groups
-    for line_num, line in ipairs(lines) do
+    for i, line in ipairs(lines) do
+        local line_num = i + start_line - 1
         if line:match("^%*") then
-            vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_ADD, line_num + start_line - 1, 2, -1)
-            return
+            vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_ADD, line_num, 2, -1)
         end
+        local pull_start, pull_end = line:find("↓%d+")
+        require("ever._ui.highlight").highlight_line(bufnr, "Keyword", line_num, pull_start, pull_end)
+        local push_start, push_end = line:find("↑%d+")
+        require("ever._ui.highlight").highlight_line(bufnr, "Keyword", line_num, push_start, push_end)
     end
 end
 
@@ -190,6 +194,7 @@ end
 function M.render(bufnr, opts)
     set_lines(bufnr, opts)
     set_keymaps(bufnr, opts)
+    require("ever._ui.utils.num_commits_pull_push").set_num_commits_to_pull_and_push(bufnr, highlight, opts.start_line)
 end
 
 return M
