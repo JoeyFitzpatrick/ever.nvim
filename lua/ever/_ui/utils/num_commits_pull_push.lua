@@ -51,9 +51,26 @@ end
 ---@param start_line? integer
 function M.set_num_commits_to_pull_and_push(bufnr, highlight, start_line)
     render_num_commits(bufnr, highlight, start_line)
+    local received_output = false
     vim.fn.jobstart("git fetch", {
+        on_stdout = function(_, data, _)
+            for _, line in ipairs(data) do
+                if line and line ~= "" then
+                    received_output = true
+                    return
+                end
+            end
+        end,
+        on_stderr = function(_, data, _)
+            for _, line in ipairs(data) do
+                if line and line ~= "" then
+                    received_output = true
+                    return
+                end
+            end
+        end,
         on_exit = function(_, code, _)
-            if code ~= 0 then
+            if code ~= 0 or not received_output then
                 return
             end
             render_num_commits(bufnr, highlight, start_line)
