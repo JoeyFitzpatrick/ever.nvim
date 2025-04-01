@@ -34,6 +34,7 @@ local function set_lines(bufnr, opts)
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     highlight(bufnr, start_line, output)
+    require("ever._ui.utils.num_commits_pull_push").set_num_commits_to_pull_and_push(bufnr, highlight, opts.start_line)
     return output
 end
 
@@ -219,7 +220,6 @@ end
 function M.render(bufnr, opts)
     set_lines(bufnr, opts)
     set_keymaps(bufnr, opts)
-    require("ever._ui.utils.num_commits_pull_push").set_num_commits_to_pull_and_push(bufnr, highlight, opts.start_line)
 end
 
 return M
