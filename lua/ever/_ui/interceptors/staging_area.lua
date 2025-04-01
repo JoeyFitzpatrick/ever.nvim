@@ -45,6 +45,17 @@ local function set_diff_keymaps(bufnr, is_staged)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
+    -- Normally, get_keymaps sets the "q" keymap.
+    -- In this case, we want it to close both diff buffers
+    -- So we need to set it here
+    set("n", "q", function()
+        require("ever._core.register").deregister_buffer(DIFF_BUFNR_STAGED, { skip_go_to_last_buffer = true })
+        require("ever._core.register").deregister_buffer(DIFF_BUFNR_UNSTAGED, { skip_go_to_last_buffer = true })
+        -- At this point, we are in the staging area files buffer
+        -- We want to close it and navigate back to the last non-staging-area buffer
+        require("ever._core.register").deregister_buffer(0, { skip_go_to_last_buffer = false })
+    end, keymap_opts)
+
     set("n", keymaps.stage, function()
         local hunk = require("ever._ui.interceptors.diff.hunk").extract(is_staged)
         if not hunk then
