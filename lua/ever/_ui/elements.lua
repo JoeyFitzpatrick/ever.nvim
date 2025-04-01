@@ -2,7 +2,7 @@
 
 ---@class ever.ElementNewBufferOpts
 ---@field filetype? string
----@field lines? fun(): string[]
+---@field lines? fun(bufnr?: integer): string[]
 ---@field win_config? vim.api.keyset.win_config
 ---@field enter? boolean
 ---@field buffer_name? string
@@ -211,7 +211,7 @@ function M.new_buffer(opts)
             vim.cmd("e " .. opts.buffer_name)
         else
             if opts.lines then
-                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, opts.lines())
+                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, opts.lines(bufnr))
                 vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
             end
         end

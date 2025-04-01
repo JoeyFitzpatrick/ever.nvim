@@ -57,8 +57,7 @@ local function set_keymaps(bufnr, opts)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     ---@param branch_name string
-    ---@param delete_type string
-    ---@return ("success" | "error"), integer
+    ---@param delete_type "local" | "remote" | "both"
     local function delete_branch(branch_name, delete_type)
         local run_cmd = function(cmd)
             return require("ever._core.run_cmd").run_hidden_cmd(cmd, { error_codes_to_ignore = { 1 } })
@@ -86,7 +85,31 @@ local function set_keymaps(bufnr, opts)
             ["both"] = delete_actions.both,
         }
         assert(action_map[delete_type], "Attempt to delete branch with invalid delete type: " .. delete_type)
-        return action_map[delete_type]()
+        local status, code = action_map[delete_type]()
+        if code == 1 and status == "error" and delete_type ~= "remote" then
+            require("ever._ui.popups.popup").render_popup({
+                buffer_name = "EverBranchDeleteConfirm",
+                title = "Branch "
+                    .. require("ever._core.texter").surround_with_quotes(branch_name)
+                    .. " is not fully merged. Delete anyway?",
+                mappings = {
+                    {
+                        keys = "y",
+                        description = "Yes",
+                        action = function()
+                            require("ever._core.run_cmd").run_hidden_cmd("git branch -D " .. branch_name)
+                        end,
+                    },
+                    {
+                        keys = "n",
+                        description = "No",
+                        -- This is a no-op, and the popup will close
+                        action = function() end,
+                    },
+                },
+            })
+        end
+        set_lines(bufnr, opts)
     end
 
     set("n", keymaps.delete, function()
@@ -95,32 +118,33 @@ local function set_keymaps(bufnr, opts)
             return
         end
 
-        vim.ui.select(
-            { "local", "remote", "both" },
-            { prompt = "Delete type for branch " .. line_data.branch_name .. ": " },
-            function(selection)
-                if not selection then
-                    return
-                end
-                local status, code = delete_branch(line_data.branch_name, selection)
-                if code == 1 and status == "error" and selection ~= "remote" then
-                    vim.ui.select({ "Yes", "No" }, {
-                        prompt = "Branch "
-                            .. require("ever._core.texter").surround_with_quotes(line_data.branch_name)
-                            .. " is not fully merged. Delete anyway?",
-                    }, function(delete_unmerged_selection)
-                        if not delete_unmerged_selection or delete_unmerged_selection == "No" then
-                            return
-                        end
-                        require("ever._core.run_cmd").run_hidden_cmd("git branch -D " .. line_data.branch_name)
-                        set_lines(bufnr, opts)
-                    end)
-                end
-                if selection and status then
-                    set_lines(bufnr, opts)
-                end
-            end
-        )
+        require("ever._ui.popups.popup").render_popup({
+            buffer_name = "EverDeleteBranch",
+            title = "Delete Branch",
+            mappings = {
+                {
+                    keys = "l",
+                    description = "Local",
+                    action = function()
+                        delete_branch(line_data.branch_name, "local")
+                    end,
+                },
+                {
+                    keys = "r",
+                    description = "Remote",
+                    action = function()
+                        delete_branch(line_data.branch_name, "remote")
+                    end,
+                },
+                {
+                    keys = "b",
+                    description = "Both",
+                    action = function()
+                        delete_branch(line_data.branch_name, "both")
+                    end,
+                },
+            },
+        })
     end, keymap_opts)
 
     local keymap_to_command_map = {

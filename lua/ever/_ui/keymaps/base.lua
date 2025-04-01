@@ -120,7 +120,7 @@ function M.get_keymaps(bufnr, ui_type, opts)
     vim.keymap.set("n", "q", function()
         require("ever._core.register").deregister_buffer(
             bufnr,
-            { skip_go_to_last_buffer = opts.skip_go_to_last_buffer }
+            { skip_go_to_last_buffer = opts.skip_go_to_last_buffer or opts.popup }
         )
     end, { buffer = bufnr })
 
