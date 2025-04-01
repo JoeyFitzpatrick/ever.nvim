@@ -46,7 +46,7 @@ local function get_line(bufnr, line_num)
     if line == "" then
         return nil
     end
-    return { branch_name = line:sub(3) }
+    return { branch_name = line:match("%S+", 3) }
 end
 
 ---@param bufnr integer
@@ -98,6 +98,7 @@ local function set_keymaps(bufnr, opts)
                         description = "Yes",
                         action = function()
                             require("ever._core.run_cmd").run_hidden_cmd("git branch -D " .. branch_name)
+                            set_lines(bufnr, opts)
                         end,
                     },
                     {
