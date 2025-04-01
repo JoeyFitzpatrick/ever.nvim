@@ -41,9 +41,8 @@ end
 ---@param is_staged boolean
 local function set_diff_keymaps(bufnr, is_staged)
     require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
-    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "diff", {})
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "diff", { skip_go_to_last_buffer = true })
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-    require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", keymaps.stage, function()

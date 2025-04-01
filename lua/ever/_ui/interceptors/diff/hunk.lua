@@ -30,8 +30,9 @@ end
 --- For adding lines, remove any lines that start with +, and remove the starting - from any lines
 ---@param patch_line string
 ---@param line_nums integer[]
+---@param is_staged boolean
 ---@return string?
-M._get_patch_line = function(patch_line, line_nums)
+M._get_patch_line = function(patch_line, line_nums, is_staged)
     local first, last = line_nums[1], line_nums[2]
     local lines_to_apply = vim.api.nvim_buf_get_lines(0, first, last, false)
     local old_start, old_count, new_start, new_count, context =
@@ -39,7 +40,9 @@ M._get_patch_line = function(patch_line, line_nums)
     if not old_start or not old_count or not new_start or not new_count then
         return nil
     end
-
+    if is_staged then
+        old_count = new_count
+    end
     new_count = tonumber(old_count)
 
     for _, line in ipairs(lines_to_apply) do
@@ -154,13 +157,14 @@ M.extract = function(is_staged)
     add_empty_line_for_patch(patch_lines)
 
     local first, last = require("ever._ui.utils.ui_utils").get_visual_line_nums()
-    local patch_selected_lines = { lines[3], lines[4], M._get_patch_line(lines[hunk_start - 1], { first, last }) }
+    if is_staged == nil then
+        is_staged = false
+    end
+    local patch_selected_lines =
+        { lines[3], lines[4], M._get_patch_line(lines[hunk_start - 1], { first, last }, is_staged) }
     local patch_context_lines = {}
     for i = hunk_start, hunk_end do
         table.insert(patch_context_lines, lines[i])
-    end
-    if is_staged == nil then
-        is_staged = false
     end
     patch_context_lines =
         M._filter_patch_lines(patch_context_lines, { first - hunk_start + 2, last - hunk_start + 1 }, is_staged)
