@@ -39,7 +39,8 @@ function M._parse_log_cmd(args)
     if not args then
         return string.format("git log %s", DEFAULT_LOG_FORMAT)
     end
-    local cmd_with_format = string.format("git %s %s", args, DEFAULT_LOG_FORMAT)
+    local args_without_log_prefix = args:sub(5)
+    local cmd_with_format = string.format("git log %s %s", DEFAULT_LOG_FORMAT, args_without_log_prefix)
     if args:match("log%s-$") then
         return cmd_with_format
     end
@@ -52,10 +53,6 @@ function M._parse_log_cmd(args)
     return "git " .. args -- args already starts with "log "
 end
 
-local COMMAND_OPTIONS_TO_FILTER_EMPTY_LINES = {
-    "--oneline",
-}
-
 --- This `set_lines` is different than the others, in that it streams content into the buffer
 --- instead of writing it all at once.
 --- TODO: use standard stream for this
@@ -64,17 +61,7 @@ local COMMAND_OPTIONS_TO_FILTER_EMPTY_LINES = {
 local function set_lines(bufnr, opts)
     local cmd = M._parse_log_cmd(opts.cmd)
     if not cmd:find(DEFAULT_LOG_FORMAT, 1, true) then
-        local should_filter_empty_lines = false
-        for _, option in ipairs(COMMAND_OPTIONS_TO_FILTER_EMPTY_LINES) do
-            if cmd:find(option, 1, true) then
-                should_filter_empty_lines = true
-            end
-        end
-        require("ever._ui.stream").stream_lines(
-            bufnr,
-            cmd,
-            { filetype = "git", filter_empty_lines = should_filter_empty_lines }
-        )
+        require("ever._ui.stream").stream_lines(bufnr, cmd, { filetype = "git" })
         return
     end
     local function on_stdout(_, data, _)

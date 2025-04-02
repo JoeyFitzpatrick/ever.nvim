@@ -4,7 +4,6 @@
 ---@field highlight_line? fun(bufnr: integer, line: string, line_num: integer)
 ---@field on_exit? fun(bufnr: integer)
 ---@field filetype? string
----@field filter_empty_lines? boolean
 
 local M = {}
 
@@ -27,12 +26,9 @@ function M.stream_lines(bufnr, cmd, opts)
                 if opts.transform_line then
                     line = opts.transform_line(line)
                 end
-                local should_filter_line = opts.filter_empty_lines and line == ""
-                if not should_filter_line then
-                    vim.api.nvim_buf_set_lines(bufnr, line_num, line_num + 1, false, { line })
-                    if opts.highlight_line then
-                        pcall(opts.highlight_line, bufnr, line, line_num)
-                    end
+                vim.api.nvim_buf_set_lines(bufnr, line_num, line_num + 1, false, { line })
+                if opts.highlight_line then
+                    pcall(opts.highlight_line, bufnr, line, line_num)
                 end
                 line_num = line_num + 1
             end
