@@ -109,6 +109,7 @@ end
 local function set_lines(bufnr, opts)
     local first_line = get_current_head(opts.cmd)
     local start_line = opts.start_line or 0
+    vim.bo[bufnr].modifiable = true
     vim.api.nvim_buf_set_lines(bufnr, start_line, start_line + 1, false, { first_line })
     highlight_head_line(bufnr, first_line, start_line)
     start_line = start_line + 1
@@ -118,6 +119,9 @@ local function set_lines(bufnr, opts)
         cmd,
         { filter_empty_lines = true, highlight_line = highlight_line, start_line = start_line }
     )
+    -- This should already be set to false by stream_lines.
+    -- Just leaving this in case there's an error there.
+    vim.bo[bufnr].modifiable = false
 end
 
 ---@param bufnr integer
