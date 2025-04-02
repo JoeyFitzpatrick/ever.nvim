@@ -60,51 +60,11 @@ end
 ---@param opts ever.UiRenderOpts
 local function set_lines(bufnr, opts)
     local cmd = M._parse_log_cmd(opts.cmd)
-    if not cmd:find(DEFAULT_LOG_FORMAT, 1, true) then
-        require("ever._ui.stream").stream_lines(bufnr, cmd, { filetype = "git" })
-        return
-    end
-    local function on_stdout(_, data, _)
-        if data then
-            -- Populate the buffer with the git log data
-            vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-            for _, line in ipairs(data) do
-                if line ~= "" then
-                    vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { line })
-                    highlight_line(bufnr, line, vim.api.nvim_buf_line_count(bufnr) - 1)
-                end
-            end
-            vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-        end
-    end
-
-    local function on_exit(_, code, _)
-        vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-        if code ~= 0 then
-            vim.notify("git log command failed with exit code " .. code, vim.log.levels.ERROR)
-        end
-    end
-
-    -- Remove existing lines before adding new lines
-    -- This is for when we rerender the output
-    vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    vim.api.nvim_buf_set_lines(bufnr, opts.start_line or 0, -1, false, {})
-    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    -- Start the asynchronous job
-    vim.fn.jobstart(cmd, {
-        on_stdout = function(...)
-            pcall(on_stdout, ...)
-        end,
-        -- Handle stderr the same way for simplicity
-        on_stderr = function(...)
-            pcall(on_stdout, ...)
-        end,
-        on_exit = function(...)
-            pcall(on_exit, ...)
-        end,
-    })
-    -- highlight(bufnr, start_line, output)
-    -- return output
+    require("ever._ui.stream").stream_lines(
+        bufnr,
+        cmd,
+        { filter_empty_lines = true, highlight_line = highlight_line, start_line = opts.start_line }
+    )
 end
 
 ---@param bufnr integer

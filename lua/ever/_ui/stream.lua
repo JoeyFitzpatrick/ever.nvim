@@ -4,6 +4,8 @@
 ---@field highlight_line? fun(bufnr: integer, line: string, line_num: integer)
 ---@field on_exit? fun(bufnr: integer)
 ---@field filetype? string
+---@field filter_empty_lines? boolean
+---@field start_line? integer
 
 local M = {}
 
@@ -17,7 +19,8 @@ function M.stream_lines(bufnr, cmd, opts)
     if opts.filetype then
         vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
     end
-    local line_num = 0
+    local line_num = opts.start_line or 0
+
     local function on_stdout(_, data, _)
         if data then
             -- Populate the buffer with the incoming lines
@@ -26,11 +29,14 @@ function M.stream_lines(bufnr, cmd, opts)
                 if opts.transform_line then
                     line = opts.transform_line(line)
                 end
-                vim.api.nvim_buf_set_lines(bufnr, line_num, line_num + 1, false, { line })
-                if opts.highlight_line then
-                    pcall(opts.highlight_line, bufnr, line, line_num)
+                local should_filter_line = opts.filter_empty_lines and line == ""
+                if not should_filter_line then
+                    vim.api.nvim_buf_set_lines(bufnr, line_num, line_num + 1, false, { line })
+                    if opts.highlight_line then
+                        pcall(opts.highlight_line, bufnr, line, line_num)
+                    end
+                    line_num = line_num + 1
                 end
-                line_num = line_num + 1
             end
             vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
         end
@@ -49,11 +55,13 @@ function M.stream_lines(bufnr, cmd, opts)
         end
     end
 
-    -- Remove existing lines before adding new lines
-    -- This is for when we rerender the output
+    -- Remove existing lines before adding new lines.
+    -- This is for when we rerender the output.
+    -- If a start line is passed in, we don't want to overwrite lines
+    -- before the start line.
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
-    -- vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    vim.api.nvim_buf_set_lines(bufnr, opts.start_line or 0, -1, false, {})
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     -- Start the asynchronous job
     vim.fn.jobstart(cmd, {
         on_stdout = function(...)
