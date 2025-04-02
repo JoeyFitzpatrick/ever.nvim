@@ -154,6 +154,10 @@ Ever doesn't have an integrated merge conflict resolution solution currently, so
 
 [Delta](https://github.com/dandavison/delta) - improved git diff output (used in the demos/examples)
 
+# Development and Contributing
+I welcome users of any experience level to contribute to Ever and improve the project. If you'd like to contribute by writing code, please run `scripts/dev_setup/dev_setup.sh` first, which will set up a pre-commit hook that runs tests and some checks. The same checks run in CI, but this will help you catch issues before pushing up code. Note that you may need to run `chmod +x scripts/dev_setup/dev_setup.sh` first, to set up correct permissions to run the script.
+
+There are templates for asking questions, bug reports, and feature requests, all which are also good ways to contribute.
 
 # Tests
 ## Initialization
