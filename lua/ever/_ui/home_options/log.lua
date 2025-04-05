@@ -66,21 +66,11 @@ function M._parse_log_cmd(args)
     return "git " .. args -- args already starts with "log "
 end
 
---- This is used to find an argument in a command
---- That does not begin with dashes.
---- For git log, this determines whether we are
---- viewing commits for HEAD or for a specific branch.
---- TODO: make this work for running log with a
---- file path, e.g. git log -- somefile.txt
-local function find_non_dash_arg(input)
-    return input:match("%s+([^%s-][^%s]*)") or input:match("^([^%s-][^%s]*)")
-end
-
 ---@param cmd string?
 ---@return string
 local function get_current_head(cmd)
     if cmd then
-        local branch = find_non_dash_arg(cmd:sub(5))
+        local branch = require("ever._core.texter").find_non_dash_arg(cmd:sub(5))
         if branch then
             return "Branch: " .. branch
         end

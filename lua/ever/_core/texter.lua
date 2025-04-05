@@ -102,12 +102,31 @@ function M.startswith(text, start)
 end
 
 --- Surround `text` with quotes
----
 ---@param text string The text to surround with quotes
 ---@return string # The text surrounded with quotes
----
 function M.surround_with_quotes(text)
     return "'" .. text .. "'"
+end
+
+--- This is used to find an argument in a command
+--- That does not begin with dashes.
+--- For git log, this determines whether we are
+--- viewing commits for HEAD or for a specific branch.
+function M.find_non_dash_arg(input)
+    local args = vim.split(input, " ", { plain = true, trimempty = true })
+    for _, arg in ipairs(args) do
+        -- If arg == "--", then the next arg will have been preceded by
+        -- "-- ", e.g. "git log -- somepath/somefile.txt", because
+        -- we are splitting on " ".
+        -- We don't want to match that.
+        if arg == "--" then
+            return nil
+        end
+        if not arg:match("^%-+%s-") then
+            return arg
+        end
+    end
+    return nil
 end
 
 return M
