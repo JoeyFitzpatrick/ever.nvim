@@ -22,6 +22,17 @@ local function get_num_commits_to_pull_and_push(branch)
     return pull_and_push
 end
 
+--- This matches any valid branch characters, which are
+--- anything except arrows (e.g. ↓↑). This is to match
+--- either a branch, or text like
+--- `(no branch, rebasing <branch-name>)`.
+--- Matches up to, but not inluding, a final
+--- whitespace character.
+---@param line string
+function M._get_line_without_num_commits(line)
+    return line:match("[^↓↑]+[^↓↑%s]")
+end
+
 ---@param bufnr integer
 ---@param highlight fun(bufnr: integer, start_line: integer, lines: string[])
 ---@param start_line? integer
@@ -34,7 +45,7 @@ local function render_num_commits(bufnr, highlight, start_line)
         return
     end
     for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, start_line, -1, false)) do
-        local line_without_num_commits = line:match("..%S*")
+        local line_without_num_commits = M._get_line_without_num_commits(line)
         local branch = line:match("%a%S*")
         if branch and line_without_num_commits then
             table.insert(new_output, line_without_num_commits .. " " .. get_num_commits_to_pull_and_push(branch))
