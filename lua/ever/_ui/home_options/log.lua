@@ -34,43 +34,59 @@ local function get_line(bufnr, line_num)
 end
 
 local DEFAULT_LOG_FORMAT = "--pretty='format:%h %<(25)%cr %<(25)%an %<(25)%s'"
+local NATIVE_OUTPUT_OPTIONS = {
+    "-p",
+}
 
 ---@param args? string
----@return string
+---@return { cmd: string, use_native_output: boolean, show_head: boolean }
 function M._parse_log_cmd(args)
-    -- if cmd is nil, the default command is "git log" with special format
-    if not args then
-        return string.format("git log %s", DEFAULT_LOG_FORMAT)
+    -- if cmd is nil, or just "log" and whitespace, the default command is "git log" with special format
+    if not args or args:match("log%s-$") then
+        return { cmd = string.format("git log %s", DEFAULT_LOG_FORMAT), use_native_output = false, show_head = true }
     end
+
+    local native_output = { cmd = "git " .. args, use_native_output = true, show_head = false }
+    for _, option in ipairs(NATIVE_OUTPUT_OPTIONS) do
+        if args:match("%s+" .. option:gsub("%-", "%-")) then
+            return native_output
+        end
+    end
+
     local args_without_log_prefix = args:sub(5)
     local cmd_with_format = string.format("git log %s %s", DEFAULT_LOG_FORMAT, args_without_log_prefix)
-    if args:match("log%s-$") then
-        return cmd_with_format
-    end
+
     -- This checks whether a flag that starts with "-" is present
     -- If not, we're probably just using log on a branch or commit,
-    -- so using the special format is fine
-    if not args:match("^log.+%s%-") then
-        return cmd_with_format
+    -- so showing the branch being logged is desired.
+    local show_head = false
+    if not args:match("^log.-%s%-") then
+        show_head = true
     end
-    return "git " .. args -- args already starts with "log "
+    return { cmd = cmd_with_format, use_native_output = false, show_head = show_head }
 end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 local function set_lines(bufnr, opts)
-    local first_line = require("ever._ui.utils.get_current_head").get_current_head(opts.cmd)
     local start_line = opts.start_line or 0
+    local cmd_tbl = M._parse_log_cmd(opts.cmd)
     vim.bo[bufnr].modifiable = true
-    vim.api.nvim_buf_set_lines(bufnr, start_line, start_line + 1, false, { first_line })
-    require("ever._ui.utils.get_current_head").highlight_head_line(bufnr, first_line, start_line)
-    start_line = start_line + 1
-    local cmd = M._parse_log_cmd(opts.cmd)
-    require("ever._ui.stream").stream_lines(
-        bufnr,
-        cmd,
-        { filter_empty_lines = true, highlight_line = highlight_line, start_line = start_line }
-    )
+
+    if cmd_tbl.show_head then
+        local first_line = require("ever._ui.utils.get_current_head").get_current_head(opts.cmd)
+        vim.api.nvim_buf_set_lines(bufnr, start_line, start_line + 1, false, { first_line })
+        require("ever._ui.utils.get_current_head").highlight_head_line(bufnr, first_line, start_line)
+        start_line = start_line + 1
+    end
+
+    require("ever._ui.stream").stream_lines(bufnr, cmd_tbl.cmd, {
+        filter_empty_lines = not cmd_tbl.use_native_output,
+        highlight_line = highlight_line,
+        start_line = start_line,
+        filetype = cmd_tbl.use_native_output and "git" or nil,
+    })
+
     -- This should already be set to false by stream_lines.
     -- Just leaving this in case there's an error there.
     vim.bo[bufnr].modifiable = false
