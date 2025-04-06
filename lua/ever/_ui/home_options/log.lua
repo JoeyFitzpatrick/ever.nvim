@@ -34,8 +34,9 @@ local function get_line(bufnr, line_num)
 end
 
 local DEFAULT_LOG_FORMAT = "--pretty='format:%h %<(25)%cr %<(25)%an %<(25)%s'"
-local NATIVE_OUTPUT_OPTIONS = {
+M.NATIVE_OUTPUT_OPTIONS = {
     "-p",
+    "-L",
 }
 
 ---@param args? string
@@ -47,7 +48,7 @@ function M._parse_log_cmd(args)
     end
 
     local native_output = { cmd = "git " .. args, use_native_output = true, show_head = false }
-    for _, option in ipairs(NATIVE_OUTPUT_OPTIONS) do
+    for _, option in ipairs(M.NATIVE_OUTPUT_OPTIONS) do
         if args:match("%s+" .. option:gsub("%-", "%-")) then
             return native_output
         end
