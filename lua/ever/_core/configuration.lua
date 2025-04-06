@@ -83,6 +83,11 @@ local _DEFAULTS = {
     difftool = {
         auto_display_on = true,
     },
+    git_filetype = {
+        keymaps = {
+            show_details = "<enter>",
+        },
+    },
     log = {
         keymaps = {
             checkout = "c",

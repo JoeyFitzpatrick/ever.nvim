@@ -69,6 +69,7 @@ end
 
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
+---@return { use_native_keymaps: boolean }
 local function set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
     local cmd_tbl = M._parse_log_cmd(opts.cmd)
@@ -91,6 +92,7 @@ local function set_lines(bufnr, opts)
     -- This should already be set to false by stream_lines.
     -- Just leaving this in case there's an error there.
     vim.bo[bufnr].modifiable = false
+    return { use_native_keymaps = cmd_tbl.use_native_output }
 end
 
 ---@param bufnr integer
@@ -183,8 +185,12 @@ end
 ---@param opts ever.UiRenderOpts
 function M.render(bufnr, opts)
     vim.api.nvim_set_option_value("wrap", false, { win = 0 })
-    set_lines(bufnr, opts)
-    set_keymaps(bufnr, opts)
+    local set_lines_result = set_lines(bufnr, opts)
+    if set_lines_result.use_native_keymaps then
+        require("ever._ui.keymaps.git_filetype_keymaps").set_keymaps(bufnr)
+    else
+        set_keymaps(bufnr, opts)
+    end
 end
 
 return M

@@ -14,6 +14,7 @@
 ---@field commit_popup ever.CommitPopupConfiguration
 ---@field diff ever.DiffConfiguration
 ---@field difftool ever.DifftoolConfiguration
+---@field git_filetype ever.GitFiletypeConfiguration
 ---@field log ever.LogConfiguration
 ---@field open_files ever.OpenFilesConfiguration
 ---@field reflog ever.ReflogConfiguration
@@ -46,6 +47,9 @@
 
 ---@class ever.DifftoolConfiguration
 ---@field auto_display_on boolean
+
+---@class ever.GitFiletypeConfiguration
+---@field keymaps ever.GitFiletypeKeymaps
 
 ---@class ever.LogConfiguration
 ---@field keymaps ever.LogKeymaps
@@ -112,6 +116,9 @@
 ---@field stage string
 
 ---@class ever.DifftoolKeymaps
+
+---@class ever.GitFiletypeKeymaps
+---@field show_details string
 
 ---@class ever.LogKeymaps
 ---@field checkout string

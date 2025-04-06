@@ -53,6 +53,10 @@ return {
         previous_hunk = "Move to previous hunk",
         stage = "Stage hunk under cursor or visually selected lines",
     },
+    ---@type ever.GitFiletypeKeymaps
+    git_filetype = {
+        show_details = "Show details for item under cursor",
+    },
     ---@type ever.LogKeymaps
     log = {
         checkout = "Checkout commit (with detached HEAD)",
