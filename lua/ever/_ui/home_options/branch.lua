@@ -13,11 +13,8 @@ local function highlight(bufnr, start_line, lines)
         if line:match("^%*") then
             vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_groups.EVER_DIFF_ADD, line_num, 2, -1)
         end
-        local pull_start, pull_end = line:find("↓%d+")
-        require("ever._ui.highlight").highlight_line(bufnr, "Keyword", line_num, pull_start, pull_end)
-        local push_start, push_end = line:find("↑%d+")
-        require("ever._ui.highlight").highlight_line(bufnr, "Keyword", line_num, push_start, push_end)
     end
+    require("ever._ui.utils.num_commits_pull_push").highlight_num_commits(bufnr, start_line, lines)
 end
 
 ---@param bufnr integer
@@ -34,7 +31,10 @@ local function set_lines(bufnr, opts)
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     highlight(bufnr, start_line, output)
-    require("ever._ui.utils.num_commits_pull_push").set_num_commits_to_pull_and_push(bufnr, highlight, opts.start_line)
+    require("ever._ui.utils.num_commits_pull_push").set_num_commits_to_pull_and_push(
+        bufnr,
+        { highlight = highlight, start_line = opts.start_line, line_type = "branch" }
+    )
     return output
 end
 

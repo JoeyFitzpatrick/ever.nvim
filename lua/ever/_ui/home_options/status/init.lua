@@ -49,23 +49,40 @@ function M.set_lines(bufnr, opts)
         return
     end
     local run_cmd = require("ever._core.run_cmd").run_cmd
-    local start_line = opts.start_line or 0
+    local start_line = opts.start_line or 1
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
+    local current_head = require("ever._ui.utils.get_current_head").get_current_head()
     local stat_line = run_cmd(
         "git diff --staged --shortstat | grep -q '^' && git diff --staged --shortstat || echo 'No files staged'"
     )[1]
     local files = run_cmd("git status --porcelain --untracked")
     M._sort_status_files(files)
-    vim.api.nvim_buf_set_lines(bufnr, math.max(0, start_line - 1), -1, false, { stat_line, unpack(files) })
+    vim.api.nvim_buf_set_lines(bufnr, start_line - 1, -1, false, { current_head, stat_line, unpack(files) })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    highlight(bufnr, start_line, files)
+    require("ever._ui.utils.get_current_head").highlight_head_line(bufnr, current_head, start_line - 1)
+    -- For highlights, we don't want to include the 2 lines of non-files text.
+    -- Lines are 0-indexed, so we only need to increment start_line by 1.
+    highlight(bufnr, start_line + 1, files)
+    require("ever._ui.utils.num_commits_pull_push").set_num_commits_to_pull_and_push(bufnr, {
+        highlight = function(hl_bufnr, hl_start_line, hl_lines)
+            require("ever._ui.utils.get_current_head").highlight_head_line(bufnr, current_head, start_line - 1)
+            require("ever._ui.utils.num_commits_pull_push").highlight_num_commits(hl_bufnr, hl_start_line, hl_lines)
+        end,
+        start_line = start_line - 1,
+        end_line = start_line,
+        line_type = "head",
+    })
 end
 
 ---@param bufnr integer
+---@param start_line integer
 ---@param line_num? integer
 ---@return ever.StatusLineData | nil
-function M.get_line(bufnr, line_num)
+function M.get_line(bufnr, start_line, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
+    if line_num <= start_line then
+        return nil
+    end
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
     if line == "" then
         return nil
@@ -85,9 +102,11 @@ function M.set_keymaps(bufnr, opts)
     local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "status", ui_keymap_opts)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
+    -- 2 because we don't want to include the 2 lines of non-files text.
+    local start_line = opts.start_line or 2
 
     set("n", keymaps.stage, function()
-        local line_data = M.get_line(bufnr)
+        local line_data = M.get_line(bufnr, start_line)
         if not line_data then
             return
         end
@@ -107,9 +126,9 @@ function M.set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("v", keymaps.stage, function()
-        local start_line, end_line = require("ever._ui.utils.ui_utils").get_visual_line_nums()
-        start_line = math.max(start_line, opts.start_line or 0)
-        local files = vim.api.nvim_buf_get_lines(bufnr, start_line, end_line, false)
+        local visual_start_line, end_line = require("ever._ui.utils.ui_utils").get_visual_line_nums()
+        visual_start_line = math.max(visual_start_line, start_line)
+        local files = vim.api.nvim_buf_get_lines(bufnr, visual_start_line, end_line, false)
         local should_stage = require("ever._ui.home_options.status.status_utils").should_stage_files(files)
         local files_as_string = ""
         for i, file in ipairs(files) do
@@ -125,7 +144,7 @@ function M.set_keymaps(bufnr, opts)
 
     set("n", keymaps.stage_all, function()
         local should_stage = require("ever._ui.home_options.status.status_utils").should_stage_files(
-            vim.api.nvim_buf_get_lines(bufnr, opts.start_line or 0, -1, false)
+            vim.api.nvim_buf_get_lines(bufnr, start_line, -1, false)
         )
         if should_stage then
             require("ever._core.run_cmd").run_hidden_cmd("git add -A", { rerender = true })
@@ -148,7 +167,7 @@ function M.set_keymaps(bufnr, opts)
     set("n", keymaps.commit_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_COMMIT_POPUP, keymap_opts)
 
     set("n", keymaps.diff_file, function()
-        local line_data = M.get_line(bufnr)
+        local line_data = M.get_line(bufnr, start_line)
         if not line_data then
             return
         end
@@ -156,7 +175,7 @@ function M.set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.edit_file, function()
-        local line_data = M.get_line(bufnr)
+        local line_data = M.get_line(bufnr, start_line)
         if not line_data then
             return
         end
@@ -168,7 +187,7 @@ function M.set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.restore, function()
-        local line_data = M.get_line(bufnr)
+        local line_data = M.get_line(bufnr, start_line)
         if not line_data then
             return
         end
@@ -238,20 +257,20 @@ function M.render(bufnr, opts)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
-    if opts.start_line then
-        opts.start_line = opts.start_line + 1
+    if not opts.start_line then
+        opts.start_line = 1
     end
     M.set_lines(bufnr, opts)
     require("ever._ui.auto_display").create_auto_display(bufnr, "status", {
         generate_cmd = function()
-            local line_data = M.get_line(bufnr)
+            local line_data = M.get_line(bufnr, opts.start_line)
             if not line_data then
                 return
             end
             return get_diff_cmd(line_data.status, line_data.safe_filename)
         end,
         get_current_diff = function()
-            local line_data = M.get_line(bufnr)
+            local line_data = M.get_line(bufnr, opts.start_line)
             if not line_data then
                 return
             end
@@ -259,6 +278,9 @@ function M.render(bufnr, opts)
         end,
         strategy = { enter = false },
     })
+    -- For keymaps, we don't want to include the 2 lines of non-files text.
+    -- Lines are 0-indexed, so we only need to increment start_line by 1.
+    opts.start_line = opts.start_line + 1
     M.set_keymaps(bufnr, opts)
 end
 

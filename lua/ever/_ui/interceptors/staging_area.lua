@@ -140,7 +140,7 @@ local function set_autocmds(bufnr)
         desc = "Diff the file under the cursor",
         buffer = bufnr,
         callback = function()
-            local line_data = get_line(bufnr)
+            local line_data = get_line(bufnr, 0)
             if not line_data or line_data.filename == CURRENT_DIFF_FILE then
                 return
             end
@@ -205,12 +205,11 @@ end
 
 ---@return integer -- created bufnr
 M.render = function()
-    local opts = { start_line = 1 }
     local bufnr = require("ever._ui.elements").new_buffer({
         buffer_name = "EverStagingArea",
     })
-    require("ever._ui.home_options.status").set_lines(bufnr, opts)
-    set_keymaps(bufnr, opts)
+    require("ever._ui.home_options.status").set_lines(bufnr, {})
+    set_keymaps(bufnr, {})
     set_autocmds(bufnr)
     return bufnr
 end

@@ -1,3 +1,9 @@
+---@class ever.SetNumCommitsParams
+---@field highlight fun(bufnr: integer, start_line: integer, lines: string[])
+---@field start_line? integer
+---@field end_line? integer
+---@field line_type "branch" | "head"
+
 local M = {}
 
 ---@param branch string
@@ -34,34 +40,45 @@ function M._get_line_without_num_commits(line)
 end
 
 ---@param bufnr integer
----@param highlight fun(bufnr: integer, start_line: integer, lines: string[])
----@param start_line? integer
-local function render_num_commits(bufnr, highlight, start_line)
+---@param opts ever.SetNumCommitsParams
+local function render_num_commits(bufnr, opts)
+    local start_line = opts.start_line
+    local end_line = opts.end_line
     local new_output = {}
+
     if start_line == nil then
         start_line = 0
     end
+    if end_line == nil then
+        end_line = -1
+    end
+
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
-    for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, start_line, -1, false)) do
+    for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, start_line, end_line, false)) do
         local line_without_num_commits = M._get_line_without_num_commits(line)
-        local branch = line:match("%a%S*")
+        local branch
+        if opts.line_type == "branch" then
+            branch = line:match("%a%S*")
+        else
+            -- For a line like "HEAD: main", the 7th char is "m"
+            branch = line:match("%S+", 7)
+        end
         if branch and line_without_num_commits then
             table.insert(new_output, line_without_num_commits .. " " .. get_num_commits_to_pull_and_push(branch))
         end
     end
     vim.bo[bufnr].modifiable = true
-    vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, new_output)
+    vim.api.nvim_buf_set_lines(bufnr, start_line, end_line, false, new_output)
     vim.bo[bufnr].modifiable = false
-    highlight(bufnr, start_line, new_output)
+    opts.highlight(bufnr, start_line, new_output)
 end
 
 ---@param bufnr integer
----@param highlight fun(bufnr: integer, start_line: integer, lines: string[])
----@param start_line? integer
-function M.set_num_commits_to_pull_and_push(bufnr, highlight, start_line)
-    render_num_commits(bufnr, highlight, start_line)
+---@param opts ever.SetNumCommitsParams
+function M.set_num_commits_to_pull_and_push(bufnr, opts)
+    render_num_commits(bufnr, opts)
     local received_output = false
     vim.fn.jobstart("git fetch", {
         on_stdout = function(_, data, _)
@@ -84,9 +101,22 @@ function M.set_num_commits_to_pull_and_push(bufnr, highlight, start_line)
             if code ~= 0 or not received_output then
                 return
             end
-            render_num_commits(bufnr, highlight, start_line)
+            render_num_commits(bufnr, opts)
         end,
     })
+end
+
+---@param bufnr integer
+---@param start_line integer
+---@param lines string[]
+function M.highlight_num_commits(bufnr, start_line, lines)
+    for i, line in ipairs(lines) do
+        local line_num = i + start_line - 1
+        local pull_start, pull_end = line:find("↓%d+")
+        require("ever._ui.highlight").highlight_line(bufnr, "Keyword", line_num, pull_start, pull_end)
+        local push_start, push_end = line:find("↑%d+")
+        require("ever._ui.highlight").highlight_line(bufnr, "Keyword", line_num, push_start, push_end)
+    end
 end
 
 return M

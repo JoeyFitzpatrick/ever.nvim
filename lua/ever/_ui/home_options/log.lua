@@ -19,16 +19,6 @@ local function highlight_line(bufnr, line, line_num)
 end
 
 ---@param bufnr integer
----@param line string
----@param line_num integer
-local function highlight_head_line(bufnr, line, line_num)
-    if line:match("^HEAD:") or line:match("^Branch:") then
-        local head_start, head_end = line:find("%s%S+")
-        require("ever._ui.highlight").highlight_line(bufnr, "Identifier", line_num, head_start, head_end)
-    end
-end
-
----@param bufnr integer
 ---@param line_num? integer
 ---@return { hash: string } | nil
 local function get_line(bufnr, line_num)
@@ -66,42 +56,14 @@ function M._parse_log_cmd(args)
     return "git " .. args -- args already starts with "log "
 end
 
----@param cmd string?
----@return string
-local function get_current_head(cmd)
-    if cmd then
-        local branch = require("ever._core.texter").find_non_dash_arg(cmd:sub(5))
-        if branch then
-            return "Branch: " .. branch
-        end
-    end
-    local ERROR_MSG = "HEAD: Unable to find current HEAD"
-    local current_head, status_code = require("ever._core.run_cmd").run_cmd("git rev-parse --abbrev-ref HEAD")
-    if status_code ~= 0 then
-        return ERROR_MSG
-    end
-    -- If current head is HEAD and not a branch, we're in a detached head
-    if current_head == "HEAD" then
-        local current_head_hash, hash_status_code = require("ever._core.run_cmd").run_cmd("git rev-parse --short HEAD")
-        if hash_status_code ~= 0 then
-            return ERROR_MSG
-        end
-        return string.format("HEAD: %s (detached head)", current_head_hash[1])
-    end
-    return "HEAD: " .. current_head[1]
-end
-
---- This `set_lines` is different than the others, in that it streams content into the buffer
---- instead of writing it all at once.
---- TODO: use standard stream for this
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 local function set_lines(bufnr, opts)
-    local first_line = get_current_head(opts.cmd)
+    local first_line = require("ever._ui.utils.get_current_head").get_current_head(opts.cmd)
     local start_line = opts.start_line or 0
     vim.bo[bufnr].modifiable = true
     vim.api.nvim_buf_set_lines(bufnr, start_line, start_line + 1, false, { first_line })
-    highlight_head_line(bufnr, first_line, start_line)
+    require("ever._ui.utils.get_current_head").highlight_head_line(bufnr, first_line, start_line)
     start_line = start_line + 1
     local cmd = M._parse_log_cmd(opts.cmd)
     require("ever._ui.stream").stream_lines(
