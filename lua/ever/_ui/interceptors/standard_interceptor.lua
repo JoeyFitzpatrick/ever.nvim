@@ -1,7 +1,7 @@
 local M = {}
 
 local function set_keymaps(bufnr)
-    require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
+    require("ever._ui.keymaps.git_filetype_keymaps").set_keymaps(bufnr)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", "q", function()

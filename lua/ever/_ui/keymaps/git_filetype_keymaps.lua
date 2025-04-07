@@ -31,7 +31,7 @@ local function get_line(bufnr)
 
     if line:match("^%-%-%-%s%l") then
         local ok, commit = pcall(find_commit_from_cursor, bufnr, cursor_row)
-        if not ok then
+        if not ok or not commit then
             return nil
         end
         -- return file with previous commit
