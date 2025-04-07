@@ -5,6 +5,7 @@
 ---@field popup? boolean
 ---@field open_file_keymaps? boolean
 ---@field auto_display_keymaps? boolean
+---@field diff_keymaps? boolean
 ---@field skip_go_to_last_buffer? boolean
 
 local M = {}
@@ -67,6 +68,9 @@ local function display_keymap_help(mappings, ui_type, opts)
     if opts.auto_display_keymaps then
         descriptions =
             vim.tbl_extend("force", descriptions, require("ever._constants.keymap_descriptions").auto_display)
+    end
+    if opts.diff_keymaps then
+        descriptions = vim.tbl_extend("force", descriptions, require("ever._constants.keymap_descriptions").diff)
     end
     local max_keymap_length = get_max_keymap_length(mappings)
 

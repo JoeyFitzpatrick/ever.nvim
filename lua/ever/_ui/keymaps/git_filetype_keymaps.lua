@@ -60,7 +60,12 @@ end
 
 ---@param bufnr integer
 function M.set_keymaps(bufnr)
-    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "git_filetype", { open_file_keymaps = true })
+    require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(
+        bufnr,
+        "git_filetype",
+        { open_file_keymaps = true, diff_keymaps = true }
+    )
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
