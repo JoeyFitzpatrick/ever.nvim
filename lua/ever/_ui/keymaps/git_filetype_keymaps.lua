@@ -1,61 +1,68 @@
 ---@class ever.GitFiletypeLineData
----@field item_type "commit" | "filepath"
+---@field item_type "commit" | "filepath" | "previous_filepath"
 ---@field commit? string
+---@field previous_commit? string
 ---@field filepath? string
+---@field previous_filepath? string
+
+local PREVIOUS_FILE_PATTERN = "^%-%-%-%s%l"
+local CURRENT_FILE_PATTERN = "^%+%+%+%s%l"
 
 local M = {}
 
 ---@param bufnr integer
----@param cursor_row integer
----@return string | nil
-local function find_commit_from_cursor(bufnr, cursor_row)
-    while cursor_row > 1 do
-        local line = vim.api.nvim_buf_get_lines(bufnr, cursor_row - 2, cursor_row - 1, false)[1]
-        if line:match("^commit") then
-            return line:match("%x+", 8)
-        end
-        cursor_row = cursor_row - 1
-    end
-    return nil
-end
-
----@param bufnr
 ---@return ever.GitFiletypeLineData | nil
 local function get_line(bufnr)
     local cursor_row = vim.api.nvim_win_get_cursor(0)[1]
-    local line = vim.api.nvim_buf_get_lines(bufnr, cursor_row - 1, cursor_row, false)[1]
-
-    if line:match("^commit") then
-        return { commit = line:match("%x+", 8), item_type = "commit" }
+    local current_line = vim.api.nvim_get_current_line()
+    local output = {}
+    if current_line:match(PREVIOUS_FILE_PATTERN) then
+        output.item_type = "previous_filepath"
+    elseif current_line:match(CURRENT_FILE_PATTERN) then
+        output.item_type = "filepath"
+    else
+        output.item_type = "commit"
+    end
+    if not output.item_type then
+        return nil
     end
 
-    if line:match("^%-%-%-%s%l") then
-        local ok, commit = pcall(find_commit_from_cursor, bufnr, cursor_row)
-        if not ok or not commit then
-            return nil
+    -- Search backwards to find commit
+    local commit_found = false
+    while not commit_found and cursor_row > 0 do
+        local line = vim.api.nvim_buf_get_lines(bufnr, cursor_row - 1, cursor_row, false)[1]
+        if line:match("^commit") then
+            output.commit = line:match("%x+", 8)
+            commit_found = true
         end
-        -- return file with previous commit
-        local previous_commit_hash_output =
-            require("ever._core.run_cmd").run_cmd("git rev-list --parents -n 1 " .. commit)[1]
-        local previous_commit_hash = previous_commit_hash_output:match("%s(%x+)")
-        if not previous_commit_hash then
-            -- if we can't parse the hash, just use commit + ^
-            commit = commit .. "^"
-        else
-            commit = previous_commit_hash
-        end
-        return { commit = commit, filepath = line:match("%S+", 7), item_type = "filepath" }
+        cursor_row = cursor_row - 1
+    end
+    if not output.commit then
+        return nil
     end
 
-    if line:match("^%+%+%+%s%l") then
-        local ok, commit = pcall(find_commit_from_cursor, bufnr, cursor_row)
-        if not ok then
-            return nil
+    -- Search forwards to find everything else
+    local filepaths_found = false
+    while not filepaths_found and cursor_row < vim.api.nvim_buf_line_count(bufnr) do
+        local line = vim.api.nvim_buf_get_lines(bufnr, cursor_row, cursor_row + 1, false)[1]
+        if line:match(PREVIOUS_FILE_PATTERN) then
+            local previous_commit_hash_output =
+                require("ever._core.run_cmd").run_cmd("git rev-list --parents -n 1 " .. output.commit)[1]
+            output.previous_commit = previous_commit_hash_output:match("%s(%x+)")
+            if not output.previous_commit then
+                -- if we can't parse the hash, just use commit + ^
+                output.previous_commit = output.commit .. "^"
+            end
+            output.previous_filepath = line:match("%S+", 7)
+        elseif line:match(CURRENT_FILE_PATTERN) then
+            output.filepath = line:match("%S+", 7)
+            -- If we find the current file, the previous file should already be found
+            filepaths_found = true
         end
-        return { commit = commit, filepath = line:match("%S+", 7), item_type = "filepath" }
+        cursor_row = cursor_row + 1
     end
 
-    return nil
+    return output
 end
 
 ---@param bufnr integer
@@ -79,6 +86,12 @@ function M.set_keymaps(bufnr)
             require("ever._ui.commit_details").render(line_data.commit, false)
         elseif item_type == "filepath" then
             require("ever._core.open_file").open_file_in_split(line_data.filepath, line_data.commit, "right")
+        elseif item_type == "previous_filepath" then
+            require("ever._core.open_file").open_file_in_split(
+                line_data.previous_filepath,
+                line_data.previous_commit,
+                "right"
+            )
         end
     end, keymap_opts)
 
