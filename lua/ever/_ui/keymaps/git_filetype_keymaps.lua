@@ -10,56 +10,78 @@ local CURRENT_FILE_PATTERN = "^%+%+%+%s%l"
 
 local M = {}
 
+---@return string
+local function get_item_type()
+    local current_line = vim.api.nvim_get_current_line()
+    if current_line:match(PREVIOUS_FILE_PATTERN) then
+        return "previous_filepath"
+    elseif current_line:match(CURRENT_FILE_PATTERN) then
+        return "filepath"
+    else
+        return "commit"
+    end
+end
+
+--- Search backwards from cursor position to find commit
+---@param bufnr integer
+---@param cursor_row integer
+---@return string | nil
+local function find_commit(bufnr, cursor_row)
+    while cursor_row > 0 do
+        local line = vim.api.nvim_buf_get_lines(bufnr, cursor_row - 1, cursor_row, false)[1]
+        if line:match("^commit") then
+            return line:match("%x+", 8)
+        end
+        cursor_row = cursor_row - 1
+    end
+    return nil
+end
+
+---@param commit string
+---@return string
+local function get_previous_commit(commit)
+    local previous_commit_hash_output =
+        require("ever._core.run_cmd").run_cmd("git rev-list --parents -n 1 " .. commit)[1]
+    local previous_commit = previous_commit_hash_output:match("%s(%x+)")
+    if not previous_commit then
+        -- if we can't parse the hash, just use commit + ^
+        previous_commit = commit .. "^"
+    end
+    return previous_commit
+end
+
+---@param line string
+---@return string
+local function parse_filepath(line)
+    return line:match("%S+", 7)
+end
+
 ---@param bufnr integer
 ---@return ever.GitFiletypeLineData | nil
 local function get_line(bufnr)
     local cursor_row = vim.api.nvim_win_get_cursor(0)[1]
-    local current_line = vim.api.nvim_get_current_line()
     local output = {}
-    if current_line:match(PREVIOUS_FILE_PATTERN) then
-        output.item_type = "previous_filepath"
-    elseif current_line:match(CURRENT_FILE_PATTERN) then
-        output.item_type = "filepath"
-    else
-        output.item_type = "commit"
-    end
-    if not output.item_type then
-        return nil
-    end
+    output.item_type = get_item_type()
+    output.commit = find_commit(bufnr, cursor_row)
 
-    -- Search backwards to find commit
-    local commit_found = false
-    while not commit_found and cursor_row > 0 do
-        local line = vim.api.nvim_buf_get_lines(bufnr, cursor_row - 1, cursor_row, false)[1]
-        if line:match("^commit") then
-            output.commit = line:match("%x+", 8)
-            commit_found = true
-        end
-        cursor_row = cursor_row - 1
-    end
     if not output.commit then
         return nil
     end
 
-    -- Search forwards to find everything else
-    local filepaths_found = false
-    while not filepaths_found and cursor_row < vim.api.nvim_buf_line_count(bufnr) do
-        local line = vim.api.nvim_buf_get_lines(bufnr, cursor_row, cursor_row + 1, false)[1]
-        if line:match(PREVIOUS_FILE_PATTERN) then
-            local previous_commit_hash_output =
-                require("ever._core.run_cmd").run_cmd("git rev-list --parents -n 1 " .. output.commit)[1]
-            output.previous_commit = previous_commit_hash_output:match("%s(%x+)")
-            if not output.previous_commit then
-                -- if we can't parse the hash, just use commit + ^
-                output.previous_commit = output.commit .. "^"
-            end
-            output.previous_filepath = line:match("%S+", 7)
-        elseif line:match(CURRENT_FILE_PATTERN) then
-            output.filepath = line:match("%S+", 7)
-            -- If we find the current file, the previous file should already be found
-            filepaths_found = true
-        end
-        cursor_row = cursor_row + 1
+    if output.item_type == "commit" then
+        return output
+    end
+
+    output.previous_commit = get_previous_commit(output.commit)
+
+    local current_line = vim.api.nvim_get_current_line()
+    if current_line:match(PREVIOUS_FILE_PATTERN) then
+        output.previous_filepath = parse_filepath(current_line)
+        output.filepath = parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row, cursor_row + 1, false)[1])
+    elseif current_line:match(CURRENT_FILE_PATTERN) then
+        output.filepath = parse_filepath(current_line)
+        output.previous_filepath =
+            parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row - 1, cursor_row, false)[1])
     end
 
     return output
