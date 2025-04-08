@@ -1,5 +1,7 @@
+---@alias ever.GitFiletypeOutputType "commit" | "filepath" | "previous_filepath" | "vimdiff"
+
 ---@class ever.GitFiletypeLineData
----@field item_type "commit" | "filepath" | "previous_filepath"
+---@field item_type ever.GitFiletypeOutputType
 ---@field commit? string
 ---@field previous_commit? string
 ---@field filepath? string
@@ -7,16 +9,20 @@
 
 local PREVIOUS_FILE_PATTERN = "^%-%-%-%s%l"
 local CURRENT_FILE_PATTERN = "^%+%+%+%s%l"
+local DIFF_PATTERN = "^diff"
+local HUNK_START_PATTERN = "^@@"
 
 local M = {}
 
----@return string
+---@return ever.GitFiletypeOutputType
 local function get_item_type()
     local current_line = vim.api.nvim_get_current_line()
     if current_line:match(PREVIOUS_FILE_PATTERN) then
         return "previous_filepath"
     elseif current_line:match(CURRENT_FILE_PATTERN) then
         return "filepath"
+    elseif current_line:match(DIFF_PATTERN) or current_line:match(HUNK_START_PATTERN) then
+        return "vimdiff"
     else
         return "commit"
     end
@@ -82,6 +88,14 @@ local function get_line(bufnr)
         output.filepath = parse_filepath(current_line)
         output.previous_filepath =
             parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row - 1, cursor_row, false)[1])
+    elseif current_line:match(DIFF_PATTERN) then
+        output.previous_filepath =
+            parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row + 1, cursor_row + 2, false)[1])
+        output.filepath = parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row + 2, cursor_row + 3, false)[1])
+    elseif current_line:match(HUNK_START_PATTERN) then
+        output.previous_filepath =
+            parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row - 3, cursor_row - 2, false)[1])
+        output.filepath = parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row - 2, cursor_row - 1, false)[1])
     end
 
     return output
@@ -114,6 +128,15 @@ function M.set_keymaps(bufnr)
                 line_data.previous_commit,
                 "right"
             )
+        elseif item_type == "vimdiff" then
+            require("ever._core.open_file").open_file_in_split(
+                line_data.previous_filepath,
+                line_data.previous_commit,
+                "below"
+            )
+            vim.cmd("diffthis")
+            require("ever._core.open_file").open_file_in_split(line_data.filepath, line_data.commit, "right")
+            vim.cmd("diffthis")
         end
     end, keymap_opts)
 
