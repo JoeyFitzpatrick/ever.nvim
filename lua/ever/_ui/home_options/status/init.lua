@@ -259,6 +259,8 @@ function M.render(bufnr, opts)
     end
     if not opts.start_line then
         opts.start_line = 1
+    else
+        opts.start_line = opts.start_line + 1
     end
     M.set_lines(bufnr, opts)
     require("ever._ui.auto_display").create_auto_display(bufnr, "status", {
