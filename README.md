@@ -94,6 +94,11 @@ By default, pressing `<leader>s` in the status tab of the home UI will open the 
 
 Note that you can select lines with either visual mode or linewise-visual mode, and use the "stage" keymap (`s` by default) to (un)stage selected lines. If you want to (un)stage single lines at a time, you can use `vs`, to visually select a line and immediately (un)stage it.
 
+## G Difftool
+Passing commit(s) to Ever's `difftool` command, e.g. `:G difftool abc123` or `:G difftool abc123..def456`, will open a UI that allows for seeing the diff introduced
+by a commit, or the diff between two commits. Note that if a commit range is given, e.g. `abc123..def456`, using the open-file keymaps will use the latter commit.
+So in this example, using `oh` to open a file in a horizontal split would use commit `def456`.
+
 ## G Branch
 G commands that display a list of branches, such as `:G branch`, `:G branch --all`, `:G branch --merged`, and so on, bring up a branch UI, from which keymaps can be used to view commits, rename branches, merge branches, etc. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the branch UI.
 
