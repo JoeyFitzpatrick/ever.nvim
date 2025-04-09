@@ -128,19 +128,6 @@ M.extract = function(is_staged)
         return nil
     end
 
-    local next_hunk_start, previous_hunk_start = nil, nil
-    for i = hunk_start - 2, 1, -1 do -- -2 represents the line before the @@ line of the current hunk
-        if is_patch_line(lines[i]) then
-            previous_hunk_start = i
-            break
-        end
-    end
-
-    local not_in_last_line = lines[hunk_end + 1] and lines[hunk_end + 2]
-    if not_in_last_line and is_patch_line(lines[hunk_end + 1]) then
-        next_hunk_start = hunk_end + 1
-    end
-
     -- First few lines of diff are like this:
     -- diff --git a/lua/alien/keymaps/diff-keymaps.lua b/lua/alien/keymaps/diff-keymaps.lua
     -- index 3dcb93a..8da090a 100644
@@ -178,8 +165,6 @@ M.extract = function(is_staged)
         hunk_end = hunk_end,
         patch_lines = patch_lines,
         patch_selected_lines = patch_selected_lines,
-        next_hunk_start = next_hunk_start,
-        previous_hunk_start = previous_hunk_start,
     }
 end
 

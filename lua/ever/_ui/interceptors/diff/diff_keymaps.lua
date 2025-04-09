@@ -10,7 +10,7 @@ function M.set_keymaps(bufnr)
     end, keymap_opts)
 
     set("n", keymaps.previous_hunk, function()
-        require("ever._ui.interceptors.diff.move_to_hunk").move_cursor_to_previous_hunk()
+        require("ever._ui.interceptors.diff.move_to_hunk").move_cursor_to_previous_hunk(bufnr)
     end, keymap_opts)
 end
 
