@@ -60,11 +60,14 @@ There are some advantages to using terminal mode for these commands, as opposed 
 Note that using the `%` character will expand it to the current buffer's filename, similar to vim-fugitive, e.g. `:G log --follow %` to see commits that changed the current file.
 
 # Keymaps for Raw Git Output
-When a command outputs raw git output (for example, `:G log -p`), a keymap is created to show details for the item under the cursor. By default, this is `<enter>`. Some details:
+When a command outputs raw git output (for example, `:G log -p`), a keymap is created to show details for the item under the cursor. 
+By default, this is `<enter>`. Some details:
 * If the current line is a filepath, e.g. `--- a/lua/ever/_ui/keymaps/git_filetype_keymaps.lua`, it opens the file at that revision. Lines that start with `---` are the revision
 before the commit associated with this change, lines that begin with `+++` are the revision at that commit.
 * If the line begins with `diff` or `@@`, the previous and next versions of the file, relative to that commit, are opened in a vim diff.
 * Otherwise, the commit is opened in the commit details UI.
+
+It's worth noting that this functionality already exists in vim-fugitive, with some minor differences.
 
 # Special Commands
 
