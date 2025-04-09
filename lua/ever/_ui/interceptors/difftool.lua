@@ -74,11 +74,65 @@ local function get_line(bufnr, line_num)
     return { filename = filename, safe_filename = "'" .. filename .. "'" }
 end
 
-local function set_keymaps(bufnr)
-    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+---@param bufnr integer
+---@param commits string
+---@param open_type "tab" | "window" | "vertical" | "horizontal"
+---@return { file_to_open: string, commit_to_use: string } | nil
+local function open_file(bufnr, commits, open_type)
+    local line_data = get_line(bufnr)
+    if not line_data then
+        return nil
+    end
 
-    vim.keymap.set("n", "q", function()
+    vim.print(commits)
+    local file_to_open = line_data.filename
+    if commits:match("%.") then
+        commits = commits:match("%.(%x+)")
+    end
+
+    if not file_to_open or not commits then
+        return nil
+    end
+
+    if open_type == "tab" then
+        require("ever._core.open_file").open_file_in_tab(file_to_open, commits)
+    elseif open_type == "window" then
+        require("ever._core.open_file").open_file_in_current_window(file_to_open, commits)
+    elseif open_type == "vertical" then
+        require("ever._ui.auto_display").close_auto_display(bufnr, "difftool")
+        require("ever._core.open_file").open_file_in_split(file_to_open, commits, "right")
+    elseif open_type == "horizontal" then
+        require("ever._ui.auto_display").close_auto_display(bufnr, "difftool")
+        require("ever._core.open_file").open_file_in_split(file_to_open, commits, "below")
+    end
+end
+
+---@param bufnr integer
+---@param commits string
+local function set_keymaps(bufnr, commits)
+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "difftool", { open_file_keymaps = true })
+    local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
+    local set = require("ever._ui.keymaps.set").safe_set_keymap
+
+    -- TODO: why isn't this set up automatically?
+    set("n", "q", function()
         vim.api.nvim_buf_delete(bufnr, { force = true })
+    end, keymap_opts)
+
+    set("n", keymaps.open_in_current_window, function()
+        open_file(bufnr, commits, "window")
+    end, keymap_opts)
+
+    set("n", keymaps.open_in_horizontal_split, function()
+        open_file(bufnr, commits, "horizontal")
+    end, keymap_opts)
+
+    set("n", keymaps.open_in_new_tab, function()
+        open_file(bufnr, commits, "tab")
+    end, keymap_opts)
+
+    set("n", keymaps.open_in_vertical_split, function()
+        open_file(bufnr, commits, "vertical")
     end, keymap_opts)
 end
 
@@ -91,7 +145,7 @@ M.render = function(cmd)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_diff_files(commits_to_diff))
     highlight(bufnr)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    set_keymaps(bufnr)
+    set_keymaps(bufnr, commits_to_diff)
     require("ever._ui.auto_display").create_auto_display(bufnr, "difftool", {
         generate_cmd = function()
             local line_data = get_line(bufnr)

@@ -61,7 +61,7 @@ end
 local function display_keymap_help(mappings, ui_type, opts)
     ---@type string[]
     local keys_to_descriptions = {}
-    local descriptions = require("ever._constants.keymap_descriptions")[ui_type]
+    local descriptions = require("ever._constants.keymap_descriptions")[ui_type] or {}
     if opts.open_file_keymaps then
         descriptions = vim.tbl_extend("force", descriptions, require("ever._constants.keymap_descriptions").open_files)
     end
@@ -105,8 +105,11 @@ end
 ---@param opts ever.GetKeymapsOpts
 ---@return table<string, string>
 function M.get_keymaps(bufnr, ui_type, opts)
-    local mappings = require("ever._core.configuration").DATA[ui_type].keymaps
-    assert(mappings ~= nil, "Called `get_ui_keymaps` with an invalid ui type: " .. ui_type)
+    local mappings = {}
+    local config = require("ever._core.configuration").DATA[ui_type]
+    if config and config.keymaps then
+        mappings = config.keymaps
+    end
 
     if opts.open_file_keymaps then
         mappings = vim.tbl_extend("force", mappings, require("ever._core.configuration").DATA["open_files"].keymaps)
