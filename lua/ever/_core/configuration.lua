@@ -73,8 +73,6 @@ local _DEFAULTS = {
     },
     diff = {
         keymaps = {
-            next_file = "<tab>",
-            previous_file = "<S-tab>",
             next_hunk = "J",
             previous_hunk = "K",
             stage = "s",

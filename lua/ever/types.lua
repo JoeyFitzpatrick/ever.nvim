@@ -109,8 +109,6 @@
 ---@field commit_no_verify string
 
 ---@class ever.DiffKeymaps
----@field next_file string
----@field previous_file string
 ---@field next_hunk string
 ---@field previous_hunk string
 ---@field stage string

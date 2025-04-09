@@ -107,12 +107,17 @@ end
 function M.get_keymaps(bufnr, ui_type, opts)
     local mappings = require("ever._core.configuration").DATA[ui_type].keymaps
     assert(mappings ~= nil, "Called `get_ui_keymaps` with an invalid ui type: " .. ui_type)
+
     if opts.open_file_keymaps then
         mappings = vim.tbl_extend("force", mappings, require("ever._core.configuration").DATA["open_files"].keymaps)
     end
     if opts.auto_display_keymaps then
         mappings = vim.tbl_extend("force", mappings, require("ever._core.configuration").DATA["auto_display"].keymaps)
     end
+    if opts.diff_keymaps then
+        mappings = vim.tbl_extend("force", mappings, require("ever._core.configuration").DATA["diff"].keymaps)
+    end
+
     if not opts.popup then
         local HELP_FLOAT_MAP = "g?"
 

@@ -101,6 +101,37 @@ local function get_line(bufnr)
     return output
 end
 
+---@param line_data ever.GitFiletypeLineData | nil
+---@param open_type "tab" | "window" | "vertical" | "horizontal"
+---@return { file_to_open: string, commit_to_use: string } | nil
+local function open_file(line_data, open_type)
+    if not line_data then
+        return nil
+    end
+
+    local file_to_open, commit_to_use = nil, nil
+    if line_data.item_type == "filepath" then
+        file_to_open = line_data.filepath
+        commit_to_use = line_data.commit
+    elseif line_data.item_type == "previous_filepath" then
+        file_to_open = line_data.previous_filepath
+        commit_to_use = line_data.previous_commit
+    end
+    if not file_to_open or not commit_to_use then
+        return nil
+    end
+
+    if open_type == "tab" then
+        require("ever._core.open_file").open_file_in_tab(file_to_open, commit_to_use)
+    elseif open_type == "window" then
+        require("ever._core.open_file").open_file_in_current_window(file_to_open, commit_to_use)
+    elseif open_type == "vertical" then
+        require("ever._core.open_file").open_file_in_split(file_to_open, commit_to_use, "right")
+    elseif open_type == "horizontal" then
+        require("ever._core.open_file").open_file_in_split(file_to_open, commit_to_use, "below")
+    end
+end
+
 ---@param bufnr integer
 function M.set_keymaps(bufnr)
     require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
@@ -141,36 +172,19 @@ function M.set_keymaps(bufnr)
     end, keymap_opts)
 
     set("n", keymaps.open_in_current_window, function()
-        local line_data = get_line(bufnr)
-        if not line_data or line_data.item_type ~= "filepath" then
-            return
-        end
-        require("ever._core.open_file").open_file_in_current_window(line_data.filepath, line_data.commit)
+        open_file(get_line(bufnr), "window")
     end, keymap_opts)
 
     set("n", keymaps.open_in_horizontal_split, function()
-        local line_data = get_line(bufnr)
-        if not line_data or line_data.item_type ~= "filepath" then
-            return
-        end
-        require("ever._core.open_file").open_file_in_split(line_data.filepath, line_data.commit, "below")
+        open_file(get_line(bufnr), "horizontal")
     end, keymap_opts)
 
     set("n", keymaps.open_in_new_tab, function()
-        local line_data = get_line(bufnr)
-        if not line_data or line_data.item_type ~= "filepath" then
-            return
-        end
-        require("ever._core.open_file").open_file_in_tab(line_data.filepath, line_data.commit)
+        open_file(get_line(bufnr), "tab")
     end, keymap_opts)
 
     set("n", keymaps.open_in_vertical_split, function()
-        local line_data = get_line(bufnr)
-        if not line_data or line_data.item_type ~= "filepath" then
-            return
-        end
-        require("ever._ui.auto_display").close_auto_display(bufnr, "commit_details")
-        require("ever._core.open_file").open_file_in_split(line_data.filepath, line_data.commit, "right")
+        open_file(get_line(bufnr), "vertical")
     end, keymap_opts)
 end
 

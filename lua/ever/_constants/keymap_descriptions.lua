@@ -47,8 +47,6 @@ return {
     },
     ---@type ever.DiffKeymaps
     diff = {
-        next_file = "Go to next file",
-        previous_file = "Go to previous file",
         next_hunk = "Move to next hunk",
         previous_hunk = "Move to previous hunk",
         stage = "Stage hunk under cursor or visually selected lines",
