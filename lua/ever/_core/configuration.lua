@@ -1,15 +1,13 @@
 --- All functions and data to help customize `ever` for this user.
 ---
 ---@module 'ever._core.configuration'
----
-
--- local vlog = require("ever._vendors.vlog")
 
 local M = {}
 
 -- NOTE: Don't remove this line. It makes the Lua module much easier to reload
 vim.g.loaded_ever = false
 
+---@diagnostic disable-next-line: missing-fields
 M.DATA = {}
 
 -- TODO: (you) If you use the vlog.lua for built-in logging, keep the `logging`
@@ -161,17 +159,11 @@ function M.initialize_data_if_needed()
     M.DATA = vim.tbl_deep_extend("force", _DEFAULTS, vim.g.ever_configuration or {})
 
     vim.g.loaded_ever = true
-
-    -- vlog.new(M.DATA.logging or {}, true)
-
-    -- vlog.fmt_debug("Initialized ever's configuration.")
 end
 
 --- Merge `data` with the user's current configuration.
----
 ---@param data ever.Configuration? All extra customizations for this plugin.
 ---@return ever.Configuration # The configuration with 100% filled out values.
----
 function M.resolve_data(data)
     M.initialize_data_if_needed()
 

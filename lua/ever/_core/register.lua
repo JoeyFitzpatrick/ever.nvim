@@ -2,12 +2,16 @@
 ---@field render_fn? fun()
 ---@field state? table<string, any>
 
+---@class ever.RegisterOptsWithState
+---@field render_fn? fun()
+---@field state table<string, any>
+
 ---@class ever.DeregisterOpts
 ---@field skip_go_to_last_buffer? boolean
 
 local M = {}
 
----@type table<integer, ever.RegisterOpts>
+---@type table<integer, ever.RegisterOptsWithState>
 M.buffers = {}
 
 ---@param bufnr integer
@@ -16,6 +20,7 @@ function M.register_buffer(bufnr, opts)
     if not opts.state then
         opts.state = {}
     end
+    ---@diagnostic disable-next-line: assign-type-mismatch
     M.buffers[bufnr] = opts
 end
 

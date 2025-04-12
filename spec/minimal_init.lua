@@ -1,4 +1,4 @@
---- Run the is file before you run unittests to download any extra dependencies.
+-- TODO: make this work with current project setup
 
 local _PLUGINS = {
     ["https://github.com/nvim-lualine/lualine.nvim"] = os.getenv("LUALINE_DIR") or "/tmp/lualine.nvim",
