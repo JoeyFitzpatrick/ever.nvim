@@ -114,11 +114,6 @@ local function set_keymaps(bufnr, commits)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
-    -- TODO: why isn't this set up automatically?
-    set("n", "q", function()
-        vim.api.nvim_buf_delete(bufnr, { force = true })
-    end, keymap_opts)
-
     set("n", keymaps.open_in_current_window, function()
         open_file(bufnr, commits, "window")
     end, keymap_opts)
