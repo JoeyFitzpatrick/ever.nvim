@@ -17,17 +17,20 @@ local unstaged_patch = {
 }
 
 local staged_patch = {
-    "@@ -41,9 +41,8 @@ end",
-    " ---@param is_staged boolean",
-    " local function set_diff_keymaps(bufnr, is_staged)",
-    '     require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)',
-    '-    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "diff", {})',
-    '+    local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "diff", { skip_go_to_last_buffer = true })',
-    "     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }",
-    '-    require("ever._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)',
-    '     local set = require("ever._ui.keymaps.set").safe_set_keymap',
+    "@@ -78,10 +78,11 @@ local function set_diff_keymaps(bufnr, is_staged)",
     " ",
-    '     set("n", keymaps.stage, function()',
+    "local cmd",
+    "if is_staged then",
+    '-            cmd = "git apply --reverse --cached --whitespace=nowarn -"',
+    '+            cmd = "git apply --reverse --cached --whitespace=fix -"',
+    "else",
+    '-            cmd = "git apply --cached --whitespace=nowarn -"',
+    '+            cmd = "git apply --cached --whitespace=fix -"',
+    "end",
+    "+        vim.print(hunk.patch_selected_lines)",
+    'require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_selected_lines, rerender = true })',
+    "end, keymap_opts)",
+    "end",
     "",
     "",
 }
@@ -68,11 +71,18 @@ describe("get patch line", function()
         mock_buf_get_lines(5, nil)
         local expected = "@@ -53,9 +53,8 @@ local function set_diff_keymaps(bufnr, is_staged)"
         assert.are.equal(expected, get_patch_line(unstaged_patch[1], { 0, 0 }, false))
-    end)
+    end)(
+"@@ -78,10 +78,11 @@ local function set_diff_keymaps(bufnr, is_staged)")
 
     it("generates a valid patch line for diff on a staged file", function()
         mock_buf_get_lines(5, 6, staged_patch)
-        local expected = "@@ -41,8 +41,8 @@ end"
+        local expected = "@@ -78,11 +78,11 @@ local function set_diff_keymaps(bufnr, is_staged)"
+        assert.are.equal(expected, get_patch_line(staged_patch[1], { 0, 0 }, true))
+    end)
+
+    it("generates a valid patch line for + lines at end of staged file", function()
+        mock_buf_get_lines(9, 11, staged_patch)
+        local expected = "@@ -78,9 +78,11 @@ local function set_diff_keymaps(bufnr, is_staged)"
         assert.are.equal(expected, get_patch_line(staged_patch[1], { 0, 0 }, true))
     end)
 end)

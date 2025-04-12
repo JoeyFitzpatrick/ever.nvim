@@ -78,9 +78,9 @@ local function set_diff_keymaps(bufnr, is_staged)
 
         local cmd
         if is_staged then
-            cmd = "git apply --reverse --cached --whitespace=nowarn -"
+            cmd = "git apply --reverse --cached --whitespace=fix -"
         else
-            cmd = "git apply --cached --whitespace=nowarn -"
+            cmd = "git apply --cached --whitespace=fix -"
         end
         require("ever._core.run_cmd").run_cmd(cmd, { stdin = hunk.patch_selected_lines, rerender = true })
     end, keymap_opts)

@@ -40,22 +40,34 @@ M._get_patch_line = function(patch_line, line_nums, is_staged)
     if not old_start or not old_count or not new_start or not new_count then
         return nil
     end
+    local updated_count
     if is_staged then
-        old_count = new_count
+        updated_count = tonumber(new_count)
+    else
+        updated_count = tonumber(old_count)
     end
-    new_count = tonumber(old_count)
 
     for _, line in ipairs(lines_to_apply) do
         local line_type = get_line_type(line:sub(1, 1))
-        if line_type == "add" then
-            new_count = new_count + 1
-        elseif line_type == "remove" then
-            new_count = new_count - 1
+        if line_type == "add" and not is_staged then
+            updated_count = updated_count + 1
+        elseif line_type == "add" and is_staged then
+            updated_count = updated_count - 1
+        elseif line_type == "remove" and not is_staged then
+            updated_count = updated_count - 1
+        elseif line_type == "remove" and is_staged then
+            updated_count = updated_count + 1
         end
     end
 
     -- We want the old start to be the old start and new start for this patch
-    local new_patch_line = string.format("@@ -%d,%d +%d,%d @@%s", old_start, old_count, old_start, new_count, context)
+    if is_staged then
+        local new_patch_line =
+            string.format("@@ -%d,%d +%d,%d @@%s", old_start, updated_count, old_start, new_count, context)
+        return new_patch_line
+    end
+    local new_patch_line =
+        string.format("@@ -%d,%d +%d,%d @@%s", old_start, old_count, old_start, updated_count, context)
     return new_patch_line
 end
 
