@@ -15,7 +15,7 @@ function M._get_commits_to_diff(cmd)
         commits = cmd_args[2]
     end
     if commits ~= "" and not commits:match("%.%.") then
-        commits = "HEAD.." .. commits
+        commits = commits .. "..HEAD"
     end
     return commits
 end
