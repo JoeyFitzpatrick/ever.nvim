@@ -9,109 +9,250 @@ operation of this Lua plugin.
 *ever.Configuration*
 
 Fields ~
-    {keymaps} ever.Keymaps -- All of the keymaps in Ever
+    {auto_display} `(ever.AutoDisplayConfiguration)`
+    {blame} `(ever.BlameConfiguration)`
+    {home} `(ever.HomeConfiguration)`
+    {branch} `(ever.BranchConfiguration)`
+    {commit_details} `(ever.CommitDetailsConfiguration)`
+    {commit_popup} `(ever.CommitPopupConfiguration)`
+    {diff} `(ever.DiffConfiguration)`
+    {difftool} `(ever.DifftoolConfiguration)`
+    {git_filetype} `(ever.GitFiletypeConfiguration)`
+    {log} `(ever.LogConfiguration)`
+    {open_files} `(ever.OpenFilesConfiguration)`
+    {reflog} `(ever.ReflogConfiguration)`
+    {stash} `(ever.StashConfiguration)`
+    {stash_popup} `(ever.StashPopupConfiguration)`
+    {status} `(ever.StatusConfiguration)`
 
 ------------------------------------------------------------------------------
-*ever.Keymaps*
+*ever.BlameConfiguration*
 
 Fields ~
-    {home} ever.KeymapsHome
-    {branch} ever.KeymapsBranch
-    {diff} ever.KeymapsDiff
-    {log} ever.KeymapsLog
-    {stash} ever.KeymapsStash
-    {status} ever.KeymapsStatus
+    {default_cmd_args} `(string[])`
+    {keymaps} `(ever.BlameKeymaps)`
 
 ------------------------------------------------------------------------------
-*ever.KeymapsHome*
+*ever.HomeConfiguration*
+
+Fields ~
+    {keymaps} `(ever.HomeKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.AutoDisplayConfiguration*
+
+Fields ~
+    {keymaps} `(ever.AutoDisplayKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.BranchConfiguration*
+
+Fields ~
+    {keymaps} `(ever.BranchKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.CommitDetailsConfiguration*
+
+Fields ~
+    {keymaps} `(ever.CommitDetailsKeymaps)`
+    {auto_display_on} `(boolean)`
+
+------------------------------------------------------------------------------
+*ever.CommitPopupConfiguration*
+
+Fields ~
+    {keymaps} `(ever.CommitPopupKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.DiffConfiguration*
+
+Fields ~
+    {keymaps} `(ever.DiffKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.DifftoolConfiguration*
+
+Fields ~
+    {auto_display_on} `(boolean)`
+
+------------------------------------------------------------------------------
+*ever.GitFiletypeConfiguration*
+
+Fields ~
+    {keymaps} `(ever.GitFiletypeKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.LogConfiguration*
+
+Fields ~
+    {keymaps} `(ever.LogKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.OpenFilesConfiguration*
+
+Fields ~
+    {keymaps} `(ever.OpenFilesKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.ReflogConfiguration*
+
+Fields ~
+    {keymaps} `(ever.ReflogKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.StashConfiguration*
+
+Fields ~
+    {keymaps} `(ever.StashKeymaps)`
+    {auto_display_on} `(boolean)`
+
+------------------------------------------------------------------------------
+*ever.StashPopupConfiguration*
+
+Fields ~
+    {keymaps} `(ever.StashPopupKeymaps)`
+
+------------------------------------------------------------------------------
+*ever.StatusConfiguration*
+
+Fields ~
+    {keymaps} `(ever.StatusKeymaps)`
+    {auto_display_on} `(boolean)`
+
+------------------------------------------------------------------------------
+*ever.HomeKeymaps*
 
 Fields ~
     {next} `(string)`
     {previous} `(string)`
 
 ------------------------------------------------------------------------------
-*ever.KeymapsDiff*
+*ever.AutoDisplayKeymaps*
+
+Fields ~
+    {scroll_diff_down} `(string)`
+    {scroll_diff_up} `(string)`
+    {toggle_auto_display} `(string)`
+
+------------------------------------------------------------------------------
+*ever.BlameKeymaps*
+
+Fields ~
+    {checkout} `(string)`
+    {diff_file} `(string)`
+    {commit_details} `(string)`
+    {commit_info} `(string)`
+    {reblame} `(string)`
+    {return_to_original_file} `(string)`
+    {show} `(string)`
+
+------------------------------------------------------------------------------
+*ever.BranchKeymaps*
+
+Fields ~
+    {delete} `(string)`
+    {log} `(string)`
+    {new_branch} `(string)`
+    {pull} `(string)`
+    {push} `(string)`
+    {rename} `(string)`
+    {switch} `(string)`
+
+------------------------------------------------------------------------------
+*ever.CommitDetailsKeymaps*
+
+Fields ~
+    {show_all_changes} `(string)`
+
+------------------------------------------------------------------------------
+*ever.CommitPopupKeymaps*
+
+Fields ~
+    {commit} `(string)`
+    {commit_amend} `(string)`
+    {commit_amend_reuse_message} `(string)`
+    {commit_dry_run} `(string)`
+    {commit_no_verify} `(string)`
+
+------------------------------------------------------------------------------
+*ever.DiffKeymaps*
 
 Fields ~
     {next_hunk} `(string)`
     {previous_hunk} `(string)`
-    {stage_hunk} `(string)`
-    {stage_line} `(string)`
+    {stage} `(string)`
 
 ------------------------------------------------------------------------------
-*ever.KeymapsBranch*
-
-Fields ~
-    {delete} `(string)`
-    {new_branch} `(string)`
-    {switch} `(string)`
+*ever.DifftoolKeymaps*
 
 ------------------------------------------------------------------------------
-*ever.KeymapsLog*
+*ever.GitFiletypeKeymaps*
 
 Fields ~
+    {show_details} `(string)`
+
+------------------------------------------------------------------------------
+*ever.LogKeymaps*
+
+Fields ~
+    {checkout} `(string)`
+    {commit_details} `(string)`
     {commit_info} `(string)`
+    {pull} `(string)`
+    {push} `(string)`
+    {rebase} `(string)`
     {reset} `(string)`
     {revert} `(string)`
     {show} `(string)`
 
 ------------------------------------------------------------------------------
-*ever.KeymapsStash*
+*ever.OpenFilesKeymaps*
+
+Fields ~
+    {open_in_current_window} `(string)`
+    {open_in_horizontal_split} `(string)`
+    {open_in_new_tab} `(string)`
+    {open_in_vertical_split} `(string)`
+
+------------------------------------------------------------------------------
+*ever.ReflogKeymaps*
+
+Fields ~
+    {checkout} `(string)`
+    {commit_details} `(string)`
+    {commit_info} `(string)`
+    {show} `(string)`
+
+------------------------------------------------------------------------------
+*ever.StashKeymaps*
 
 Fields ~
     {apply} `(string)`
     {drop} `(string)`
     {pop} `(string)`
+    {show} `(string)`
 
 ------------------------------------------------------------------------------
-*ever.KeymapsStatus*
+*ever.StashPopupKeymaps*
 
 Fields ~
-    {commit} `(string)`
+    {stash_all} `(string)`
+    {stash_staged} `(string)`
+
+------------------------------------------------------------------------------
+*ever.StatusKeymaps*
+
+Fields ~
+    {commit_popup} `(string)`
+    {diff_file} `(string)`
     {edit_file} `(string)`
+    {enter_staging_area} `(string)`
     {pull} `(string)`
     {push} `(string)`
     {restore} `(string)`
-    {scroll_diff_down} `(string)`
-    {scroll_diff_up} `(string)`
     {stage} `(string)`
     {stage_all} `(string)`
-    {stash} `(string)`
-
-------------------------------------------------------------------------------
-*ever.ConfigurationCmdparseAutoComplete*
-   The settings that control what happens during auto-completion.
-
-Fields ~
-    {display} {help_flag: `(boolean})`
-       help_flag = Show / Hide the --help flag during auto-completion.
-
-------------------------------------------------------------------------------
-*ever.LoggingConfiguration*
-   Control whether or not logging is printed to the console or to disk.
-
-Fields ~
-    {level} (
-       | "trace"
-       | "debug"
-       | "info"
-       | "warn" | "error"
-       | "fatal"
-       | vim.log.levels.DEBUG
-       | vim.log.levels.ERROR
-       | vim.log.levels.INFO
-       | vim.log.levels.TRACE
-       | vim.log.levels.WARN)?
-       Any messages above this level will be logged.
-    {use_console} `(boolean?)`
-       Should print the output to neovim while running. Warning: This is very
-       spammy. You probably don't want to enable this unless you have to.
-    {use_file} `(boolean?)`
-       Should write to a file.
-    {output_path} `(string?)`
-       The default path on-disk where log files will be written to.
-       TODO: make this the correct log path
-       Defaults to "/home/selecaoone/.local/share/nvim/plugin_name.log".
+    {stash_popup} `(string)`
 
 WARNING: This file is auto-generated. Do not edit it!
 
