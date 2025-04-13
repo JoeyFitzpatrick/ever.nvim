@@ -27,7 +27,13 @@ local function highlight(bufnr, start_line, lines)
         else
             highlight_group = highlight_groups.EVER_DIFF_REMOVE
         end
-        vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_group, line_num + start_line - 1, 0, 2)
+        vim.hl.range(
+            bufnr,
+            vim.api.nvim_create_namespace(""),
+            highlight_group,
+            { line_num + start_line - 1, 0 },
+            { line_num + start_line - 1, 2 }
+        )
     end
 end
 

@@ -115,8 +115,8 @@ local highlight_namespace = vim.api.nvim_create_namespace("EverHomeTabs")
 local function highlight_tabs(bufnr, indices)
     vim.api.nvim_buf_clear_namespace(bufnr, highlight_namespace, 0, 3)
     for i = 1, 3 do
-        vim.api.nvim_buf_add_highlight(bufnr, highlight_namespace, "Conceal", i - 1, 1, indices[i].start - 4)
-        vim.api.nvim_buf_add_highlight(bufnr, highlight_namespace, "Conceal", i - 1, indices[i].ending, -1)
+        vim.hl.range(bufnr, highlight_namespace, "Conceal", { i - 1, 1 }, { i - 1, indices[i].start - 4 })
+        vim.hl.range(bufnr, highlight_namespace, "Conceal", { i - 1, indices[i].ending }, { i - 1, -1 })
     end
 end
 

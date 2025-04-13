@@ -38,7 +38,13 @@ end
 ---@param finish? integer
 function M.highlight_line(bufnr, highlight_group, line_num, start, finish)
     if start and finish then
-        vim.api.nvim_buf_add_highlight(bufnr, -1, highlight_group, line_num, start - 1, finish)
+        vim.hl.range(
+            bufnr,
+            vim.api.nvim_create_namespace(""),
+            highlight_group,
+            { line_num, start - 1 },
+            { line_num, finish }
+        )
     end
 end
 
