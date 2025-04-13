@@ -106,8 +106,10 @@ local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
         if strategy.enter == false then
             enter = false
         end
+        -- Cast this to appease type checker
+        ---@cast display_strategy "above" | "below" | "right" | "left"
         if strategy.win_size then
-            if vim.tbl_contains({ "above", "below" }, strategy.display_strategy) then
+            if vim.tbl_contains({ "above", "below" }, display_strategy) then
                 local height = math.floor(vim.o.lines * strategy.win_size)
                 win = vim.api.nvim_open_win(bufnr, enter, { split = display_strategy, height = height })
             else
