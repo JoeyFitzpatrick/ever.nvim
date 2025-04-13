@@ -10,15 +10,15 @@ Table of Contents                                     *ever-table-of-contents*
 5. Usage                                                          |ever-usage|
 6. Keymaps for Raw Git Output                |ever-keymaps-for-raw-git-output|
 7. Special Commands                                    |ever-special-commands|
-  - G                                                |ever-special-commands-g|
-  - G Difftool                              |ever-special-commands-g-difftool|
-  - G Branch                                  |ever-special-commands-g-branch|
-  - G Log                                        |ever-special-commands-g-log|
-  - G Commit                                  |ever-special-commands-g-commit|
-  - G Blame                                    |ever-special-commands-g-blame|
-  - G Stash List                          |ever-special-commands-g-stash-list|
-  - G Show                                      |ever-special-commands-g-show|
-  - G Help Commands                    |ever-special-commands-g-help-commands|
+  -                                                   |ever-special-commands-|
+  - Difftool                                  |ever-special-commands-difftool|
+  - Branch                                      |ever-special-commands-branch|
+  - Log                                            |ever-special-commands-log|
+  - Commit                                      |ever-special-commands-commit|
+  - Blame                                        |ever-special-commands-blame|
+  - Stash List                              |ever-special-commands-stash-list|
+  - Show                                          |ever-special-commands-show|
+  - Help Commands                        |ever-special-commands-help-commands|
 8. UI Management (Tabs, Windows, Buffers)|ever-ui-management-(tabs,-windows,-buffers)|
 9. Plug mappings                                          |ever-plug-mappings|
 10. Optional Dependencies                         |ever-optional-dependencies|
@@ -145,7 +145,7 @@ Note that for any command that brings up a UI: You can close the UI by pressing
 like normal `<C-i>` and `<C-o>` You can view keymaps by pressing `g?`
 
 
-G                                                    *ever-special-commands-g*
+                                                      *ever-special-commands-*
 
 Using the `:G` command renders a home ui, that will display some status info.
 This includes the git status of all changed files, a diff split to display
@@ -168,7 +168,7 @@ want to (un)stage single lines at a time, you can use `vs`, to visually select
 a line and immediately (un)stage it.
 
 
-G DIFFTOOL                                  *ever-special-commands-g-difftool*
+DIFFTOOL                                      *ever-special-commands-difftool*
 
 Passing commit(s) to Ever’s `difftool` command, e.g. `:G difftool abc123` or
 `:G difftool abc123..def456`, will open a UI that allows for seeing the diff
@@ -178,9 +178,9 @@ the latter commit. So in this example, using `oh` to open a file in a
 horizontal split would use commit `def456`.
 
 
-G BRANCH                                      *ever-special-commands-g-branch*
+BRANCH                                          *ever-special-commands-branch*
 
-G commands that display a list of branches, such as `:G branch`, `:G branch
+`:G` commands that display a list of branches, such as `:G branch`, `:G branch
 --all`, `:G branch --merged`, and so on, bring up a branch UI, from which
 keymaps can be used to view commits, rename branches, merge branches, etc. The
 |ever-default-configuration-section| shows every keymap, as does pressing `g?`
@@ -191,9 +191,9 @@ G branch commands that do not display a list of branches, such as `:G branch
 command.
 
 
-G LOG                                            *ever-special-commands-g-log*
+LOG                                                *ever-special-commands-log*
 
-G log commands will typically open a UI. The
+`:G` log commands will typically open a UI. The
 |ever-default-configuration-section| shows every keymap, as does pressing `g?`
 in the log UI.
 
@@ -203,9 +203,9 @@ to change how the output looks. Passing any arguments to `:G log` causes this
 `--pretty` option to not be added to the `log` command.
 
 
-G LOG -L ~
+LOG -L ~
 
-G log has a `-L` flag, as shown in the docs
+`:G` log has a `-L` flag, as shown in the docs
 <https://git-scm.com/docs/git-log#Documentation/git-log.txt--Lltstartgtltendgtltfilegt>.
 This can be used to see the commits that changed just the line numbers given,
 e.g. `git log -L20,40:example.lua`, to see just the commits that changed lines
@@ -218,19 +218,19 @@ numbers and file name automatically to the git command, making it much more
 convenient to use.
 
 
-G COMMIT                                      *ever-special-commands-g-commit*
+COMMIT                                          *ever-special-commands-commit*
 
-G commit will open an editor to create the commit message when that message is
-not passed to the command, e.g. `git commit` (no message, opens the editor) vs
-`git commit -m "some message"` (does not open the commit message editor). When
-the commit message editor is opened, Ever opens it in the current Neovim
+`:G` commit will open an editor to create the commit message when that message
+is not passed to the command, e.g. `git commit` (no message, opens the editor)
+vs `git commit -m "some message"` (does not open the commit message editor).
+When the commit message editor is opened, Ever opens it in the current Neovim
 instance. You can write and quit the editor (`:wq`) to apply the message, or
 simply close the editor without saving to abort the commit due to an empty
 commit message. If the commit message editor doesn’t need to open, the
 command will just run in terminal mode like most other commands.
 
 
-G BLAME                                        *ever-special-commands-g-blame*
+BLAME                                            *ever-special-commands-blame*
 
 Like vim-fugitive, running `:G blame` will open a blame window to the left,
 that uses |scrollbind| to sync with with the opened file. From there, many of
@@ -239,21 +239,21 @@ the keymaps for the commit UI also work in the blame UI. The
 in the blame UI.
 
 
-G STASH LIST                              *ever-special-commands-g-stash-list*
+STASH LIST                                  *ever-special-commands-stash-list*
 
 Running `:G stash list` will open a UI, in which you can view, pop, apply, and
 drop stashes. Other stash commands, like `:G stash show`, run in terminal mode
 like most other commands.
 
 
-G SHOW                                          *ever-special-commands-g-show*
+SHOW                                              *ever-special-commands-show*
 
 Running `:G show` commands will just open their output in the current window.
 Not amazingly helpful, but sometimes nice when that’s what you need. You can
 close this with `q` like other Ever buffers.
 
 
-G HELP COMMANDS                        *ever-special-commands-g-help-commands*
+HELP COMMANDS                            *ever-special-commands-help-commands*
 
 Running a git help command, such as `:G commit -h` or `:G log --help`, will
 open that help file in the current window. This way, you can use your normal
