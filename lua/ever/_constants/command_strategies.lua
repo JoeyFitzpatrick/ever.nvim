@@ -71,6 +71,10 @@ M.diff = {
     insert = false,
 }
 
+M.fetch = {
+    trigger_redraw = true,
+}
+
 M.merge = {
     insert = true,
     trigger_redraw = true,
