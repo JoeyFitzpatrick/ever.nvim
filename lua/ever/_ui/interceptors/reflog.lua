@@ -77,7 +77,8 @@ function M.render(cmd)
         buffer_name = os.tmpname() .. "EverReflog",
         filetype = "git",
         lines = function()
-            return require("ever._core.run_cmd").run_cmd("git " .. cmd)
+            local output = require("ever._core.run_cmd").run_cmd("git " .. cmd)
+            return output
         end,
     })
     highlight(bufnr)

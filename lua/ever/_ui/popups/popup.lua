@@ -40,6 +40,8 @@ local function get_popup_lines(bufnr, mapping_config, title)
         end
         return lines
     end
+    -- We should never get here
+    return {}
 end
 
 local function highlight(bufnr)
@@ -73,6 +75,7 @@ function M.render_popup(opts)
             elseif opts.mappings then
                 return get_popup_lines(new_bufnr, opts.mappings, opts.title)
             end
+            return {}
         end,
     })
     set_popup_settings()

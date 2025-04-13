@@ -126,7 +126,7 @@ local function set_keymaps(bufnr, opts)
         if not line_data then
             return
         end
-        require("ever._ui.commit_details").render(line_data.hash, {})
+        require("ever._ui.commit_details").render(line_data.hash, false)
     end, keymap_opts)
 
     set("n", keymaps.commit_info, function()

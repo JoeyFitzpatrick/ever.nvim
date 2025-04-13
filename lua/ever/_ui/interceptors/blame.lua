@@ -80,7 +80,9 @@ local function set_keymaps(bufnr)
         require("ever._ui.elements").new_buffer({
             filetype = vim.api.nvim_get_option_value("filetype", { buf = 0 }),
             lines = function()
-                return require("ever._core.run_cmd").run_cmd(string.format("git show %s:%s", line_data.hash, filepath))
+                local output =
+                    require("ever._core.run_cmd").run_cmd(string.format("git show %s:%s", line_data.hash, filepath))
+                return output
             end,
             buffer_name = os.tmpname() .. "/" .. FILENAME_PREFIX .. filepath,
         })
