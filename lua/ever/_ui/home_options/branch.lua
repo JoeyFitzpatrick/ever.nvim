@@ -83,7 +83,8 @@ local function set_keymaps(bufnr, opts)
                     return status, code
                 end
                 -- Then try remote deletion
-                return run_cmd("git push origin --delete " .. branch_name)
+                local output, _ = run_cmd("git push origin --delete " .. branch_name)
+                return output
             end,
         }
         local action_map = {
