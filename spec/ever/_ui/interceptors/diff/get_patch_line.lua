@@ -71,8 +71,7 @@ describe("get patch line", function()
         mock_buf_get_lines(5, nil)
         local expected = "@@ -53,9 +53,8 @@ local function set_diff_keymaps(bufnr, is_staged)"
         assert.are.equal(expected, get_patch_line(unstaged_patch[1], { 0, 0 }, false))
-    end)(
-"@@ -78,10 +78,11 @@ local function set_diff_keymaps(bufnr, is_staged)")
+    end)("@@ -78,10 +78,11 @@ local function set_diff_keymaps(bufnr, is_staged)")
 
     it("generates a valid patch line for diff on a staged file", function()
         mock_buf_get_lines(5, 6, staged_patch)
