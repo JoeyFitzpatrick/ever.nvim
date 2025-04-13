@@ -86,7 +86,7 @@ Note that for any command that brings up a UI:
 * The jumplist still works like normal `<C-i>` and `<C-o>`
 * You can view keymaps by pressing `g?`
 
-## G
+##
 Using the `:G` command renders a home ui, that will display some status info. This includes the git status of all changed files, a diff split to display these changes, and some keymaps to manipulate these files, such as staging/unstaging them. Use `h` and `l` to then display the UI for  `git branch`, `git log`, and `git stash`, all of which are further detailed below.
 
 ### Staging Area
@@ -94,38 +94,38 @@ By default, pressing `<leader>s` in the status tab of the home UI will open the 
 
 Note that you can select lines with either visual mode or linewise-visual mode, and use the "stage" keymap (`s` by default) to (un)stage selected lines. If you want to (un)stage single lines at a time, you can use `vs`, to visually select a line and immediately (un)stage it.
 
-## G Difftool
+## Difftool
 Passing commit(s) to Ever's `difftool` command, e.g. `:G difftool abc123` or `:G difftool abc123..def456`, will open a UI that allows for seeing the diff introduced
 by a commit, or the diff between two commits. Note that if a commit range is given, e.g. `abc123..def456`, using the open-file keymaps will use the latter commit.
 So in this example, using `oh` to open a file in a horizontal split would use commit `def456`.
 
-## G Branch
-G commands that display a list of branches, such as `:G branch`, `:G branch --all`, `:G branch --merged`, and so on, bring up a branch UI, from which keymaps can be used to view commits, rename branches, merge branches, etc. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the branch UI.
+## Branch
+`:G` commands that display a list of branches, such as `:G branch`, `:G branch --all`, `:G branch --merged`, and so on, bring up a branch UI, from which keymaps can be used to view commits, rename branches, merge branches, etc. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the branch UI.
 
 G branch commands that do not display a list of branches, such as `:G branch --delete`, run the command in terminal mode, as if it were a non-special command.
 
-## G Log
-G log commands will typically open a UI. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the log UI.
+## Log
+`:G` log commands will typically open a UI. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the log UI.
 
 When using the `:G log` command without arguments, a default [`--pretty`](https://git-scm.com/docs/pretty-formats) option is passed to the `log` command to change how the output looks. Passing any arguments to `:G log` causes this `--pretty` option to not be added to the `log` command.
 
-### G log -L
+### Log -L
 
-G log has a `-L` flag, as shown [in the docs](https://git-scm.com/docs/git-log#Documentation/git-log.txt--Lltstartgtltendgtltfilegt). This can be used to see the commits that changed just the line numbers given, e.g. `git log -L20,40:example.lua`, to see just the commits that changed lines from 20 to 40 in `example.lua`. In many cases, this can be an extremely useful way to search for changes, as opposed to running something like `git log --follow example.lua`, which could show commits that made changes that you don't care about. With Ever, if you make a visual selection and run `:'<,'>G log`, without passing line numbers or a file name, it will pass the line numbers and file name automatically to the git command, making it much more convenient to use.
+`:G` log has a `-L` flag, as shown [in the docs](https://git-scm.com/docs/git-log#Documentation/git-log.txt--Lltstartgtltendgtltfilegt). This can be used to see the commits that changed just the line numbers given, e.g. `git log -L20,40:example.lua`, to see just the commits that changed lines from 20 to 40 in `example.lua`. In many cases, this can be an extremely useful way to search for changes, as opposed to running something like `git log --follow example.lua`, which could show commits that made changes that you don't care about. With Ever, if you make a visual selection and run `:'<,'>G log`, without passing line numbers or a file name, it will pass the line numbers and file name automatically to the git command, making it much more convenient to use.
 
-## G Commit
-G commit will open an editor to create the commit message when that message is not passed to the command, e.g. `git commit` (no message, opens the editor) vs `git commit -m "some message"` (does not open the commit message editor). When the commit message editor is opened, Ever opens it in the current Neovim instance. You can write and quit the editor (`:wq`) to apply the message, or simply close the editor without saving to abort the commit due to an empty commit message. If the commit message editor doesn't need to open, the command will just run in terminal mode like most other commands.
+## Commit
+`:G` commit will open an editor to create the commit message when that message is not passed to the command, e.g. `git commit` (no message, opens the editor) vs `git commit -m "some message"` (does not open the commit message editor). When the commit message editor is opened, Ever opens it in the current Neovim instance. You can write and quit the editor (`:wq`) to apply the message, or simply close the editor without saving to abort the commit due to an empty commit message. If the commit message editor doesn't need to open, the command will just run in terminal mode like most other commands.
 
-## G Blame
+## Blame
 Like vim-fugitive, running `:G blame` will open a blame window to the left, that uses `:h scrollbind` to sync with with the opened file. From there, many of the keymaps for the commit UI also work in the blame UI. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the blame UI.
 
-## G Stash List
+## Stash List
 Running `:G stash list` will open a UI, in which you can view, pop, apply, and drop stashes. Other stash commands, like `:G stash show`, run in terminal mode like most other commands.
 
-## G Show
+## Show
 Running `:G show` commands will just open their output in the current window. Not amazingly helpful, but sometimes nice when that's what you need. You can close this with `q` like other Ever buffers.
 
-## G Help Commands
+## Help Commands
 Running a git help command, such as `:G commit -h` or `:G log --help`, will open that help file in the current window. This way, you can use your normal vim navigation to move through the docs, versus opening a pager. You can close it by pressing `q` to return to your last buffer.
 
 # UI Management (Tabs, Windows, Buffers)
