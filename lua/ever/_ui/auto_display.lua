@@ -88,7 +88,7 @@ local function set_autocmds(bufnr, ui_type, auto_display_opts)
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
-    vim.api.nvim_create_autocmd("CursorMoved", {
+    vim.api.nvim_create_autocmd({ "CursorMoved", "BufEnter" }, {
         desc = "Diff the file under the cursor",
         buffer = bufnr,
         callback = function()

@@ -84,10 +84,9 @@ local function open_file(bufnr, commits, open_type)
         return nil
     end
 
-    vim.print(commits)
     local file_to_open = line_data.filename
     if commits:match("%.") then
-        commits = commits:match("%.(%x+)")
+        commits = commits:match("%.%.(%S+)")
     end
 
     if not file_to_open or not commits then
