@@ -138,7 +138,7 @@ function M.set_keymaps(bufnr, opts)
         local should_stage = require("ever._ui.home_options.status.status_utils").should_stage_files(files)
         local files_as_string = ""
         for i, file in ipairs(files) do
-            -- dont' add space for first file, and don't include status
+            -- don't add space for first file, and don't include status
             files_as_string = files_as_string .. (i == 0 and "" or " ") .. file:sub(4)
         end
         if should_stage then
@@ -252,6 +252,54 @@ function M.set_keymaps(bufnr, opts)
                 },
             },
         })
+    end, keymap_opts)
+
+    set("v", keymaps.restore, function()
+        local visual_start_line, end_line = require("ever._ui.utils.ui_utils").get_visual_line_nums()
+        visual_start_line = math.max(visual_start_line, start_line)
+        local files = vim.api.nvim_buf_get_lines(bufnr, visual_start_line, end_line, false)
+        local statuses = {
+            staged = "",
+            unstaged = "",
+            untracked = "",
+        }
+        for _, file in ipairs(files) do
+            local status_to_use
+            local status = get_status(file)
+            if require("ever._core.git").is_staged(status) then
+                status_to_use = "staged"
+            elseif require("ever._core.git").is_untracked(status) then
+                status_to_use = "untracked"
+            else
+                status_to_use = "unstaged"
+            end
+            local current_files = statuses[status_to_use]
+            -- don't add space for first file, and don't include status
+            statuses[status_to_use] = current_files .. (current_files == "" and "" or " ") .. file:sub(4)
+        end
+        vim.ui.select({ "Yes", "No" }, { prompt = "Restore (remove) all selected files?" }, function(choice)
+            if choice ~= "Yes" then
+                return
+            end
+            if statuses.staged ~= "" then
+                require("ever._core.run_cmd").run_hidden_cmd(
+                    string.format("git reset -- %s && git clean -f -- %s", statuses.staged, statuses.staged),
+                    { rerender = true }
+                )
+            end
+            if statuses.unstaged ~= "" then
+                require("ever._core.run_cmd").run_hidden_cmd(
+                    "git restore -- " .. statuses.unstaged,
+                    { rerender = true }
+                )
+            end
+            if statuses.untracked ~= "" then
+                require("ever._core.run_cmd").run_hidden_cmd(
+                    "git clean -f -- " .. statuses.untracked,
+                    { rerender = true }
+                )
+            end
+        end)
     end, keymap_opts)
 
     set("n", keymaps.stash_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_STASH_POPUP, keymap_opts)

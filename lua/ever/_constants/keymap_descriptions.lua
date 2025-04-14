@@ -95,15 +95,15 @@ return {
     },
     ---@type ever.StatusKeymaps
     status = {
-        commit_popup = "Open commit command popup",
+        commit_popup = "Open git commit options",
         diff_file = "Diff file",
         edit_file = "Edit file",
         enter_staging_area = "Enter staging area (stage hunks/lines)",
         pull = PULL_DESCRIPTION,
         push = PUSH_DESCRIPTION,
-        restore = "Restore file",
+        restore = "Open git restore options, or restore visually selected lines",
         stage = "Stage file",
         stage_all = "Stage all files",
-        stash_popup = "Open stash command popup",
+        stash_popup = "Open git stash options",
     },
 }
