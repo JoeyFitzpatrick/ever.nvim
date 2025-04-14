@@ -201,36 +201,57 @@ function M.set_keymaps(bufnr, opts)
         local status = line_data.status
         local status_checks = require("ever._core.git")
         local cmd
-        vim.ui.select(
-            { "Just this file", "Nuke working tree", "Hard reset", "Mixed reset", "Soft reset" },
-            { prompt = "Git restore type: " },
-            function(selection)
-                if not selection then
-                    return
-                end
-                if selection == "Just this file" then
-                    if not filename then
-                        return
-                    end
-                    if status_checks.is_untracked(status) then
-                        cmd = "git clean -f " .. filename
-                    elseif status_checks.is_staged(status) then
-                        cmd = "git reset -- " .. filename .. " && git clean -f -- " .. filename
-                    else
-                        cmd = "git restore -- " .. filename
-                    end
-                elseif selection == "Nuke working tree" then
-                    cmd = "git reset --hard HEAD && git clean -fd"
-                elseif selection == "Hard reset" then
-                    cmd = "git reset --hard HEAD"
-                elseif selection == "Mixed reset" then
-                    cmd = "git reset --mixed HEAD"
-                elseif selection == "Soft reset" then
-                    cmd = "git reset --soft HEAD"
-                end
-                require("ever._core.run_cmd").run_hidden_cmd(cmd, { rerender = true })
-            end
-        )
+        require("ever._ui.popups.popup").render_popup({
+            buffer_name = "EverStatusDeletePopup",
+            title = "Git Restore Type",
+            mappings = {
+                {
+                    keys = "f",
+                    description = "Just this file",
+                    action = function()
+                        if not filename then
+                            return
+                        end
+                        if status_checks.is_untracked(status) then
+                            cmd = "git clean -f " .. filename
+                        elseif status_checks.is_staged(status) then
+                            cmd = "git reset -- " .. filename .. " && git clean -f -- " .. filename
+                        else
+                            cmd = "git restore -- " .. filename
+                        end
+                        require("ever._core.run_cmd").run_hidden_cmd(cmd, { rerender = true })
+                    end,
+                },
+                {
+                    keys = "n",
+                    description = "Nuke working tree",
+                    action = function()
+                        require("ever._core.run_cmd").run_hidden_cmd("git reset --hard HEAD && git clean -fd")
+                    end,
+                },
+                {
+                    keys = "h",
+                    description = "Hard reset",
+                    action = function()
+                        require("ever._core.run_cmd").run_hidden_cmd("git reset --hard HEAD")
+                    end,
+                },
+                {
+                    keys = "s",
+                    description = "Soft reset",
+                    action = function()
+                        require("ever._core.run_cmd").run_hidden_cmd("git reset --soft HEAD")
+                    end,
+                },
+                {
+                    keys = "m",
+                    description = "Mixed reset",
+                    action = function()
+                        require("ever._core.run_cmd").run_hidden_cmd("git reset --mixed HEAD")
+                    end,
+                },
+            },
+        })
     end, keymap_opts)
 
     set("n", keymaps.stash_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_STASH_POPUP, keymap_opts)
