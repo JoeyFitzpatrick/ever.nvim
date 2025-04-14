@@ -1,4 +1,4 @@
-*ever.txt*            For Neovim >= 0.8.0           Last change: 2025 April 13
+*ever.txt*            For Neovim >= 0.8.0           Last change: 2025 April 14
 
 ==============================================================================
 Table of Contents                                     *ever-table-of-contents*
