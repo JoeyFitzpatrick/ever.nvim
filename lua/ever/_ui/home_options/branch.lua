@@ -205,7 +205,10 @@ local function set_keymaps(bufnr, opts)
             if not input then
                 return
             end
-            vim.cmd(string.format("G branch -m %s %s", line_data.branch_name, input))
+            require("ever._core.run_cmd").run_hidden_cmd(
+                string.format("git branch -m %s %s", line_data.branch_name, input),
+                { rerender = true }
+            )
         end)
     end, keymap_opts)
 
