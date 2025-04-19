@@ -193,13 +193,6 @@ function M.set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.restore, function()
-        local line_data = M.get_line(bufnr, start_line)
-        if not line_data then
-            return
-        end
-        local filename = line_data.safe_filename
-        local status = line_data.status
-        local status_checks = require("ever._core.git")
         local cmd
         require("ever._ui.popups.popup").render_popup({
             buffer_name = "EverStatusDeletePopup",
@@ -209,9 +202,14 @@ function M.set_keymaps(bufnr, opts)
                     keys = "f",
                     description = "Just this file",
                     action = function()
-                        if not filename then
+                        local line_data = M.get_line(bufnr, start_line)
+                        if not line_data then
                             return
                         end
+                        local filename = line_data.safe_filename
+                        local status = line_data.status
+                        local status_checks = require("ever._core.git")
+
                         if status_checks.is_untracked(status) then
                             cmd = "git clean -f " .. filename
                         elseif status_checks.is_staged(status) then
@@ -226,28 +224,31 @@ function M.set_keymaps(bufnr, opts)
                     keys = "n",
                     description = "Nuke working tree",
                     action = function()
-                        require("ever._core.run_cmd").run_hidden_cmd("git reset --hard HEAD && git clean -fd")
+                        require("ever._core.run_cmd").run_hidden_cmd(
+                            "git reset --hard HEAD && git clean -fd",
+                            { rerender = true }
+                        )
                     end,
                 },
                 {
                     keys = "h",
                     description = "Hard reset",
                     action = function()
-                        require("ever._core.run_cmd").run_hidden_cmd("git reset --hard HEAD")
+                        require("ever._core.run_cmd").run_hidden_cmd("git reset --hard HEAD", { rerender = true })
                     end,
                 },
                 {
                     keys = "s",
                     description = "Soft reset",
                     action = function()
-                        require("ever._core.run_cmd").run_hidden_cmd("git reset --soft HEAD")
+                        require("ever._core.run_cmd").run_hidden_cmd("git reset --soft HEAD", { rerender = true })
                     end,
                 },
                 {
                     keys = "m",
                     description = "Mixed reset",
                     action = function()
-                        require("ever._core.run_cmd").run_hidden_cmd("git reset --mixed HEAD")
+                        require("ever._core.run_cmd").run_hidden_cmd("git reset --mixed HEAD", { rerender = true })
                     end,
                 },
             },
