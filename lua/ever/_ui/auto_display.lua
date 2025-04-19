@@ -31,27 +31,26 @@ local function set_diff_buffer_autocmds(diff_bufnr, original_bufnr, ui_type)
         group = vim.api.nvim_create_augroup(string.format("Ever%sStopInsert", ui_type), { clear = false }),
     })
     vim.api.nvim_create_autocmd("BufHidden", {
-        desc = "Close open diffs when buffer is hidden",
+        desc = "Close open diffs and clean up diff variables",
         buffer = original_bufnr,
         callback = function()
-            require("ever._core.register").deregister_buffer(diff_bufnr, {})
             local buf = require("ever._core.register").buffers[original_bufnr]
             if buf then
                 clear_state(buf.state, ui_type)
             end
+            require("ever._core.register").deregister_buffer(diff_bufnr, {})
         end,
         group = vim.api.nvim_create_augroup(string.format("Ever%sCloseAutoDisplay", ui_type), { clear = true }),
     })
-    vim.api.nvim_create_autocmd("BufHidden", {
-        desc = "Clean up diff variables",
-        buffer = diff_bufnr,
-        callback = function()
-            local state = require("ever._core.register").buffers[original_bufnr].state
-            state.diff_bufnr = nil
-            state.diff_channel_id = nil
-            state.current_diff = nil
-        end,
-    })
+end
+
+---@param diff_bufnr integer
+---@param original_bufnr integer
+local function set_diff_buffer_keymaps(diff_bufnr, original_bufnr)
+    require("ever._ui.keymaps.set").safe_set_keymap("n", "q", function()
+        require("ever._core.register").deregister_buffer(diff_bufnr, { skip_go_to_last_buffer = true })
+        require("ever._core.register").deregister_buffer(original_bufnr, {})
+    end, { buffer = diff_bufnr })
 end
 
 ---@param bufnr integer
@@ -60,7 +59,11 @@ end
 local function render_auto_display(bufnr, ui_type, auto_display_opts)
     local state = require("ever._core.register").buffers[bufnr].state
     local current_diff = auto_display_opts.get_current_diff(bufnr)
-    if not current_diff or current_diff == state.current_diff then
+    if not current_diff then
+        clear_state(state, ui_type, true)
+        return
+    end
+    if current_diff == state.current_diff then
         return
     end
     local diff_cmd = auto_display_opts.generate_cmd(bufnr)
@@ -76,6 +79,7 @@ local function render_auto_display(bufnr, ui_type, auto_display_opts)
     state.diff_channel_id, state.diff_bufnr =
         require("ever._ui.elements").terminal(diff_cmd, auto_display_opts.strategy)
     set_diff_buffer_autocmds(state.diff_bufnr, bufnr, ui_type)
+    set_diff_buffer_keymaps(state.diff_bufnr, bufnr)
     vim.api.nvim_set_current_win(win)
 end
 
