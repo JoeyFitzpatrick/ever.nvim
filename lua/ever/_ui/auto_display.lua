@@ -51,6 +51,10 @@ local function set_diff_buffer_keymaps(diff_bufnr, original_bufnr)
         require("ever._core.register").deregister_buffer(diff_bufnr, { skip_go_to_last_buffer = true })
         require("ever._core.register").deregister_buffer(original_bufnr, {})
     end, { buffer = diff_bufnr })
+
+    require("ever._ui.keymaps.set").safe_set_keymap("n", "<enter>", function()
+        require("ever._core.register").deregister_buffer(diff_bufnr, { skip_go_to_last_buffer = true })
+    end, { buffer = diff_bufnr })
 end
 
 ---@param bufnr integer
@@ -72,7 +76,9 @@ local function render_auto_display(bufnr, ui_type, auto_display_opts)
     end
     state.current_diff = current_diff
     if state.diff_bufnr then
-        vim.api.nvim_buf_delete(state.diff_bufnr, { force = true })
+        if vim.api.nvim_buf_is_valid(state.diff_bufnr) then
+            vim.api.nvim_buf_delete(state.diff_bufnr, { force = true })
+        end
         state.diff_bufnr = nil
     end
     local win = vim.api.nvim_get_current_win()
