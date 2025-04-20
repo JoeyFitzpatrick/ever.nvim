@@ -1,10 +1,9 @@
 ---@class ever.Hunk
+---@field filename string
 ---@field hunk_start integer
 ---@field hunk_end integer
 ---@field patch_lines string[]
 ---@field patch_selected_lines? string[]
----@field next_hunk_start? integer
----@field previous_hunk_start? integer
 
 local M = {}
 
@@ -192,6 +191,7 @@ M.extract = function(is_staged)
     add_empty_line_for_patch(patch_selected_lines)
 
     return {
+        filename = require("ever._core.texter").surround_with_quotes(file_before:sub(7)),
         hunk_start = hunk_start,
         hunk_end = hunk_end,
         patch_lines = patch_lines,
