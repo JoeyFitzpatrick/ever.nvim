@@ -6,9 +6,12 @@ local function get_filename(filename, commit)
     return commit .. "--" .. filename
 end
 
+--- It is worth noting that this could potentially delete a buffer that
+--- is not the one we are looking for, because we're just using `find`
+--- on the filename, and other paths could contain this. Worth fixing
+--- at some point.
 ---@param name string
 local function delete_existing_buffer(name)
-    vim.print("current name: " .. name)
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         local buf_name = vim.api.nvim_buf_get_name(buf)
         if buf_name:find(name, 1, true) then
