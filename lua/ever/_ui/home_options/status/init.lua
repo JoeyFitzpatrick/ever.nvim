@@ -113,18 +113,13 @@ function M.set_keymaps(bufnr, opts)
         if not line_data then
             return
         end
-        local result
         if not require("ever._core.git").is_staged(line_data.status) then
-            result =
-                require("ever._core.run_cmd").run_hidden_cmd("git add -- " .. line_data.filename, { rerender = true })
+            require("ever._core.run_cmd").run_hidden_cmd("git add -- " .. line_data.filename, { rerender = true })
         else
-            result = require("ever._core.run_cmd").run_hidden_cmd(
+            require("ever._core.run_cmd").run_hidden_cmd(
                 "git reset HEAD -- " .. line_data.filename,
                 { rerender = true }
             )
-        end
-        if result == "error" then
-            return
         end
     end, keymap_opts)
 

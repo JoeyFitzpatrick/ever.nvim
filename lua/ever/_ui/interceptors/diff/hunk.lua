@@ -102,6 +102,24 @@ local function add_empty_line_for_patch(lines)
     table.insert(lines, "")
 end
 
+---@param line_1 string
+---@param line_2 string
+---@param line_3 string
+---@returns string, string
+local function get_patch_filenames(line_1, line_2, line_3)
+    local file_before, file_after = line_1, line_2
+    if line_1:match("^index") then
+        file_before = line_2
+        file_after = line_3
+    end
+    if file_before == "--- /dev/null" then
+        file_before = "--- a" .. file_after:sub(6)
+    elseif file_after == "+++ /dev/null" then
+        file_after = "+++ b" .. file_before:sub(6)
+    end
+    return file_before, file_after
+end
+
 --- Returns info on a diff hunk
 ---@param is_staged? boolean
 ---@return ever.Hunk | nil
@@ -147,7 +165,8 @@ M.extract = function(is_staged)
     -- +++ b/lua/alien/keymaps/diff-keymaps.lua
     -- @@ -9,7 +9,7 @@ M.set_unstaged_diff_keymaps = function(bufnr)
 
-    local patch_lines = { lines[3], lines[4] }
+    local file_before, file_after = get_patch_filenames(lines[3], lines[4], lines[5])
+    local patch_lines = { file_before, file_after }
 
     for i = hunk_start - 1, hunk_end do
         table.insert(patch_lines, lines[i])
@@ -160,7 +179,7 @@ M.extract = function(is_staged)
         is_staged = false
     end
     local patch_selected_lines =
-        { lines[3], lines[4], M._get_patch_line(lines[hunk_start - 1], { first, last }, is_staged) }
+        { file_before, file_after, M._get_patch_line(lines[hunk_start - 1], { first, last }, is_staged) }
     local patch_context_lines = {}
     for i = hunk_start, hunk_end do
         table.insert(patch_context_lines, lines[i])
