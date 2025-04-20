@@ -90,9 +90,6 @@ function M.get_line(bufnr, start_line, line_num)
         return nil
     end
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
-    if line == "" then
-        return nil
-    end
     if not line:match("^%s?[%w%?]") then
         return nil
     end
@@ -193,7 +190,8 @@ function M.set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.restore, function()
-        local cmd
+        -- We need to pass in line_num, otherwise it uses cursor position from popup
+        local line_num = vim.api.nvim_win_get_cursor(0)[1]
         require("ever._ui.popups.popup").render_popup({
             buffer_name = "EverStatusDeletePopup",
             title = "Git Restore Type",
@@ -202,14 +200,14 @@ function M.set_keymaps(bufnr, opts)
                     keys = "f",
                     description = "Just this file",
                     action = function()
-                        local line_data = M.get_line(bufnr, start_line)
+                        local line_data = M.get_line(bufnr, start_line, line_num)
                         if not line_data then
                             return
                         end
                         local filename = line_data.safe_filename
                         local status = line_data.status
                         local status_checks = require("ever._core.git")
-
+                        local cmd
                         if status_checks.is_untracked(status) then
                             cmd = "git clean -f " .. filename
                         elseif status_checks.is_staged(status) then

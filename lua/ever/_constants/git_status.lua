@@ -1,6 +1,7 @@
 ---@alias ever.GitStatus
 ---| "A "
 ---| "AA"
+---| "AM"
 ---| " A"
 ---| "C "
 ---| " C"
@@ -22,6 +23,7 @@ local M = {}
 M.STATUSES = {
     ADDED = "A ",
     ADDED_BOTH_STAGED_UNSTAGED = "AA",
+    ADDED_MODIFIED = "AM",
     ADDED_UNSTAGED = " A",
     COPIED_STAGED = "C ",
     COPIED_UNSTAGED = " C",
@@ -41,6 +43,7 @@ M.STATUSES = {
 M.STAGED_STATUSES = {
     M.STATUSES.MODIFIED_STAGED,
     M.STATUSES.ADDED,
+    M.STATUSES.ADDED_MODIFIED,
     M.STATUSES.DELETED_STAGED,
     M.STATUSES.RENAMED_STAGED,
     M.STATUSES.COPIED_STAGED,
