@@ -8,13 +8,11 @@
 }
 ```
 
-Note: lazy loading is handled internally, so it is not required to lazy load Ever. It loads in less than 1ms on my machine. With that being said, if you really want to lazy load Ever, you should be able to lazy load it however you normally lazy load plugins.
+Note: lazy loading is handled internally, so it is not required to lazy load Ever. With that being said, if you really want to lazy load Ever, you should be able to lazy load it however you normally lazy load plugins.
 
 
 # Configuration
 (These are default values)
-
-<!-- TODO: (you) - Remove / Add / Adjust your configuration here -->
 
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
@@ -22,7 +20,8 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
     "JoeyFitzpatrick/ever.nvim",
     config = function()
         vim.g.ever_configuration = {
-            -- TODO: add config here
+            -- Default configuration
+            -- End of default configuration
         }
     end
 }

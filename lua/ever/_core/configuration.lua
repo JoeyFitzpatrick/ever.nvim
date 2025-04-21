@@ -1,5 +1,4 @@
 --- All functions and data to help customize `ever` for this user.
----
 ---@module 'ever._core.configuration'
 
 local M = {}
@@ -10,11 +9,6 @@ vim.g.loaded_ever = false
 ---@diagnostic disable-next-line: missing-fields
 M.DATA = {}
 
--- TODO: (you) If you use the vlog.lua for built-in logging, keep the `logging`
--- section. Otherwise delete it.
---
--- It's recommended to keep the `display` section in any case.
---
 ---@type ever.Configuration
 local _DEFAULTS = require("ever._core.default_configuration")
 
