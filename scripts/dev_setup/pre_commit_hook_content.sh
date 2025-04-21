@@ -13,4 +13,7 @@ if ! luacheck lua plugin scripts; then
   exit 1
 fi
 
+echo "Updating default config in docs..."
+scripts/docs_update_default_config/main.sh
+
 exit 0
