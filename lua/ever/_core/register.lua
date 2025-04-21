@@ -44,11 +44,13 @@ function M.deregister_buffer(bufnr, opts)
     end
 end
 
----@param bufnr? integer
+---@param bufnr? integer optional buffer to rerender first
 function M.rerender_buffers(bufnr)
+    -- Always rerender current buffer first if one isn't passed in
+    bufnr = bufnr or vim.api.nvim_get_current_buf()
     local main_buffer = M.buffers[bufnr]
     if main_buffer then
-        M.buffers[bufnr].render_fn(bufnr)
+        M.buffers[bufnr].render_fn()
     end
     for buf, opts in pairs(M.buffers) do
         if buf ~= bufnr and opts.render_fn then
