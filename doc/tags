@@ -23,8 +23,6 @@ ever-tests-initialization	ever.txt	/*ever-tests-initialization*
 ever-tests-running	ever.txt	/*ever-tests-running*
 ever-tracking-updates	ever.txt	/*ever-tracking-updates*
 ever-usage	ever.txt	/*ever-usage*
-ever-what-is-ever?	ever.txt	/*ever-what-is-ever?*
-ever-yet-another-neovim-git-client	ever.txt	/*ever-yet-another-neovim-git-client*
 ever.AutoDisplayConfiguration	ever_types.txt	/*ever.AutoDisplayConfiguration*
 ever.AutoDisplayKeymaps	ever_types.txt	/*ever.AutoDisplayKeymaps*
 ever.BlameConfiguration	ever_types.txt	/*ever.BlameConfiguration*

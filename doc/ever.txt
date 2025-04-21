@@ -1,15 +1,13 @@
-*ever.txt*            For Neovim >= 0.8.0           Last change: 2025 April 20
+*ever.txt*           For Neovim >= 0.11.0           Last change: 2025 April 21
 
 ==============================================================================
 Table of Contents                                     *ever-table-of-contents*
 
-1. Yet Another Neovim Git Client          |ever-yet-another-neovim-git-client|
-2. What is Ever?                                          |ever-what-is-ever?|
-3. Installation                                            |ever-installation|
-4. Configuration                                          |ever-configuration|
-5. Usage                                                          |ever-usage|
-6. Keymaps for Raw Git Output                |ever-keymaps-for-raw-git-output|
-7. Special Commands                                    |ever-special-commands|
+1. Installation                                            |ever-installation|
+2. Configuration                                          |ever-configuration|
+3. Usage                                                          |ever-usage|
+4. Keymaps for Raw Git Output                |ever-keymaps-for-raw-git-output|
+5. Special Commands                                    |ever-special-commands|
   -                                                   |ever-special-commands-|
   - Difftool                                  |ever-special-commands-difftool|
   - Branch                                      |ever-special-commands-branch|
@@ -19,47 +17,17 @@ Table of Contents                                     *ever-table-of-contents*
   - Stash List                              |ever-special-commands-stash-list|
   - Show                                          |ever-special-commands-show|
   - Help Commands                        |ever-special-commands-help-commands|
-8. UI Management (Tabs, Windows, Buffers)|ever-ui-management-(tabs,-windows,-buffers)|
-9. Plug mappings                                          |ever-plug-mappings|
-10. Optional Dependencies                         |ever-optional-dependencies|
-11. Development and Contributing           |ever-development-and-contributing|
-12. Tests                                                         |ever-tests|
+6. UI Management (Tabs, Windows, Buffers)|ever-ui-management-(tabs,-windows,-buffers)|
+7. Plug mappings                                          |ever-plug-mappings|
+8. Optional Dependencies                          |ever-optional-dependencies|
+9. Development and Contributing            |ever-development-and-contributing|
+10. Tests                                                         |ever-tests|
   - Initialization                                 |ever-tests-initialization|
   - Running                                               |ever-tests-running|
-13. Tracking Updates                                   |ever-tracking-updates|
+11. Tracking Updates                                   |ever-tracking-updates|
 
 ==============================================================================
-1. Yet Another Neovim Git Client          *ever-yet-another-neovim-git-client*
-
-  --------------------------------------------------------------------------------
-            
-  --------- ----------------------------------------------------------------------
-  Build     [unittests] [documentation] [luacheck] [llscheck] [stylua]
-  Status    [urlchecker]
-
-  License   [License-MIT]
-  --------------------------------------------------------------------------------
-
-==============================================================================
-2. What is Ever?                                          *ever-what-is-ever?*
-
-Ever is a Neovim git client. It takes some ideas from vim-fugitive
-<https://github.com/tpope/vim-fugitive>, lazygit
-<https://github.com/jesseduffield/lazygit>, magit <https://magit.vc/>, and git
-<https://git-scm.com/> itself, and introduces some other ideas. The main
-features are: - Most valid git command can be called via command-mode,
-e.g. `:G commit`, like fugitive - Autocompletion for those commands,
-e.g. typing `:G switch` will cause valid branches to be autocompleted -
-Keymaps for common actions in various git contexts, e.g. `n` to create a new
-branch from the branch UI, like lazygit - Rich UIs that always show the
-up-to-date git status and provide context for available actions - Easy and
-straightforward customizability
-
-NOTE: this plugin is in an alpha state. API changes and bugs are expected.
-
-
-==============================================================================
-3. Installation                                            *ever-installation*
+1. Installation                                            *ever-installation*
 
 - lazy.nvim <https://github.com/folke/lazy.nvim>
 
@@ -71,14 +39,14 @@ NOTE: this plugin is in an alpha state. API changes and bugs are expected.
     }
 <
 
-Note:lazy loading is handled internally, so it is not required to lazy load
+Note: lazy loading is handled internally, so it is not required to lazy load
 Ever. It loads in less than 1ms on my machine. With that being said, if you
 really want to lazy load Ever, you should be able to lazy load it however you
 normally lazy load plugins.
 
 
 ==============================================================================
-4. Configuration                                          *ever-configuration*
+2. Configuration                                          *ever-configuration*
 
 (These are default values)
 
@@ -97,7 +65,7 @@ normally lazy load plugins.
 
 
 ==============================================================================
-5. Usage                                                          *ever-usage*
+3. Usage                                                          *ever-usage*
 
 1. To use this plugin, simply call git commands from command mode, using the `:G` command. Many commands will simply call the git command in terminal mode, with some improvements:
 
@@ -115,7 +83,7 @@ that changed the current file.
 
 
 ==============================================================================
-6. Keymaps for Raw Git Output                *ever-keymaps-for-raw-git-output*
+4. Keymaps for Raw Git Output                *ever-keymaps-for-raw-git-output*
 
 When a command outputs raw git output (for example, `:G log -p`), a keymap is
 created to show details for the item under the cursor. By default, this is
@@ -132,7 +100,7 @@ with some minor differences.
 
 
 ==============================================================================
-7. Special Commands                                    *ever-special-commands*
+5. Special Commands                                    *ever-special-commands*
 
 Some commands that are often used, or are normally cumbersome to use, are
 handled differently than just running the command in terminal mode. This
@@ -262,7 +230,7 @@ it by pressing `q` to return to your last buffer.
 
 
 ==============================================================================
-8. UI Management (Tabs, Windows, Buffers)*ever-ui-management-(tabs,-windows,-buffers)*
+6. UI Management (Tabs, Windows, Buffers)*ever-ui-management-(tabs,-windows,-buffers)*
 
 When Ever opens a UI, this will typically either open a new buffer in the
 current window, or open a new window in a split. In either case, the window can
@@ -290,7 +258,7 @@ pressing the `g?` keymap.
 
 
 ==============================================================================
-9. Plug mappings                                          *ever-plug-mappings*
+7. Plug mappings                                          *ever-plug-mappings*
 
 Ever provides some plug mappings, so you can conveniently create your own
 mappings for some actions if you want. To use such a mapping, you can do
@@ -319,14 +287,14 @@ stash popup
 
 
 ==============================================================================
-10. Optional Dependencies                         *ever-optional-dependencies*
+8. Optional Dependencies                          *ever-optional-dependencies*
 
 Delta <https://github.com/dandavison/delta> - improved git diff output (used in
 the demos/examples)
 
 
 ==============================================================================
-11. Development and Contributing           *ever-development-and-contributing*
+9. Development and Contributing            *ever-development-and-contributing*
 
 I welcome users of any experience level to contribute to Ever and improve the
 project. If you’d like to contribute by writing code, please run
@@ -341,7 +309,7 @@ all which are also good ways to contribute.
 
 
 ==============================================================================
-12. Tests                                                         *ever-tests*
+10. Tests                                                         *ever-tests*
 
 
 INITIALIZATION                                     *ever-tests-initialization*
@@ -373,7 +341,7 @@ Run test based on tags
 
 
 ==============================================================================
-13. Tracking Updates                                   *ever-tracking-updates*
+11. Tracking Updates                                   *ever-tracking-updates*
 
 See doc/news.txt <doc/news.txt> for updates.
 
