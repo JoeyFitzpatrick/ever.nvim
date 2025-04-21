@@ -44,8 +44,8 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
             home = {
                 keymaps = {
                     -- NOTE: setting a keymap to nil disables it, e.g. `next = nil`
-                    next = "l",
-                    previous = "h",
+                    next = "l", -- Move right through home options
+                    previous = "h", -- Move left through home options
                 },
             },
             auto_display = {
@@ -62,20 +62,20 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
                     commit_details = "<enter>",
                     commit_info = "i",
                     diff_file = "d",
-                    reblame = "r",
-                    return_to_original_file = "gq",
-                    show = "s",
+                    reblame = "r", -- Display the file as of the given commit, then blame from that commit
+                    return_to_original_file = "gq", -- If in reblamed file, return to original
+                    show = "s", -- Output of `git show` for the given commit
                 },
             },
             branch = {
                 keymaps = {
-                    delete = "d",
-                    log = "<enter>",
-                    new_branch = "n",
-                    pull = "p",
-                    push = "<leader>p",
-                    rename = "rn",
-                    switch = "s",
+                    delete = "d", -- Display a popup with branch deletion options
+                    log = "<enter>", -- Display commits for branch under cursor
+                    new_branch = "n", -- New branch from branch under cusor
+                    pull = "p", -- Run git pull
+                    push = "<leader>p", -- Run git push
+                    rename = "rn", -- Rename branch under cursor
+                    switch = "s", -- Switch to branch under cursor
                 },
             },
             commit_details = {
@@ -97,7 +97,7 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
                 keymaps = {
                     next_hunk = "J",
                     previous_hunk = "K",
-                    stage = "s",
+                    stage = "s", -- Stage hunk in normal mode, stage selected lines in visual mode
                 },
             },
             difftool = {
@@ -105,7 +105,7 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
             },
             git_filetype = {
                 keymaps = {
-                    show_details = "<enter>",
+                    show_details = "<enter>", -- Show details for item under cursor
                 },
             },
             log = {
