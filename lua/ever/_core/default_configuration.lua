@@ -31,8 +31,8 @@ return {
             delete = "d", -- Display a popup with branch deletion options
             log = "<enter>", -- Display commits for branch under cursor
             new_branch = "n", -- New branch from branch under cusor
-            pull = "p", -- Run git pull
-            push = "<leader>p", -- Run git push
+            pull = "p",
+            push = "<leader>p",
             rename = "rn", -- Rename branch under cursor
             switch = "s", -- Switch to branch under cursor
         },
@@ -44,8 +44,8 @@ return {
         },
     },
     commit_popup = {
-        keymaps = {
-            commit = "o",
+        keymaps = { -- Run git commit with various options
+            commit = "o", -- Just a regular commit (no options)
             commit_amend = "a",
             commit_amend_reuse_message = "A",
             commit_dry_run = "d",
@@ -69,19 +69,19 @@ return {
     },
     log = {
         keymaps = {
-            checkout = "c",
+            checkout = "c", -- Checkout commmit under cursor
             commit_details = "<enter>",
             commit_info = "i",
             pull = "p",
             push = "<leader>p",
-            rebase = "rb",
-            reset = "rs",
-            revert = "rv",
+            rebase = "rb", -- Interactive rebase from current commit to commit under cursor
+            reset = "rs", -- Reset to commit under cursor
+            revert = "rv", -- Revert commit under cursor
             show = "s",
         },
     },
     open_files = {
-        keymaps = {
+        keymaps = { -- When available, these open file under cursor in various UIs
             open_in_current_window = "ow",
             open_in_horizontal_split = "oh",
             open_in_new_tab = "ot",
@@ -116,12 +116,12 @@ return {
         keymaps = {
             commit_popup = "c",
             diff_file = "D",
-            edit_file = "<enter>",
-            enter_staging_area = "<leader>s",
+            edit_file = "<enter>", -- Close status UI and navigate to file under cursor
+            enter_staging_area = "<leader>s", -- In staging area you can (un)stage hunks or lines
             pull = "p",
             push = "<leader>p",
-            restore = "d",
-            stage = "s",
+            restore = "d", -- Display a popup with options for `git restore`
+            stage = "s", -- (un)stage file under cursor
             stage_all = "a",
             stash_popup = "S",
         },
