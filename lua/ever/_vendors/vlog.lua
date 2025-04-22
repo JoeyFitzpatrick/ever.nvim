@@ -66,6 +66,7 @@ local _LEVEL_NUMBER_TO_LEVEL_NAME = {
 ---@param config? ever.LoggerConfiguration
 ---@param standalone? boolean
 log.new = function(config, standalone)
+    config = config or {}
     config = vim.tbl_deep_extend("force", default_config, config)
     config.level = _LEVEL_NUMBER_TO_LEVEL_NAME[config.level] or config.level
 

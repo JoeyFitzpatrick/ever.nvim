@@ -28,4 +28,4 @@ vim.opt.rtp:append(".")
 
 vim.cmd("runtime plugin/ever.lua")
 
-require("ever._core.configuration").initialize_data_if_needed()
+require("ever")

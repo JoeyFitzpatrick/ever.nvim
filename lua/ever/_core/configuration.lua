@@ -16,25 +16,4 @@ function M.initialize_data()
     M.DATA = vim.tbl_deep_extend("force", _DEFAULTS, vim.g.ever_configuration or {})
 end
 
---- Setup `ever` for the first time, if needed.
---- TODO: remove this, as we are handling initialization elsewhere
-function M.initialize_data_if_needed()
-    if vim.g.loaded_ever then
-        return
-    end
-
-    M.DATA = vim.tbl_deep_extend("force", _DEFAULTS, vim.g.ever_configuration or {})
-
-    vim.g.loaded_ever = true
-end
-
---- Merge `data` with the user's current configuration.
----@param data ever.Configuration? All extra customizations for this plugin.
----@return ever.Configuration # The configuration with 100% filled out values.
-function M.resolve_data(data)
-    M.initialize_data_if_needed()
-
-    return vim.tbl_deep_extend("force", M.DATA, data or {})
-end
-
 return M
