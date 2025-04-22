@@ -205,10 +205,8 @@ function M.set_keymaps(bufnr, opts)
                         local cmd
                         if status_checks.is_untracked(status) then
                             cmd = "git clean -f " .. filename
-                        elseif status_checks.is_staged(status) then
-                            cmd = "git reset -- " .. filename .. " && git clean -f -- " .. filename
                         else
-                            cmd = "git restore -- " .. filename
+                            cmd = "git reset -- " .. filename .. " && git restore -- " .. filename
                         end
                         require("ever._core.run_cmd").run_hidden_cmd(cmd, { rerender = true })
                     end,
