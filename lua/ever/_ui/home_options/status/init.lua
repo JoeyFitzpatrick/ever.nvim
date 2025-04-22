@@ -299,7 +299,6 @@ function M.set_keymaps(bufnr, opts)
     set("n", keymaps.stash_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_STASH_POPUP, keymap_opts)
 end
 
---- Worth noting we don't include "git" in the string
 ---@param status string
 ---@param filename string
 ---@return string
@@ -307,6 +306,13 @@ local function get_diff_cmd(status, filename)
     local status_checks = require("ever._core.git")
     if status_checks.is_untracked(status) then
         return "git diff --no-index /dev/null -- " .. filename
+    end
+    if status_checks.is_modified(status) then
+        return string.format(
+            "printf 'UNSTAGED CHANGES\n'; git diff -- %s; printf '\nSTAGED CHANGES\n'; git diff --cached -- %s",
+            filename,
+            filename
+        )
     end
     if status_checks.is_deleted(status) then
         if status_checks.is_staged(status) then
@@ -347,7 +353,7 @@ function M.render(bufnr, opts)
             end
             return line_data.safe_filename
         end,
-        strategy = { enter = false },
+        strategy = { enter = false, display_strategy = "right" },
     })
     -- For keymaps, we don't want to include the 2 lines of non-files text.
     -- Lines are 0-indexed, so we only need to increment start_line by 1.

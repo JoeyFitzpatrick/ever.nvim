@@ -142,7 +142,6 @@ local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
     return channel_id
 end
 
---- Note that commands passed to this function should not be prefixed with "git", as it will be added.
 ---@param cmd string
 ---@param strategy? ever.Strategy
 ---@return integer, integer -- terminal channel id, buffer id
