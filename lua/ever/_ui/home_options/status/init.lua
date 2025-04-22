@@ -309,19 +309,16 @@ local function get_diff_cmd(status, filename)
     end
     if status_checks.is_modified(status) then
         return string.format(
-            "printf 'UNSTAGED CHANGES\n'; git diff -- %s; printf '\nSTAGED CHANGES\n'; git diff --cached -- %s",
+            "printf 'STAGED CHANGES\n'; git diff --cached -- %s; printf '\nUNSTAGED CHANGES\n'; git diff -- %s",
             filename,
             filename
         )
     end
-    if status_checks.is_deleted(status) then
-        if status_checks.is_staged(status) then
-            return "git diff --cached -- " .. filename
-        end
-        return "git diff -- " .. filename
-    end
     if status_checks.is_staged(status) then
         return "git diff --staged -- " .. filename
+    end
+    if status_checks.is_deleted(status) then
+        return "git diff -- " .. filename
     end
     return "git diff -- " .. filename
 end
