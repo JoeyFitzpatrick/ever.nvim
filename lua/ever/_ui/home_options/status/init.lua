@@ -306,18 +306,18 @@ end
 local function get_diff_cmd(status, filename)
     local status_checks = require("ever._core.git")
     if status_checks.is_untracked(status) then
-        return "diff --no-index /dev/null -- " .. filename
+        return "git diff --no-index /dev/null -- " .. filename
     end
     if status_checks.is_deleted(status) then
         if status_checks.is_staged(status) then
-            return "diff --cached -- " .. filename
+            return "git diff --cached -- " .. filename
         end
-        return "diff -- " .. filename
+        return "git diff -- " .. filename
     end
     if status_checks.is_staged(status) then
-        return "diff --staged -- " .. filename
+        return "git diff --staged -- " .. filename
     end
-    return "diff -- " .. filename
+    return "git diff -- " .. filename
 end
 
 ---@param bufnr integer

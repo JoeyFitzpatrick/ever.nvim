@@ -146,7 +146,7 @@ M.render = function(cmd)
             if not line_data then
                 return
             end
-            return string.format("diff %s -- %s", commits_to_diff, line_data.safe_filename)
+            return string.format("git diff %s -- %s", commits_to_diff, line_data.safe_filename)
         end,
         get_current_diff = function()
             local line_data = get_line(bufnr)

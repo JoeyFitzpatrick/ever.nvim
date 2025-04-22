@@ -4,16 +4,17 @@ local PREFIX = "G"
 
 ---@param input_args vim.api.keyset.create_user_command.command_args
 local function run_command(input_args)
-    local args = require("ever._core.parse_command").parse(input_args.args)
+    local cmd = require("ever._core.parse_command").parse(input_args.args)
+    local cmd_with_git_prefix = "git " .. cmd
     if input_args.bang then
-        require("ever._ui.elements").terminal(args, { display_strategy = "full", insert = true })
+        require("ever._ui.elements").terminal(cmd_with_git_prefix, { display_strategy = "full", insert = true })
         return
     end
-    local ui_function = require("ever._ui.interceptors").get_ui(args)
+    local ui_function = require("ever._ui.interceptors").get_ui(cmd)
     if ui_function then
-        ui_function(args)
+        ui_function(cmd)
     else
-        require("ever._ui.elements").terminal(args)
+        require("ever._ui.elements").terminal(cmd_with_git_prefix)
     end
 end
 

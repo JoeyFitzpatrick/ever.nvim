@@ -108,7 +108,7 @@ function M.render(bufnr, opts)
             if not line_data then
                 return
             end
-            return "stash show -p " .. line_data.stash_index
+            return "git stash show -p " .. line_data.stash_index
         end,
         get_current_diff = function()
             local line_data = get_line(bufnr)

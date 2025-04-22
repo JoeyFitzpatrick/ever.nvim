@@ -147,7 +147,6 @@ end
 ---@param strategy? ever.Strategy
 ---@return integer, integer -- terminal channel id, buffer id
 function M.terminal(cmd, strategy)
-    cmd = "git " .. cmd
     local split_cmd = vim.split(cmd, " ")
     local bufnr = vim.api.nvim_create_buf(false, true)
     local base_cmd = split_cmd[2]

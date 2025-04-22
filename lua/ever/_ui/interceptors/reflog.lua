@@ -55,7 +55,7 @@ local function set_keymaps(bufnr)
             vim.api.nvim_create_buf(false, true),
             { title = "Git log " .. line_data.hash }
         )
-        require("ever._ui.elements").terminal("log -n 1 " .. line_data.hash, { display_strategy = "full" })
+        require("ever._ui.elements").terminal("git log -n 1 " .. line_data.hash, { display_strategy = "full" })
     end, keymap_opts)
 
     set("n", keymaps.show, function()
@@ -67,7 +67,10 @@ local function set_keymaps(bufnr)
             vim.api.nvim_create_buf(false, true),
             { title = "Git show " .. line_data.hash }
         )
-        require("ever._ui.elements").terminal("show " .. line_data.hash, { display_strategy = "full", insert = true })
+        require("ever._ui.elements").terminal(
+            "git show " .. line_data.hash,
+            { display_strategy = "full", insert = true }
+        )
     end, keymap_opts)
 end
 
