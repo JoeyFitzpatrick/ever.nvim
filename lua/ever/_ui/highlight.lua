@@ -19,15 +19,17 @@ local function modify_color(hex, modification_level)
     return rgb_to_hex(r, g, b):sub(1, 7)
 end
 
---- convert a commit hash to a hex color to color the hash
+--- Convert a commit hash to a hex color
 ---@param hash string
-function M.commit_hash_to_hex(hash)
-    local stripped_hash = hash:gsub("%d", "")
+---@param modification_level? number
+---@return { hex: string, stripped_hash: string }
+function M.commit_hash_to_hex(hash, modification_level)
+    local stripped_hash = hash:gsub("%W", "")
     if #hash < 6 then
         return { hex = "", stripped_hash = stripped_hash }
     end
-    local hex = "#" .. hash:sub(1, 6)
-    return { hex = modify_color(hex, 0.85), stripped_hash = stripped_hash }
+    local hex = "#" .. hash:match("%w+"):sub(1, 6)
+    return { hex = modify_color(hex, modification_level or 0.85), stripped_hash = stripped_hash }
 end
 
 --- Make highlighting a line a little easier.
