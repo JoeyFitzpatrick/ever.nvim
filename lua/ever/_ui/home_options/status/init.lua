@@ -328,7 +328,10 @@ local function get_diff_cmd(status, filename)
     end
     if status_checks.is_modified(status) then
         return string.format(
-            "printf 'STAGED CHANGES\n'; git diff --cached -- %s; printf '\nUNSTAGED CHANGES\n'; git diff -- %s",
+            "(echo '### STAGED CHANGES ###';"
+                .. " git diff --cached -- %s;"
+                .. " echo '\n### UNSTAGED CHANGES ###'; git diff -- %s)"
+                .. " | $(git config --get core.pager || echo less)",
             filename,
             filename
         )
@@ -360,6 +363,7 @@ function M.render(bufnr, opts)
             if not line_data then
                 return
             end
+            vim.fn.setreg("+", get_diff_cmd(line_data.status, line_data.safe_filename))
             return get_diff_cmd(line_data.status, line_data.safe_filename)
         end,
         get_current_diff = function()
