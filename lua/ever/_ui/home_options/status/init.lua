@@ -212,6 +212,27 @@ function M.set_keymaps(bufnr, opts)
                     end,
                 },
                 {
+                    keys = "u",
+                    description = "Unstaged changes for this file",
+                    action = function()
+                        local line_data = M.get_line(bufnr, start_line, line_num)
+                        if not line_data then
+                            return
+                        end
+                        local filename = line_data.safe_filename
+                        local status = line_data.status
+                        local status_checks = require("ever._core.git")
+                        local cmd
+                        if status_checks.is_untracked(status) then
+                            cmd = "git clean -f " .. filename
+                        else
+                            -- Worth noting that lazygit does git -c core.hooksPath=/dev/null checkout -- filename
+                            cmd = "git restore -- " .. filename
+                        end
+                        require("ever._core.run_cmd").run_hidden_cmd(cmd, { rerender = true })
+                    end,
+                },
+                {
                     keys = "n",
                     description = "Nuke working tree",
                     action = function()
