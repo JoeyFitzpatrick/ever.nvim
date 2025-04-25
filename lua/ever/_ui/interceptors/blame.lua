@@ -142,12 +142,15 @@ local function set_blame_win_width(bufnr)
     end
 end
 
+---@param bufnr integer
+---@param cmd string
+---@return "success" | "error"
 function M.set_lines(bufnr, cmd)
     local output, error_code = require("ever._core.run_cmd").run_cmd(cmd, {})
     if error_code ~= 0 then
         vim.notify(output[1], vim.log.levels.ERROR)
         vim.api.nvim_win_close(0, true)
-        return
+        return "error"
     end
     local lines = {}
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
@@ -162,6 +165,7 @@ function M.set_lines(bufnr, cmd)
     for i, line in ipairs(lines) do
         highlight_line(bufnr, line, i - 1)
     end
+    return "success"
 end
 
 ---@param blame_bufnr integer
@@ -207,6 +211,20 @@ local function set_autocmds(blame_bufnr, file_win, blame_buffer_name)
 end
 
 ---@param cmd string
+---@param filename string
+---@return string
+local function get_blame_command(cmd, filename)
+    cmd = "git blame "
+        .. table.concat(require("ever._core.configuration").DATA.blame.default_cmd_args, " ")
+        .. cmd:sub(6) -- remove "blame" from command
+    -- add current filename if file isn't provided
+    if not cmd:match("%-%- %S+") then
+        cmd = cmd .. " -- " .. filename
+    end
+    return cmd
+end
+
+---@param cmd string
 M.render = function(cmd)
     local EVER_BLAME_PREFIX = "EverBlame://"
     local current_filename = vim.api.nvim_buf_get_name(0)
@@ -223,13 +241,9 @@ M.render = function(cmd)
             BLAME_WINDOWS[existing_blame_win] = nil
         end
     end
-    cmd = "git blame "
-        .. table.concat(require("ever._core.configuration").DATA.blame.default_cmd_args, " ")
-        .. cmd:sub(6) -- remove "blame" from command
-    -- add current filename if file isn't provided
-    if not cmd:match("%-%- %S+") then
-        cmd = cmd .. " -- " .. current_filename
-    end
+
+    cmd = get_blame_command(cmd, current_filename)
+
     local file_win = vim.api.nvim_get_current_win()
     local original_cursor_pos = vim.api.nvim_win_get_cursor(file_win)
     local file_win_line_num = vim.fn.line("w0", file_win)
@@ -237,9 +251,16 @@ M.render = function(cmd)
         win_config = { split = "left", width = math.floor(vim.o.columns * 0.33) },
         buffer_name = blame_buffer_name,
     })
+
     BLAME_WINDOWS[blame_buffer_name] = vim.api.nvim_get_current_win()
-    M.set_lines(bufnr, cmd)
-    vim.api.nvim_set_option_value("wrap", false, { win = 0 })
+    local result = M.set_lines(bufnr, cmd)
+
+    if result ~= "success" then
+        BLAME_WINDOWS[blame_buffer_name] = nil
+        require("ever._core.register").deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
+        return
+    end
+
     set_keymaps(bufnr)
     set_autocmds(bufnr, file_win, blame_buffer_name)
 
