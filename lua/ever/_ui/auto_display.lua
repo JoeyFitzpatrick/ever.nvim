@@ -106,7 +106,11 @@ local function set_autocmds(bufnr, ui_type, auto_display_opts)
             if not state.display_auto_display then
                 return
             end
-            render_auto_display(bufnr, ui_type, auto_display_opts)
+            -- We want to wait here, because if this is called while closing another window,
+            -- An error is thrown. This way, we wait until that close happens (if one does happen).
+            vim.defer_fn(function()
+                render_auto_display(bufnr, ui_type, auto_display_opts)
+            end, 10)
         end,
         group = vim.api.nvim_create_augroup(string.format("Ever%sAutoDisplay", ui_type), { clear = true }),
     })
