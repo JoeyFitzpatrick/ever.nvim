@@ -89,9 +89,20 @@ local function get_line(bufnr)
         output.previous_filepath =
             parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row - 1, cursor_row, false)[1])
     elseif current_line:match(DIFF_PATTERN) then
+        local filepath_line_num = cursor_row
+        local next_line = vim.api.nvim_buf_get_lines(bufnr, cursor_row, cursor_row + 1, false)[1]
+        local next_line_is_filepath = next_line ~= nil and next_line:match("%-%-%-")
+
+        -- In some cases, the lines after "^diff" are the filepaths, but in some cases,
+        -- there is an "^index" line first. If there is the index line, skip it.
+        if not next_line_is_filepath then
+            filepath_line_num = filepath_line_num + 1
+        end
+
         output.previous_filepath =
-            parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row + 1, cursor_row + 2, false)[1])
-        output.filepath = parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row + 2, cursor_row + 3, false)[1])
+            parse_filepath(vim.api.nvim_buf_get_lines(bufnr, filepath_line_num, filepath_line_num + 1, false)[1])
+        output.filepath =
+            parse_filepath(vim.api.nvim_buf_get_lines(bufnr, filepath_line_num + 1, filepath_line_num + 2, false)[1])
     elseif current_line:match(HUNK_START_PATTERN) then
         output.previous_filepath =
             parse_filepath(vim.api.nvim_buf_get_lines(bufnr, cursor_row - 3, cursor_row - 2, false)[1])
