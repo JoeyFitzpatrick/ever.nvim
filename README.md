@@ -17,6 +17,8 @@ Ever is a Neovim git client. It takes some ideas from [vim-fugitive](https://git
 
 🚧 NOTE: this plugin is in an alpha state. API changes and bugs are expected. 🚧
 
+A roadmap to beta can be found [here](doc/roadmap_to_beta.md).
+
 
 # Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
