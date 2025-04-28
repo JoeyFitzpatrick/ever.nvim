@@ -61,7 +61,11 @@ end
 ---@param ui_type string
 ---@param auto_display_opts ever.AutoDisplayOpts
 local function render_auto_display(bufnr, ui_type, auto_display_opts)
-    local state = require("ever._core.register").buffers[bufnr].state
+    local registered_buffer = require("ever._core.register").buffers[bufnr]
+    if not registered_buffer or not registered_buffer.state then
+        return
+    end
+    local state = registered_buffer.state
     local current_diff = auto_display_opts.get_current_diff(bufnr)
     if not current_diff then
         clear_state(state, ui_type, true)
