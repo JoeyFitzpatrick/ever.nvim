@@ -122,8 +122,8 @@ local function set_keymaps(bufnr, opts)
     end
 
     set("n", keymaps.delete, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
 
@@ -168,8 +168,8 @@ local function set_keymaps(bufnr, opts)
     end
 
     set("n", keymaps.log, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         local log_bufnr = require("ever._ui.elements").new_buffer({ buffer_name = "EverLog-" .. os.tmpname() })
@@ -180,8 +180,8 @@ local function set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.new_branch, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.ui.input({ prompt = "Name for new branch off of " .. line_data.branch_name .. ": " }, function(input)
@@ -197,8 +197,8 @@ local function set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.rename, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.ui.input({ prompt = "New name for branch " .. line_data.branch_name .. ": " }, function(input)
@@ -213,8 +213,8 @@ local function set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.switch, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         local result = require("ever._core.run_cmd").run_hidden_cmd("git switch " .. line_data.branch_name)

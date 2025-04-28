@@ -22,8 +22,8 @@ local function set_keymaps(bufnr)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", keymaps.checkout, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.api.nvim_buf_delete(bufnr, { force = true })
@@ -31,8 +31,8 @@ local function set_keymaps(bufnr)
     end, keymap_opts)
 
     set("n", keymaps.commit_details, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.api.nvim_buf_delete(bufnr, { force = true })
@@ -40,8 +40,8 @@ local function set_keymaps(bufnr)
     end, keymap_opts)
 
     set("n", keymaps.commit_info, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.elements").float(
@@ -61,8 +61,8 @@ local function set_keymaps(bufnr)
     end
 
     set("n", keymaps.diff_file, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.api.nvim_buf_delete(bufnr, { force = true })
@@ -70,8 +70,8 @@ local function set_keymaps(bufnr)
     end, keymap_opts)
 
     set("n", keymaps.reblame, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         local current_cursor_line = vim.api.nvim_win_get_cursor(0)[1]
@@ -102,8 +102,8 @@ local function set_keymaps(bufnr)
     end, keymap_opts)
 
     set("n", keymaps.show, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.elements").float(

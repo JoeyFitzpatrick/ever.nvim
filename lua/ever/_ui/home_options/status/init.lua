@@ -90,7 +90,7 @@ function M.get_line(bufnr, start_line, line_num)
         return nil
     end
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
-    if not line:match("^%s?[%w%?]") then
+    if not line or not line:match("^%s?[%w%?]") then
         return nil
     end
     local filename = line:sub(4)
@@ -109,8 +109,8 @@ function M.set_keymaps(bufnr, opts)
     local start_line = opts.start_line or 2
 
     set("n", keymaps.stage, function()
-        local line_data = M.get_line(bufnr, start_line)
-        if not line_data then
+        local ok, line_data = pcall(M.get_line, bufnr, start_line)
+        if not ok or not line_data then
             return
         end
         if not require("ever._core.git").is_staged(line_data.status) then
@@ -165,16 +165,16 @@ function M.set_keymaps(bufnr, opts)
     set("n", keymaps.commit_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_COMMIT_POPUP, keymap_opts)
 
     set("n", keymaps.diff_file, function()
-        local line_data = M.get_line(bufnr, start_line)
-        if not line_data then
+        local ok, line_data = pcall(M.get_line, bufnr, start_line)
+        if not ok or not line_data then
             return
         end
         vim.api.nvim_exec2("G diff " .. line_data.filename, {})
     end, keymap_opts)
 
     set("n", keymaps.edit_file, function()
-        local line_data = M.get_line(bufnr, start_line)
-        if not line_data then
+        local ok, line_data = pcall(M.get_line, bufnr, start_line)
+        if not ok or not line_data then
             return
         end
         vim.api.nvim_exec2("e " .. line_data.filename, {})
@@ -195,8 +195,8 @@ function M.set_keymaps(bufnr, opts)
                     keys = "f",
                     description = "Just this file",
                     action = function()
-                        local line_data = M.get_line(bufnr, start_line, line_num)
-                        if not line_data then
+                        local ok, line_data = pcall(M.get_line, bufnr, start_line, line_num)
+                        if not ok or not line_data then
                             return
                         end
                         local filename = line_data.safe_filename
@@ -215,8 +215,8 @@ function M.set_keymaps(bufnr, opts)
                     keys = "u",
                     description = "Unstaged changes for this file",
                     action = function()
-                        local line_data = M.get_line(bufnr, start_line, line_num)
-                        if not line_data then
+                        local ok, line_data = pcall(M.get_line, bufnr, start_line, line_num)
+                        if not ok or not line_data then
                             return
                         end
                         local filename = line_data.safe_filename
@@ -359,16 +359,16 @@ function M.render(bufnr, opts)
     M.set_lines(bufnr, opts)
     require("ever._ui.auto_display").create_auto_display(bufnr, "status", {
         generate_cmd = function()
-            local line_data = M.get_line(bufnr, opts.start_line)
-            if not line_data then
+            local ok, line_data = pcall(M.get_line, bufnr, opts.start_line)
+            if not ok or not line_data then
                 return
             end
             vim.fn.setreg("+", get_diff_cmd(line_data.status, line_data.safe_filename))
             return get_diff_cmd(line_data.status, line_data.safe_filename)
         end,
         get_current_diff = function()
-            local line_data = M.get_line(bufnr, opts.start_line)
-            if not line_data then
+            local ok, line_data = pcall(M.get_line, bufnr, opts.start_line)
+            if not ok or not line_data then
                 return
             end
             return line_data.safe_filename

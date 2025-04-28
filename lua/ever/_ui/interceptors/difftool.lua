@@ -79,9 +79,9 @@ end
 ---@param open_type "tab" | "window" | "vertical" | "horizontal"
 ---@return { file_to_open: string, commit_to_use: string } | nil
 local function open_file(bufnr, commits, open_type)
-    local line_data = get_line(bufnr)
-    if not line_data then
-        return nil
+    local ok, line_data = pcall(get_line, bufnr)
+    if not ok or not line_data then
+        return
     end
 
     local file_to_open = line_data.filename
@@ -142,15 +142,15 @@ M.render = function(cmd)
     set_keymaps(bufnr, commits_to_diff)
     require("ever._ui.auto_display").create_auto_display(bufnr, "difftool", {
         generate_cmd = function()
-            local line_data = get_line(bufnr)
-            if not line_data then
+            local ok, line_data = pcall(get_line, bufnr)
+            if not ok or not line_data then
                 return
             end
             return string.format("git diff %s -- %s", commits_to_diff, line_data.safe_filename)
         end,
         get_current_diff = function()
-            local line_data = get_line(bufnr)
-            if not line_data then
+            local ok, line_data = pcall(get_line, bufnr)
+            if not ok or not line_data then
                 return
             end
             return line_data.safe_filename

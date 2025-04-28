@@ -114,24 +114,24 @@ local function set_keymaps(bufnr, opts)
     end
 
     set("n", keymaps.checkout, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.cmd("G checkout " .. line_data.hash)
     end, keymap_opts)
 
     set("n", keymaps.commit_details, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.commit_details").render(line_data.hash, false)
     end, keymap_opts)
 
     set("n", keymaps.commit_info, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.elements").float(
@@ -142,16 +142,16 @@ local function set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.rebase, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.cmd("G rebase -i " .. line_data.hash .. "^")
     end, keymap_opts)
 
     set("n", keymaps.reset, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.ui.select({ "mixed", "soft", "hard" }, { prompt = "Git reset type: " }, function(selection)
@@ -161,16 +161,16 @@ local function set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.revert, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.cmd("G revert " .. line_data.hash .. " --no-commit")
     end, keymap_opts)
 
     set("n", keymaps.show, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.elements").float(

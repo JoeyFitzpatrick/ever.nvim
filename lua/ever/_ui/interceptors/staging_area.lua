@@ -160,19 +160,16 @@ local function set_autocmds(bufnr)
         desc = "Diff the file under the cursor",
         buffer = bufnr,
         callback = function()
-            local line_data = get_line(bufnr, 0)
-            if not line_data or line_data.filename == CURRENT_DIFF_FILE then
+            local ok, line_data = pcall(get_line, bufnr, 0)
+            if not ok or not line_data or line_data.filename == CURRENT_DIFF_FILE then
                 return
             end
             CURRENT_DIFF_FILE = line_data.filename
             local filename = line_data.safe_filename
 
-            if UNSTAGED_BUFNR and vim.api.nvim_buf_is_valid(UNSTAGED_BUFNR) then
-                vim.api.nvim_buf_delete(UNSTAGED_BUFNR, { force = true })
-            end
-            if STAGED_BUFNR and vim.api.nvim_buf_is_valid(STAGED_BUFNR) then
-                vim.api.nvim_buf_delete(STAGED_BUFNR, { force = true })
-            end
+            require("ever._core.register").deregister_buffer(UNSTAGED_BUFNR, { skip_go_to_last_buffer = true })
+            require("ever._core.register").deregister_buffer(STAGED_BUFNR, { skip_go_to_last_buffer = true })
+
             local win = vim.api.nvim_get_current_win()
             local diff_cmds = get_diff_cmd(line_data.status, filename)
 
@@ -209,14 +206,10 @@ local function set_autocmds(bufnr)
         desc = "Close open diffs when buffer is hidden",
         buffer = bufnr,
         callback = function()
-            if UNSTAGED_BUFNR and vim.api.nvim_buf_is_valid(UNSTAGED_BUFNR) then
-                vim.api.nvim_buf_delete(UNSTAGED_BUFNR, { force = true })
-                UNSTAGED_BUFNR = nil
-            end
-            if STAGED_BUFNR and vim.api.nvim_buf_is_valid(STAGED_BUFNR) then
-                vim.api.nvim_buf_delete(STAGED_BUFNR, { force = true })
-                STAGED_BUFNR = nil
-            end
+            require("ever._core.register").deregister_buffer(UNSTAGED_BUFNR, { skip_go_to_last_buffer = true })
+            require("ever._core.register").deregister_buffer(STAGED_BUFNR, { skip_go_to_last_buffer = true })
+            UNSTAGED_BUFNR = nil
+            STAGED_BUFNR = nil
             CURRENT_DIFF_FILE = nil
         end,
         group = vim.api.nvim_create_augroup("EverDiffCloseAutoDiff", { clear = true }),

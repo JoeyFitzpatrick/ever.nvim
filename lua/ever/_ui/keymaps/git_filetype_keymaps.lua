@@ -155,8 +155,8 @@ function M.set_keymaps(bufnr)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", keymaps.show_details, function()
-        local line_data = get_line(bufnr)
-        if not line_data or not line_data.commit then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         local item_type = line_data.item_type

@@ -58,16 +58,16 @@ local function set_keymaps(bufnr)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", keymaps.apply, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.cmd("G stash apply " .. line_data.stash_index)
     end, keymap_opts)
 
     set("n", keymaps.drop, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.ui.select(
@@ -82,16 +82,16 @@ local function set_keymaps(bufnr)
     end, keymap_opts)
 
     set("n", keymaps.pop, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.cmd("G stash pop " .. line_data.stash_index)
     end, keymap_opts)
 
     set("n", keymaps.show, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.commit_details").render(line_data.stash_index, true)
@@ -104,15 +104,15 @@ function M.render(bufnr, opts)
     set_lines(bufnr, opts)
     require("ever._ui.auto_display").create_auto_display(bufnr, "stash", {
         generate_cmd = function()
-            local line_data = get_line(bufnr)
-            if not line_data then
+            local ok, line_data = pcall(get_line, bufnr)
+            if not ok or not line_data then
                 return
             end
             return "git stash show -p " .. line_data.stash_index
         end,
         get_current_diff = function()
-            local line_data = get_line(bufnr)
-            if not line_data then
+            local ok, line_data = pcall(get_line, bufnr)
+            if not ok or not line_data then
                 return
             end
             return line_data.stash_index

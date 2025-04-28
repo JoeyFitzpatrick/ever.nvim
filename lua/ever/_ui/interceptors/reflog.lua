@@ -31,24 +31,24 @@ local function set_keymaps(bufnr)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", keymaps.checkout, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         vim.cmd("G checkout " .. line_data.hash)
     end, keymap_opts)
 
     set("n", keymaps.commit_details, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.commit_details").render(line_data.hash)
     end, keymap_opts)
 
     set("n", keymaps.commit_info, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.elements").float(
@@ -59,8 +59,8 @@ local function set_keymaps(bufnr)
     end, keymap_opts)
 
     set("n", keymaps.show, function()
-        local line_data = get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.elements").float(

@@ -75,16 +75,16 @@ local function set_keymaps(bufnr, commit)
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", keymaps.open_in_current_window, function()
-        local line_data = M.get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(M.get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._core.open_file").open_file_in_current_window(line_data.filename, commit)
     end, keymap_opts)
 
     set("n", keymaps.open_in_horizontal_split, function()
-        local line_data = M.get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(M.get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.auto_display").close_auto_display(bufnr, "commit_details")
@@ -92,16 +92,16 @@ local function set_keymaps(bufnr, commit)
     end, keymap_opts)
 
     set("n", keymaps.open_in_new_tab, function()
-        local line_data = M.get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(M.get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._core.open_file").open_file_in_tab(line_data.filename, commit)
     end, keymap_opts)
 
     set("n", keymaps.open_in_vertical_split, function()
-        local line_data = M.get_line(bufnr)
-        if not line_data then
+        local ok, line_data = pcall(M.get_line, bufnr)
+        if not ok or not line_data then
             return
         end
         require("ever._ui.auto_display").close_auto_display(bufnr, "commit_details")
@@ -122,8 +122,8 @@ function M.render(commit, is_stash)
     vim.api.nvim_set_option_value("filetype", "git", { buf = bufnr })
     require("ever._ui.auto_display").create_auto_display(bufnr, "commit_details", {
         generate_cmd = function()
-            local line_data = M.get_line(bufnr)
-            if not line_data then
+            local ok, line_data = pcall(M.get_line, bufnr)
+            if not ok or not line_data then
                 return
             end
             -- the -m flag diffs both merge commits and normal commits
@@ -134,8 +134,8 @@ function M.render(commit, is_stash)
             return cmd
         end,
         get_current_diff = function()
-            local line_data = M.get_line(bufnr)
-            if not line_data then
+            local ok, line_data = pcall(M.get_line, bufnr)
+            if not ok or not line_data then
                 return
             end
             return line_data.filename
