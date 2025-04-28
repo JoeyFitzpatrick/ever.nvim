@@ -75,9 +75,11 @@ local function render_num_commits(bufnr, opts)
     opts.highlight(bufnr, start_line, new_output)
 end
 
+--- This function is `vim.schedule_wrap`ped, so that it doesn't
+--- block the main thread. Otherwise it causes sluggishness.
 ---@param bufnr integer
 ---@param opts ever.SetNumCommitsParams
-function M.set_num_commits_to_pull_and_push(bufnr, opts)
+M.set_num_commits_to_pull_and_push = vim.schedule_wrap(function(bufnr, opts)
     render_num_commits(bufnr, opts)
     local received_output = false
     vim.fn.jobstart("git fetch", {
@@ -104,7 +106,7 @@ function M.set_num_commits_to_pull_and_push(bufnr, opts)
             render_num_commits(bufnr, opts)
         end,
     })
-end
+end)
 
 ---@param bufnr integer
 ---@param start_line integer
