@@ -5,7 +5,7 @@ local function set_keymaps(bufnr)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
 
     vim.keymap.set("n", "q", function()
-        vim.api.nvim_buf_delete(bufnr, { force = true })
+        require("ever._core.register").deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
     end, keymap_opts)
 end
 

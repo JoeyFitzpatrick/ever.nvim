@@ -116,7 +116,7 @@ end
 ---@param commit string
 ---@param is_stash? boolean
 function M.render(commit, is_stash)
-    local bufnr = vim.api.nvim_create_buf(false, true)
+    local bufnr = vim.api.nvim_create_buf(true, true)
     vim.api.nvim_win_set_buf(0, bufnr)
     M.set_lines(bufnr, commit)
     vim.api.nvim_set_option_value("filetype", "git", { buf = bufnr })
