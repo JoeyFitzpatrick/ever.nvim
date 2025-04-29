@@ -14,6 +14,8 @@ local _DEFAULTS = require("ever._core.default_configuration")
 
 function M.initialize_data()
     M.DATA = vim.tbl_deep_extend("force", _DEFAULTS, vim.g.ever_configuration or {})
+    vim.fn.system("git -C . rev-parse 2>/dev/null")
+    vim.g.ever_in_git_repo = vim.v.shell_error == 0
 end
 
 return M
