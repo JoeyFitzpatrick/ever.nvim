@@ -6,6 +6,7 @@
 ---@module 'ever.types'
 
 ---@class ever.Configuration
+---@field prevent_nvim_inception boolean
 ---@field auto_display ever.AutoDisplayConfiguration
 ---@field blame ever.BlameConfiguration
 ---@field home ever.HomeConfiguration

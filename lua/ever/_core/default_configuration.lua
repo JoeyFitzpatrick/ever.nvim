@@ -1,5 +1,9 @@
 ---@type ever.Configuration
 return {
+    -- By default, Ever attempts to prevent nested nvim sessions, in cases
+    -- where a terminal opened by Ever opens an editor (like the commit editor).
+    -- Set this to false to allow "nvim inception" to occur (or handle yourself).
+    prevent_nvim_inception = true,
     home = {
         keymaps = {
             -- NOTE: setting a keymap to nil disables it, e.g. `next = nil`
