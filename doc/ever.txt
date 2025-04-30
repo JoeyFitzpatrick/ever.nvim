@@ -311,7 +311,7 @@ from 20 to 40 in `example.lua`. In many cases, this can be an extremely useful
 way to search for changes, as opposed to running something like `git log
 --follow example.lua`, which could show commits that made changes that you
 don’t care about. With Ever, if you make a visual selection and run `:'<,'>G
-log`, without passing line numbers or a file name, it will pass the line
+log -L`, without passing line numbers or a file name, it will pass the line
 numbers and file name automatically to the git command, making it much more
 convenient to use.
 
