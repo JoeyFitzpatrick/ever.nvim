@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for suggestion! Depending on your request, the issue may be reposted to https://github.com/nvim-neorocks/nvim-best-practices (which this plugin takes great inspiration). But please feel free to ask here first!
+        Thank you for your suggestion!
   - type: checkboxes
     attributes:
       label: Did you check the documentation?
