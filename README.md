@@ -41,6 +41,9 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
 {
     "JoeyFitzpatrick/ever.nvim",
     config = function()
+        -- The next two lines allow the lua LSP to autocomplete config options
+        ---@module "ever"
+        ---@type ever.Configuration
         vim.g.ever_configuration = {
             -- Default configuration
             -- By default, Ever attempts to prevent nested nvim sessions, in cases

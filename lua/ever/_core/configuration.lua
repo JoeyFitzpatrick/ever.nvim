@@ -6,7 +6,6 @@ local M = {}
 -- NOTE: Don't remove this line. It makes the Lua module much easier to reload
 vim.g.loaded_ever = false
 
----@diagnostic disable-next-line: missing-fields
 M.DATA = {}
 
 ---@type ever.Configuration
