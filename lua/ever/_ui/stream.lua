@@ -13,6 +13,7 @@ local M = {}
 ---@param cmd string
 ---@param opts ever.StreamLinesOpts
 function M.stream_lines(bufnr, cmd, opts)
+    local POSSIBLE_ERROR_OUTPUT = nil
     if not vim.api.nvim_buf_is_valid(bufnr) then
         return
     end
@@ -26,6 +27,7 @@ function M.stream_lines(bufnr, cmd, opts)
             -- Populate the buffer with the incoming lines
             vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
             for _, line in ipairs(data) do
+                POSSIBLE_ERROR_OUTPUT = line
                 if opts.transform_line then
                     line = opts.transform_line(line)
                 end
@@ -42,13 +44,18 @@ function M.stream_lines(bufnr, cmd, opts)
         end
     end
 
-    local function on_exit(code)
+    local function on_exit(_, code, _)
         if opts.filetype then
             vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
         end
         vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
         if code ~= 0 then
-            vim.notify("command '" .. cmd .. "' failed with exit code " .. code, vim.log.levels.ERROR)
+            local error_message = "command '" .. cmd .. "' failed with exit code " .. code
+            if POSSIBLE_ERROR_OUTPUT and POSSIBLE_ERROR_OUTPUT ~= "" then
+                error_message = "command '" .. cmd .. "' failed with message: " .. POSSIBLE_ERROR_OUTPUT
+            end
+
+            vim.notify(error_message, vim.log.levels.ERROR)
         end
         if opts.on_exit then
             opts.on_exit(bufnr)
@@ -67,11 +74,14 @@ function M.stream_lines(bufnr, cmd, opts)
         on_stdout = function(...)
             pcall(on_stdout, ...)
         end,
-        on_exit = function(_, code, _)
+        on_stderr = function(...)
+            pcall(on_stdout, ...)
+        end,
+        on_exit = function(...)
             if opts.silent then
                 return
             end
-            pcall(on_exit, code)
+            pcall(on_exit, ...)
         end,
     })
 end

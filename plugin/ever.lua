@@ -4,7 +4,7 @@ local PREFIX = "G"
 
 ---@param input_args vim.api.keyset.create_user_command.command_args
 local function run_command(input_args)
-    local cmd = require("ever._core.parse_command").parse(input_args.args)
+    local cmd = require("ever._core.parse_command").parse(input_args)
     local cmd_with_git_prefix = "git " .. cmd
     if input_args.bang then
         require("ever._ui.elements").terminal(cmd_with_git_prefix, { display_strategy = "full", insert = true })
@@ -29,13 +29,13 @@ end, {
     nargs = "*",
     desc = "Ever's command API. Mostly the same as the Git API.",
     bang = true, -- with a bang, always run command in terminal mode (no ui)
+    range = true,
     complete = function(arglead, cmdline)
         local completion = require("ever._completion").complete_git_command(arglead, cmdline)
         return vim.tbl_filter(function(val)
             return vim.startswith(val, arglead)
         end, completion)
     end,
-    range = true,
 })
 
 require("ever._ui.popups.plug_mappings").setup_plug_mappings()
