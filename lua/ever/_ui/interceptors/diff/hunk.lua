@@ -158,10 +158,10 @@ M.extract = function(is_staged)
     end
 
     -- First few lines of diff are like this:
-    -- diff --git a/lua/alien/keymaps/diff-keymaps.lua b/lua/alien/keymaps/diff-keymaps.lua
+    -- diff --git a/lua/ever/keymaps/diff-keymaps.lua b/lua/ever/keymaps/diff-keymaps.lua
     -- index 3dcb93a..8da090a 100644
-    -- --- a/lua/alien/keymaps/diff-keymaps.lua
-    -- +++ b/lua/alien/keymaps/diff-keymaps.lua
+    -- --- a/lua/ever/keymaps/diff-keymaps.lua
+    -- +++ b/lua/ever/keymaps/diff-keymaps.lua
     -- @@ -9,7 +9,7 @@ M.set_unstaged_diff_keymaps = function(bufnr)
 
     local file_before, file_after = get_patch_filenames(lines[3], lines[4], lines[5])

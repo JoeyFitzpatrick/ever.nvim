@@ -1,10 +1,10 @@
 local extract = require("ever._ui.interceptors.diff.hunk").extract
 
 local mock_lines = {
-    "diff --git a/lua/alien/config.lua b/lua/alien/config.lua",
+    "diff --git a/lua/ever/config.lua b/lua/ever/config.lua",
     "index 465055b..1c4b9c1 100644",
-    "--- a/lua/alien/config.lua",
-    "+++ b/lua/alien/config.lua",
+    "--- a/lua/ever/config.lua",
+    "+++ b/lua/ever/config.lua",
     "@@ -23,7 +23,7 @@ M.default_config = {",
     '             toggle_auto_diff = "t",',
     '             scroll_diff_down = "J",',

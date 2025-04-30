@@ -148,6 +148,9 @@ end
 function M.terminal(cmd, strategy)
     local split_cmd = vim.split(cmd, " ")
     local bufnr = vim.api.nvim_create_buf(false, true)
+    -- Buffer local variable that makes any editors opened from this terminal,
+    -- such as the commit editor, use the current nvim instance instead of a nested one.
+    vim.b[bufnr].ever_use_nested_nvim = true
     local base_cmd = split_cmd[2]
     local base_strategy = require("ever._constants.command_strategies").default
     local derived_strategy = require("ever._constants.command_strategies")[base_cmd] or {}
