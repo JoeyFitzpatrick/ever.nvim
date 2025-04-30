@@ -1,6 +1,5 @@
--- As of this writing, rpcrequest fails if the last argument ({}) is missing,
--- but the language server complains that it doesn't need that argument
----@diagnostic disable: redundant-parameter
+-- This code was copied, then modified, from `nvim-unception`.
+-- Copyright (c) 2022 Samuel Williams
 
 local constants = require("ever._core.nested-buffers.constants")
 
