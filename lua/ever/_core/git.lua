@@ -11,7 +11,11 @@ end
 ---@param status string
 ---@return boolean
 M.is_modified = function(status)
-    return vim.tbl_contains(require("ever._constants.git_status").MODIFIED_STATUSES, status)
+    if not status then
+        return false
+    end
+    -- A status that is partially staged, or modified, should always be two uppercase letters.
+    return status:match("^%u%u$") ~= nil
 end
 
 --- Returns true for a git status that represents a deleted file, and false otherwise.

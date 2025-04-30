@@ -20,10 +20,12 @@ local function highlight(bufnr, start_line, lines)
     for line_num, line in ipairs(lines) do
         local highlight_group
         local status = get_status(line)
-        if require("ever._core.git").is_staged(status) then
-            highlight_group = highlight_groups.EVER_DIFF_ADD
-        elseif require("ever._core.git").is_modified(status) then
+        -- Some statuses that are "modified" are also "staged", and for highlights,
+        -- we want modified to take precedence
+        if require("ever._core.git").is_modified(status) then
             highlight_group = highlight_groups.EVER_DIFF_MODIFIED
+        elseif require("ever._core.git").is_staged(status) then
+            highlight_group = highlight_groups.EVER_DIFF_ADD
         else
             highlight_group = highlight_groups.EVER_DIFF_REMOVE
         end
