@@ -131,6 +131,9 @@ local function set_keymaps(bufnr, ui_type, auto_display_opts)
     end
     local set = require("ever._ui.keymaps.set").safe_set_keymap
     local keymaps = require("ever._core.configuration").DATA.auto_display.keymaps
+    if not keymaps then
+        return nil
+    end
 
     set("n", keymaps.toggle_auto_display, function()
         if registered_buffer.state.display_auto_display then

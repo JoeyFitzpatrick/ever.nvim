@@ -153,10 +153,17 @@ local function create_and_render_buffer(tab, indices)
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     ui_render(bufnr, { start_line = TAB_HEIGHT })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
-    vim.api.nvim_win_set_cursor(0, { math.min(vim.api.nvim_buf_line_count(bufnr), 5), 0 })
+    local line_to_set_cursor_to = 5
+    if tab == "Status" then
+        line_to_set_cursor_to = 7
+    end
+    vim.api.nvim_win_set_cursor(0, { math.min(vim.api.nvim_buf_line_count(bufnr), line_to_set_cursor_to), 0 })
     highlight_tabs(bufnr, indices)
 
     local keymaps = require("ever._core.configuration").DATA.home.keymaps
+    if not keymaps then
+        return
+    end
     local set = require("ever._ui.keymaps.set").safe_set_keymap
 
     set("n", "q", function()
