@@ -463,10 +463,20 @@ Run all tests
     make test
 <
 
-Run test based on tags
+It’s worth noting that running with `make tests` will download some test
+dependencies that add LSP types for `busted` and `luassert`. These are
+gitignored.
+
+Run tests based on tags
 
 >sh
     busted --helper spec/minimal_init.lua . --tags=simple
+<
+
+We might not have any tagged tests, but to make one, set up as test like this:
+
+>lua
+    describe("User management controls #simple", function ()...
 <
 
 
