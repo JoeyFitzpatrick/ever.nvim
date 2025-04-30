@@ -9,6 +9,7 @@ operation of this Lua plugin.
 *ever.Configuration*
 
 Fields ~
+    {prevent_nvim_inception} `(boolean)`
     {auto_display} `(ever.AutoDisplayConfiguration)`
     {blame} `(ever.BlameConfiguration)`
     {home} `(ever.HomeConfiguration)`
