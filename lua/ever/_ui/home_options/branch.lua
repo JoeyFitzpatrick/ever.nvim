@@ -23,6 +23,13 @@ local function highlight(bufnr, start_line, lines)
     require("ever._ui.utils.num_commits_pull_push").highlight_num_commits(bufnr, start_line, lines)
 end
 
+---@param opts ever.UiRenderOpts
+local function set_cursor_to_first_branch(opts)
+    if opts.win then
+        vim.api.nvim_win_set_cursor(opts.win, { opts.start_line + 1 or 1, 0 })
+    end
+end
+
 ---@param bufnr integer
 ---@param opts ever.UiRenderOpts
 ---@return string[]
@@ -30,12 +37,15 @@ local function set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
     -- if cmd is nil, the default command is "git branch"
     if not opts.cmd then
-        opts.cmd = "branch"
+        -- This sorts branches such that the current branch appears first
+        opts.cmd = "branch --sort=-HEAD"
     end
     local output = require("ever._core.run_cmd").run_cmd(string.format("git %s", opts.cmd))
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+
+    set_cursor_to_first_branch(opts)
     highlight(bufnr, start_line, output)
     require("ever._ui.utils.num_commits_pull_push").set_num_commits_to_pull_and_push(
         bufnr,

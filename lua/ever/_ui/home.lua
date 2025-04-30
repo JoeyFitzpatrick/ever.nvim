@@ -8,6 +8,7 @@
 ---@field start_line? integer
 ---@field cmd? string -- The command used for this UI
 ---@field keymap_opts? ever.GetKeymapsOpts
+---@field win? integer
 
 local M = {}
 
@@ -140,7 +141,8 @@ local tab_render_map = {
 ---@param indices ever.TabHighlightIndices[]
 local function create_and_render_buffer(tab, indices)
     local bufnr = vim.api.nvim_create_buf(true, true)
-    vim.api.nvim_win_set_buf(0, bufnr)
+    local win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(win, bufnr)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, tabs_text)
 
     local ui_render = tab_render_map[tab]
@@ -151,13 +153,13 @@ local function create_and_render_buffer(tab, indices)
     })
 
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
-    ui_render(bufnr, { start_line = TAB_HEIGHT })
+    ui_render(bufnr, { start_line = TAB_HEIGHT, win = win })
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     local line_to_set_cursor_to = 5
     if tab == "Status" then
         line_to_set_cursor_to = 7
     end
-    vim.api.nvim_win_set_cursor(0, { math.min(vim.api.nvim_buf_line_count(bufnr), line_to_set_cursor_to), 0 })
+    vim.api.nvim_win_set_cursor(win, { math.min(vim.api.nvim_buf_line_count(bufnr), line_to_set_cursor_to), 0 })
     highlight_tabs(bufnr, indices)
 
     local keymaps = require("ever._core.configuration").DATA.home.keymaps
