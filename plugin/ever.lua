@@ -21,8 +21,14 @@ end
 vim.api.nvim_create_user_command(PREFIX, function(input_args)
     require("ever")
     if vim.g.ever_in_git_repo == false then
-        vim.notify("ever: working directory does not belong to a Git repository", vim.log.levels.ERROR)
-        return
+        if input_args.args and input_args.args:match("^init") then
+            run_command(input_args)
+            vim.g.ever_in_git_repo = true
+            return
+        else
+            vim.notify("ever: working directory does not belong to a Git repository", vim.log.levels.ERROR)
+            return
+        end
     end
     run_command(input_args)
 end, {
