@@ -9,41 +9,41 @@ operation of this Lua plugin.
 *ever.Configuration*
 
 Fields ~
-    {prevent_nvim_inception} `(boolean)`
-    {auto_display} `(ever.AutoDisplayConfiguration)`
-    {blame} `(ever.BlameConfiguration)`
-    {home} `(ever.HomeConfiguration)`
-    {branch} `(ever.BranchConfiguration)`
-    {commit_details} `(ever.CommitDetailsConfiguration)`
-    {commit_popup} `(ever.CommitPopupConfiguration)`
-    {diff} `(ever.DiffConfiguration)`
-    {difftool} `(ever.DifftoolConfiguration)`
-    {git_filetype} `(ever.GitFiletypeConfiguration)`
-    {log} `(ever.LogConfiguration)`
-    {open_files} `(ever.OpenFilesConfiguration)`
-    {reflog} `(ever.ReflogConfiguration)`
-    {stash} `(ever.StashConfiguration)`
-    {stash_popup} `(ever.StashPopupConfiguration)`
-    {status} `(ever.StatusConfiguration)`
+    {prevent_nvim_inception} `(optional)` `(boolean)`
+    {auto_display} `(optional)` `(ever.AutoDisplayConfiguration)`
+    {blame} `(optional)` `(ever.BlameConfiguration)`
+    {home} `(optional)` `(ever.HomeConfiguration)`
+    {branch} `(optional)` `(ever.BranchConfiguration)`
+    {commit_details} `(optional)` `(ever.CommitDetailsConfiguration)`
+    {commit_popup} `(optional)` `(ever.CommitPopupConfiguration)`
+    {diff} `(optional)` `(ever.DiffConfiguration)`
+    {difftool} `(optional)` `(ever.DifftoolConfiguration)`
+    {git_filetype} `(optional)` `(ever.GitFiletypeConfiguration)`
+    {log} `(optional)` `(ever.LogConfiguration)`
+    {open_files} `(optional)` `(ever.OpenFilesConfiguration)`
+    {reflog} `(optional)` `(ever.ReflogConfiguration)`
+    {stash} `(optional)` `(ever.StashConfiguration)`
+    {stash_popup} `(optional)` `(ever.StashPopupConfiguration)`
+    {status} `(optional)` `(ever.StatusConfiguration)`
 
 ------------------------------------------------------------------------------
 *ever.BlameConfiguration*
 
 Fields ~
-    {default_cmd_args} `(string[])`
-    {keymaps} `(ever.BlameKeymaps)`
+    {default_cmd_args} `(optional)` `(string[])`
+    {keymaps} `(optional)` `(ever.BlameKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.HomeConfiguration*
 
 Fields ~
-    {keymaps} `(ever.HomeKeymaps)`
+    {keymaps} `(optional)` `(ever.HomeKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.AutoDisplayConfiguration*
 
 Fields ~
-    {keymaps} `(ever.AutoDisplayKeymaps)`
+    {keymaps} `(optional)` `(ever.AutoDisplayKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.BranchConfiguration*
@@ -55,133 +55,133 @@ Fields ~
 *ever.CommitDetailsConfiguration*
 
 Fields ~
-    {keymaps} `(ever.CommitDetailsKeymaps)`
-    {auto_display_on} `(boolean)`
+    {keymaps} `(optional)` `(ever.CommitDetailsKeymaps)`
+    {auto_display_on} `(optional)` `(boolean)`
 
 ------------------------------------------------------------------------------
 *ever.CommitPopupConfiguration*
 
 Fields ~
-    {keymaps} `(ever.CommitPopupKeymaps)`
+    {keymaps} `(optional)` `(ever.CommitPopupKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.DiffConfiguration*
 
 Fields ~
-    {keymaps} `(ever.DiffKeymaps)`
+    {keymaps} `(optional)` `(ever.DiffKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.DifftoolConfiguration*
 
 Fields ~
-    {auto_display_on} `(boolean)`
+    {auto_display_on} `(optional)` `(boolean)`
 
 ------------------------------------------------------------------------------
 *ever.GitFiletypeConfiguration*
 
 Fields ~
-    {keymaps} `(ever.GitFiletypeKeymaps)`
+    {keymaps} `(optional)` `(ever.GitFiletypeKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.LogConfiguration*
 
 Fields ~
-    {keymaps} `(ever.LogKeymaps)`
+    {keymaps} `(optional)` `(ever.LogKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.OpenFilesConfiguration*
 
 Fields ~
-    {keymaps} `(ever.OpenFilesKeymaps)`
+    {keymaps} `(optional)` `(ever.OpenFilesKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.ReflogConfiguration*
 
 Fields ~
-    {keymaps} `(ever.ReflogKeymaps)`
+    {keymaps} `(optional)` `(ever.ReflogKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.StashConfiguration*
 
 Fields ~
-    {keymaps} `(ever.StashKeymaps)`
-    {auto_display_on} `(boolean)`
+    {keymaps} `(optional)` `(ever.StashKeymaps)`
+    {auto_display_on} `(optional)` `(boolean)`
 
 ------------------------------------------------------------------------------
 *ever.StashPopupConfiguration*
 
 Fields ~
-    {keymaps} `(ever.StashPopupKeymaps)`
+    {keymaps} `(optional)` `(ever.StashPopupKeymaps)`
 
 ------------------------------------------------------------------------------
 *ever.StatusConfiguration*
 
 Fields ~
-    {keymaps} `(ever.StatusKeymaps)`
-    {auto_display_on} `(boolean)`
+    {keymaps} `(optional)` `(ever.StatusKeymaps)`
+    {auto_display_on} `(optional)` `(boolean)`
 
 ------------------------------------------------------------------------------
 *ever.HomeKeymaps*
 
 Fields ~
-    {next} `(string)`
-    {previous} `(string)`
+    {next} `(optional)` `(string)`
+    {previous} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.AutoDisplayKeymaps*
 
 Fields ~
-    {scroll_diff_down} `(string)`
-    {scroll_diff_up} `(string)`
-    {toggle_auto_display} `(string)`
+    {scroll_diff_down} `(optional)` `(string)`
+    {scroll_diff_up} `(optional)` `(string)`
+    {toggle_auto_display} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.BlameKeymaps*
 
 Fields ~
-    {checkout} `(string)`
-    {diff_file} `(string)`
-    {commit_details} `(string)`
-    {commit_info} `(string)`
-    {reblame} `(string)`
-    {return_to_original_file} `(string)`
-    {show} `(string)`
+    {checkout} `(optional)` `(string)`
+    {diff_file} `(optional)` `(string)`
+    {commit_details} `(optional)` `(string)`
+    {commit_info} `(optional)` `(string)`
+    {reblame} `(optional)` `(string)`
+    {return_to_original_file} `(optional)` `(string)`
+    {show} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.BranchKeymaps*
 
 Fields ~
-    {delete} `(string)`
-    {log} `(string)`
-    {new_branch} `(string)`
-    {pull} `(string)`
-    {push} `(string)`
-    {rename} `(string)`
-    {switch} `(string)`
+    {delete} `(optional)` `(string)`
+    {log} `(optional)` `(string)`
+    {new_branch} `(optional)` `(string)`
+    {pull} `(optional)` `(string)`
+    {push} `(optional)` `(string)`
+    {rename} `(optional)` `(string)`
+    {switch} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.CommitDetailsKeymaps*
 
 Fields ~
-    {show_all_changes} `(string)`
+    {show_all_changes} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.CommitPopupKeymaps*
 
 Fields ~
-    {commit} `(string)`
-    {commit_amend} `(string)`
-    {commit_amend_reuse_message} `(string)`
-    {commit_dry_run} `(string)`
-    {commit_no_verify} `(string)`
+    {commit} `(optional)` `(string)`
+    {commit_amend} `(optional)` `(string)`
+    {commit_amend_reuse_message} `(optional)` `(string)`
+    {commit_dry_run} `(optional)` `(string)`
+    {commit_no_verify} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.DiffKeymaps*
 
 Fields ~
-    {next_hunk} `(string)`
-    {previous_hunk} `(string)`
-    {stage} `(string)`
+    {next_hunk} `(optional)` `(string)`
+    {previous_hunk} `(optional)` `(string)`
+    {stage} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.DifftoolKeymaps*
@@ -190,70 +190,70 @@ Fields ~
 *ever.GitFiletypeKeymaps*
 
 Fields ~
-    {show_details} `(string)`
+    {show_details} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.LogKeymaps*
 
 Fields ~
-    {checkout} `(string)`
-    {commit_details} `(string)`
-    {commit_info} `(string)`
-    {pull} `(string)`
-    {push} `(string)`
-    {rebase} `(string)`
-    {reset} `(string)`
-    {revert} `(string)`
-    {show} `(string)`
+    {checkout} `(optional)` `(string)`
+    {commit_details} `(optional)` `(string)`
+    {commit_info} `(optional)` `(string)`
+    {pull} `(optional)` `(string)`
+    {push} `(optional)` `(string)`
+    {rebase} `(optional)` `(string)`
+    {reset} `(optional)` `(string)`
+    {revert} `(optional)` `(string)`
+    {show} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.OpenFilesKeymaps*
 
 Fields ~
-    {open_in_current_window} `(string)`
-    {open_in_horizontal_split} `(string)`
-    {open_in_new_tab} `(string)`
-    {open_in_vertical_split} `(string)`
+    {open_in_current_window} `(optional)` `(string)`
+    {open_in_horizontal_split} `(optional)` `(string)`
+    {open_in_new_tab} `(optional)` `(string)`
+    {open_in_vertical_split} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.ReflogKeymaps*
 
 Fields ~
-    {checkout} `(string)`
-    {commit_details} `(string)`
-    {commit_info} `(string)`
-    {show} `(string)`
+    {checkout} `(optional)` `(string)`
+    {commit_details} `(optional)` `(string)`
+    {commit_info} `(optional)` `(string)`
+    {show} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.StashKeymaps*
 
 Fields ~
-    {apply} `(string)`
-    {drop} `(string)`
-    {pop} `(string)`
-    {show} `(string)`
+    {apply} `(optional)` `(string)`
+    {drop} `(optional)` `(string)`
+    {pop} `(optional)` `(string)`
+    {show} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.StashPopupKeymaps*
 
 Fields ~
-    {stash_all} `(string)`
-    {stash_staged} `(string)`
+    {stash_all} `(optional)` `(string)`
+    {stash_staged} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
 *ever.StatusKeymaps*
 
 Fields ~
-    {commit_popup} `(string)`
-    {diff_file} `(string)`
-    {edit_file} `(string)`
-    {enter_staging_area} `(string)`
-    {pull} `(string)`
-    {push} `(string)`
-    {restore} `(string)`
-    {stage} `(string)`
-    {stage_all} `(string)`
-    {stash_popup} `(string)`
+    {commit_popup} `(optional)` `(string)`
+    {diff_file} `(optional)` `(string)`
+    {edit_file} `(optional)` `(string)`
+    {enter_staging_area} `(optional)` `(string)`
+    {pull} `(optional)` `(string)`
+    {push} `(optional)` `(string)`
+    {restore} `(optional)` `(string)`
+    {stage} `(optional)` `(string)`
+    {stage_all} `(optional)` `(string)`
+    {stash_popup} `(optional)` `(string)`
 
 WARNING: This file is auto-generated. Do not edit it!
 
