@@ -195,7 +195,6 @@ Note that for any command that brings up a UI:
 * The jumplist still works like normal `<C-i>` and `<C-o>`
 * You can view keymaps by pressing `g?`
 
-##
 Using the `:G` command renders a home ui, that will display some status info. This includes the git status of all changed files, a diff split to display these changes, and some keymaps to manipulate these files, such as staging/unstaging them. Use `h` and `l` to then display the UI for  `git branch`, `git log`, and `git stash`, all of which are further detailed below.
 
 ### Staging Area
@@ -216,7 +215,9 @@ G branch commands that do not display a list of branches, such as `:G branch --d
 ## Log
 `:G` log commands will typically open a UI. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the log UI.
 
-When using the `:G log` command without arguments, a default [`--pretty`](https://git-scm.com/docs/pretty-formats) option is passed to the `log` command to change how the output looks. Passing any arguments to `:G log` causes this `--pretty` option to not be added to the `log` command.
+When using the `:G log` command without arguments, a default [`--pretty`](https://git-scm.com/docs/pretty-formats) format option 
+is passed to the `log` command to change how the output looks.
+Passing a `--pretty` option, such as `:G log --pretty=full`, overrides the default format.
 
 ### Log -L
 
@@ -232,7 +233,7 @@ Like vim-fugitive, running `:G blame` will open a blame window to the left, that
 Running `:G stash list` will open a UI, in which you can view, pop, apply, and drop stashes. Other stash commands, like `:G stash show`, run in terminal mode like most other commands.
 
 ## Show
-Running `:G show` commands will just open their output in the current window. Not amazingly helpful, but sometimes nice when that's what you need. You can close this with `q` like other Ever buffers.
+Running `:G show` commands will just open their output in the current window. You can close this with `q` like other Ever buffers.
 
 ## Help Commands
 Running a git help command, such as `:G commit -h` or `:G log --help`, will open that help file in the current window. This way, you can use your normal vim navigation to move through the docs, versus opening a pager. You can close it by pressing `q` to return to your last buffer.
