@@ -8,7 +8,6 @@ ever-news.txt	news.txt	/*ever-news.txt*
 ever-optional-dependencies	ever.txt	/*ever-optional-dependencies*
 ever-plug-mappings	ever.txt	/*ever-plug-mappings*
 ever-special-commands	ever.txt	/*ever-special-commands*
-ever-special-commands-	ever.txt	/*ever-special-commands-*
 ever-special-commands-blame	ever.txt	/*ever-special-commands-blame*
 ever-special-commands-branch	ever.txt	/*ever-special-commands-branch*
 ever-special-commands-commit	ever.txt	/*ever-special-commands-commit*

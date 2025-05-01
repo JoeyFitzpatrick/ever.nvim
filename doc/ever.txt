@@ -1,4 +1,4 @@
-*ever.txt*           For Neovim >= 0.11.0           Last change: 2025 April 30
+*ever.txt*            For Neovim >= 0.11.0            Last change: 2025 May 01
 
 ==============================================================================
 Table of Contents                                     *ever-table-of-contents*
@@ -8,7 +8,6 @@ Table of Contents                                     *ever-table-of-contents*
 3. Usage                                                          |ever-usage|
 4. Keymaps for Raw Git Output                |ever-keymaps-for-raw-git-output|
 5. Special Commands                                    |ever-special-commands|
-  -                                                   |ever-special-commands-|
   - Difftool                                  |ever-special-commands-difftool|
   - Branch                                      |ever-special-commands-branch|
   - Log                                            |ever-special-commands-log|
@@ -242,9 +241,6 @@ Note that for any command that brings up a UI: You can close the UI by pressing
 `q`, in addition to the normal methods, such as `:q` The jumplist still works
 like normal `<C-i>` and `<C-o>` You can view keymaps by pressing `g?`
 
-
-                                                      *ever-special-commands-*
-
 Using the `:G` command renders a home ui, that will display some status info.
 This includes the git status of all changed files, a diff split to display
 these changes, and some keymaps to manipulate these files, such as
@@ -296,9 +292,9 @@ LOG                                                *ever-special-commands-log*
 in the log UI.
 
 When using the `:G log` command without arguments, a default `--pretty`
-<https://git-scm.com/docs/pretty-formats> option is passed to the `log` command
-to change how the output looks. Passing any arguments to `:G log` causes this
-`--pretty` option to not be added to the `log` command.
+<https://git-scm.com/docs/pretty-formats> format option is passed to the `log`
+command to change how the output looks. Passing a `--pretty` option, such as
+`:G log --pretty=full`, overrides the default format.
 
 
 LOG -L ~
@@ -347,8 +343,7 @@ like most other commands.
 SHOW                                              *ever-special-commands-show*
 
 Running `:G show` commands will just open their output in the current window.
-Not amazingly helpful, but sometimes nice when that’s what you need. You can
-close this with `q` like other Ever buffers.
+You can close this with `q` like other Ever buffers.
 
 
 HELP COMMANDS                            *ever-special-commands-help-commands*
