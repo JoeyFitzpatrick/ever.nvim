@@ -35,7 +35,7 @@ end, {
     nargs = "*",
     desc = "Ever's command API. Mostly the same as the Git API.",
     bang = true, -- with a bang, always run command in terminal mode (no ui)
-    range = true,
+    range = true, -- some commands, like ":G log -L", work on a range of lines
     complete = function(arglead, cmdline)
         local completion = require("ever._completion").complete_git_command(arglead, cmdline)
         return vim.tbl_filter(function(val)
