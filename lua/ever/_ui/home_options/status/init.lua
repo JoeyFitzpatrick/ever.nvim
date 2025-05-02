@@ -365,7 +365,6 @@ function M.render(bufnr, opts)
             if not ok or not line_data then
                 return
             end
-            vim.fn.setreg("+", get_diff_cmd(line_data.status, line_data.safe_filename))
             return get_diff_cmd(line_data.status, line_data.safe_filename)
         end,
         get_current_diff = function()
