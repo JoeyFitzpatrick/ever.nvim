@@ -60,6 +60,7 @@ return {
         checkout = "Checkout commit (with detached HEAD)",
         commit_details = "Show commit details",
         commit_info = "Show commit info",
+        diff_against_head = "Diff commit against current HEAD",
         pull = PULL_DESCRIPTION,
         push = PUSH_DESCRIPTION,
         rebase = "Rebase",

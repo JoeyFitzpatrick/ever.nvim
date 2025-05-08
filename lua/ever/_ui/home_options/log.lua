@@ -141,6 +141,14 @@ local function set_keymaps(bufnr, opts)
         require("ever._ui.elements").terminal("git log -n 1 " .. line_data.hash, { display_strategy = "full" })
     end, keymap_opts)
 
+    set("n", keymaps.diff_commit_against_head, function()
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
+            return
+        end
+        vim.cmd("G difftool " .. line_data.hash)
+    end, keymap_opts)
+
     set("n", keymaps.rebase, function()
         local ok, line_data = pcall(get_line, bufnr)
         if not ok or not line_data then

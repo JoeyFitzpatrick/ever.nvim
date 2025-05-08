@@ -122,6 +122,7 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
                     checkout = "c", -- Checkout commmit under cursor
                     commit_details = "<enter>",
                     commit_info = "i",
+                    diff_commit_against_head = "d",
                     pull = "p",
                     push = "<leader>p",
                     rebase = "rb", -- Interactive rebase from current commit to commit under cursor

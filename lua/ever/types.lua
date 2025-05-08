@@ -123,6 +123,7 @@
 ---@field checkout? string
 ---@field commit_details? string
 ---@field commit_info? string
+---@field diff_commit_against_head? string
 ---@field pull? string
 ---@field push? string
 ---@field rebase? string
