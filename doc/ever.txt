@@ -1,4 +1,4 @@
-*ever.txt*            For Neovim >= 0.11.0            Last change: 2025 May 02
+*ever.txt*            For Neovim >= 0.11.0            Last change: 2025 May 08
 
 ==============================================================================
 Table of Contents                                     *ever-table-of-contents*
@@ -132,6 +132,7 @@ able to lazy load it however you normally lazy load plugins.
                         checkout = "c", -- Checkout commmit under cursor
                         commit_details = "<enter>",
                         commit_info = "i",
+                        diff_commit_against_head = "d",
                         pull = "p",
                         push = "<leader>p",
                         rebase = "rb", -- Interactive rebase from current commit to commit under cursor

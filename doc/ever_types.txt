@@ -199,6 +199,7 @@ Fields ~
     {checkout} `(optional)` `(string)`
     {commit_details} `(optional)` `(string)`
     {commit_info} `(optional)` `(string)`
+    {diff_commit_against_head} `(optional)` `(string)`
     {pull} `(optional)` `(string)`
     {push} `(optional)` `(string)`
     {rebase} `(optional)` `(string)`
