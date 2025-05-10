@@ -13,18 +13,21 @@ function M.get_current_head(cmd)
         end
     end
     local ERROR_MSG = "HEAD: Unable to find current HEAD"
-    local current_head, status_code = require("ever._core.run_cmd").run_cmd("git rev-parse --abbrev-ref HEAD")
-    if status_code ~= 0 then
-        return ERROR_MSG
-    end
-    -- If current head is HEAD and not a branch, we're in a detached head
-    if current_head == "HEAD" then
+    local current_head, status_code = require("ever._core.run_cmd").run_cmd("git symbolic-ref --short HEAD")
+
+    local detached_head_message = "fatal: ref HEAD is not a symbolic ref"
+    if current_head[1] == detached_head_message then
         local current_head_hash, hash_status_code = require("ever._core.run_cmd").run_cmd("git rev-parse --short HEAD")
         if hash_status_code ~= 0 then
             return ERROR_MSG
         end
         return string.format("HEAD: %s (detached head)", current_head_hash[1])
     end
+
+    if status_code ~= 0 or not current_head[1] then
+        return ERROR_MSG
+    end
+
     return "HEAD: " .. current_head[1]
 end
 
