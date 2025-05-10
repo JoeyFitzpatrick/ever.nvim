@@ -23,10 +23,12 @@ local function highlight(bufnr, start_line, lines)
     require("ever._ui.utils.num_commits_pull_push").highlight_num_commits(bufnr, start_line, lines)
 end
 
+---@param bufnr integer
 ---@param opts ever.UiRenderOpts
-local function set_cursor_to_first_branch(opts)
-    if opts.win then
-        vim.api.nvim_win_set_cursor(opts.win, { opts.start_line + 1 or 1, 0 })
+local function set_cursor_to_first_branch(bufnr, opts)
+    local start_line = opts.start_line or 0
+    if opts.win and vim.api.nvim_buf_line_count(bufnr) > start_line then
+        vim.api.nvim_win_set_cursor(opts.win, { start_line + 1, 0 })
     end
 end
 
@@ -45,7 +47,7 @@ local function set_lines(bufnr, opts)
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
 
-    set_cursor_to_first_branch(opts)
+    set_cursor_to_first_branch(bufnr, opts)
     highlight(bufnr, start_line, output)
     require("ever._ui.utils.num_commits_pull_push").set_num_commits_to_pull_and_push(
         bufnr,
