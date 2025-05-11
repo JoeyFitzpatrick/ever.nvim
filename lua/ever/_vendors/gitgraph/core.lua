@@ -1,5 +1,5 @@
-local utils = require('gitgraph.utils')
-local log = require('gitgraph.log')
+local utils = require('ever._vendors.gitgraph.utils')
+local log = require('ever._vendors.gitgraph.log')
 
 ---@class I.Highlight
 ---@field hg string -- NOTE: fine to use string since lua internalizes strings
@@ -24,7 +24,7 @@ local M = {}
 ---@return integer?
 function M.gitgraph(config, options, args)
   --- depends on `git`
-  local data = require('gitgraph.git').git_log_pretty(args, config.format.timestamp)
+  local data = require('ever._vendors.gitgraph.git').git_log_pretty(args, config.format.timestamp)
 
   --- does the magic
   local start = os.clock()
@@ -45,8 +45,8 @@ end
 ---@return integer? -- head location
 ---@return boolean -- true if contained bi-crossing
 function M._gitgraph(raw_commits, opt, sym, fields)
-  local ITEM_HGS = require('gitgraph.highlights').ITEM_HGS
-  local BRANCH_HGS = require('gitgraph.highlights').BRANCH_HGS
+  local ITEM_HGS = require('ever._vendors.gitgraph.highlights').ITEM_HGS
+  local BRANCH_HGS = require('ever._vendors.gitgraph.highlights').BRANCH_HGS
 
   local NUM_BRANCH_COLORS = #BRANCH_HGS
 

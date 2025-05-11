@@ -2,6 +2,8 @@
 
 local M = {}
 
+local GITGRAPH_SETUP_CALLED = false
+
 ---@param bufnr integer
 ---@param line string
 ---@param line_num integer
@@ -21,7 +23,22 @@ end
 ---@param bufnr integer
 ---@param line_num? integer
 ---@return { hash: string } | nil
-local function get_line(bufnr, line_num)
+local function base_get_line(bufnr, line_num)
+    line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
+    local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
+    if line == "" then
+        return nil
+    end
+    if line:match("^%a+:") then
+        return { hash = line:match(": (%S+)") }
+    end
+    return { hash = line:match("%w+") }
+end
+
+---@param bufnr integer
+---@param line_num? integer
+---@return { hash: string } | nil
+local function get_graph_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
     local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
     if line == "" then
@@ -40,20 +57,30 @@ M.NATIVE_OUTPUT_OPTIONS = {
     "--pretty",
     "--format",
     "--encoding",
-    "--graph",
 }
 
+---@param command string
+---@param option string
+---@return boolean
+local function contains_option(command, option)
+    return command:match("%s+" .. option:gsub("%-", "%-"))
+end
+
 ---@param args? string
----@return { cmd: string, use_native_output: boolean, show_head: boolean }
+---@return { cmd: string, use_native_output: boolean, use_graph_output?: boolean, show_head: boolean }
 function M._parse_log_cmd(args)
     -- if cmd is nil, or just "log" and whitespace, the default command is "git log" with special format
     if not args or args:match("log%s-$") then
         return { cmd = string.format("git log %s", DEFAULT_LOG_FORMAT), use_native_output = false, show_head = true }
     end
 
+    if contains_option(args, "--graph") then
+        return { cmd = "git " .. args, use_graph_output = true, show_head = false, use_native_output = false }
+    end
+
     local native_output = { cmd = "git " .. args, use_native_output = true, show_head = false }
     for _, option in ipairs(M.NATIVE_OUTPUT_OPTIONS) do
-        if args:match("%s+" .. option:gsub("%-", "%-")) then
+        if contains_option(args, option) then
             return native_output
         end
     end
@@ -72,12 +99,27 @@ function M._parse_log_cmd(args)
 end
 
 ---@param bufnr integer
+local function git_log_graph(bufnr)
+    if not GITGRAPH_SETUP_CALLED then
+        ---@diagnostic disable-next-line: missing-fields
+        require("ever._vendors.gitgraph").setup({})
+        GITGRAPH_SETUP_CALLED = true
+    end
+    require("ever._vendors.gitgraph").draw(bufnr, {}, { all = true, max_count = 5000 })
+end
+
+---@param bufnr integer
 ---@param opts ever.UiRenderOpts
----@return { use_native_keymaps: boolean }
+---@return { use_native_keymaps: boolean, use_graph_output?: boolean }
 local function set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
     local cmd_tbl = M._parse_log_cmd(opts.cmd)
     vim.bo[bufnr].modifiable = true
+
+    if cmd_tbl.use_graph_output then
+        git_log_graph(bufnr)
+        return { use_graph_output = true, use_native_keymaps = false }
+    end
 
     if cmd_tbl.show_head then
         local first_line = require("ever._ui.utils.get_current_head").get_current_head(opts.cmd)
@@ -100,11 +142,9 @@ local function set_lines(bufnr, opts)
 end
 
 ---@param bufnr integer
+---@param get_line fun(bufnr: integer, line_num?: integer): { hash: string } | nil
 ---@param opts ever.UiRenderOpts
-local function set_keymaps(bufnr, opts)
-    vim.keymap.set("n", "<leader><leader>l", function()
-        require("ever._vendors.gitgraph").draw({}, { all = true, max_count = 5000 })
-    end)
+local function set_keymaps(bufnr, get_line, opts)
     local keymaps = require("ever._ui.keymaps.base").get_keymaps(bufnr, "log", {})
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("ever._ui.keymaps.set").safe_set_keymap
@@ -207,7 +247,8 @@ function M.render(bufnr, opts)
     if set_lines_result.use_native_keymaps then
         require("ever._ui.keymaps.git_filetype_keymaps").set_keymaps(bufnr)
     else
-        set_keymaps(bufnr, opts)
+        local get_line_fn = set_lines_result.use_graph_output and get_graph_line or base_get_line
+        set_keymaps(bufnr, get_line_fn, opts)
     end
 end
 

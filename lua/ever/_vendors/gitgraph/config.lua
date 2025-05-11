@@ -1,4 +1,4 @@
-local log = require('gitgraph.log')
+local log = require("ever._vendors.gitgraph.log")
 
 ---@class I.GGSymbols
 ---@field merge_commit string
@@ -46,47 +46,47 @@ local M = {}
 
 ---@type I.GGConfig
 M.defaults = {
-  symbols = {
-    merge_commit = 'M',
-    commit = '*',
-    merge_commit_end = 'M',
-    commit_end = '*',
+    symbols = {
+        merge_commit = "M",
+        commit = "*",
+        merge_commit_end = "M",
+        commit_end = "*",
 
-    -- Advanced symbols
-    GVER = '│',
-    GHOR = '─',
-    GCLD = '╮',
-    GCRD = '╭',
-    GCLU = '╯',
-    GCRU = '╰',
-    GLRU = '┴',
-    GLRD = '┬',
-    GLUD = '┤',
-    GRUD = '├',
-    GFORKU = '┼',
-    GFORKD = '┼',
-    GRUDCD = '├',
-    GRUDCU = '├',
-    GLUDCD = '┤',
-    GLUDCU = '┤',
-    GLRDCL = '┬',
-    GLRDCR = '┬',
-    GLRUCL = '┴',
-    GLRUCR = '┴',
-  },
-  hooks = {
-    on_select_commit = function(commit)
-      log.info('selected commit:', commit.hash)
-    end,
-    on_select_range_commit = function(from, to)
-      log.info('selected range:', from.hash, to.hash)
-    end,
-  },
-  format = {
-    timestamp = '%H:%M:%S %d-%m-%Y',
-    fields = { 'hash', 'timestamp', 'author', 'branch_name', 'tag' },
-  },
-  log_level = vim.log.levels.ERROR,
+        -- Advanced symbols
+        GVER = "│",
+        GHOR = "─",
+        GCLD = "╮",
+        GCRD = "╭",
+        GCLU = "╯",
+        GCRU = "╰",
+        GLRU = "┴",
+        GLRD = "┬",
+        GLUD = "┤",
+        GRUD = "├",
+        GFORKU = "┼",
+        GFORKD = "┼",
+        GRUDCD = "├",
+        GRUDCU = "├",
+        GLUDCD = "┤",
+        GLUDCU = "┤",
+        GLRDCL = "┬",
+        GLRDCR = "┬",
+        GLRUCL = "┴",
+        GLRUCR = "┴",
+    },
+    hooks = {
+        on_select_commit = function(commit)
+            log.info("selected commit:", commit.hash)
+        end,
+        on_select_range_commit = function(from, to)
+            log.info("selected range:", from.hash, to.hash)
+        end,
+    },
+    format = {
+        timestamp = "%H:%M:%S %d-%m-%Y",
+        fields = { "hash", "timestamp", "author", "branch_name", "tag" },
+    },
+    log_level = vim.log.levels.ERROR,
 }
 
 return M
