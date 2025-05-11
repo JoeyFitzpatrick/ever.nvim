@@ -37,6 +37,10 @@ local DEFAULT_LOG_FORMAT = "--pretty='format:%h %<(25)%cr %<(25)%an %<(25)%s'"
 M.NATIVE_OUTPUT_OPTIONS = {
     "-p",
     "-L",
+    "--pretty",
+    "--format",
+    "--encoding",
+    "--graph",
 }
 
 ---@param args? string

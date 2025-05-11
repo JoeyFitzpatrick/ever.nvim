@@ -73,3 +73,7 @@ This could be pretty powerful. Would probably look like:
 * A script to set up git repo for various states
 * Teardown script
 * Be able to call these before/after each test run
+
+### Git log graph improvements
+Make git log graph still allow keymaps to work. Currently can’t parse due to graph chars interfering with commit parsing.
+Additionally, a better display of graph characters. Might be as simple as vendoring `https://github.com/isakbm/gitgraph.nvim`.
