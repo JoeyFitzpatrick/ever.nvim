@@ -40,14 +40,22 @@ end
 ---@return { hash: string } | nil
 local function get_graph_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
-    local line = vim.api.nvim_buf_get_lines(bufnr, line_num - 1, line_num, false)[1]
-    if line == "" then
+    local lines = vim.api.nvim_buf_get_lines(bufnr, math.max(0, line_num - 2), line_num, false)
+    local line, line_before = lines[2], lines[1]
+    -- If cursor is on first line, line_before is the line we want
+    if not line then
+        line = line_before
+    end
+    local commit_pattern = "^%w+"
+    local commit_start_index = 9
+    local hash = line:match(commit_pattern, commit_start_index)
+    if not hash then
+        hash = line_before:match(commit_pattern, commit_start_index)
+    end
+    if not hash then
         return nil
     end
-    if line:match("^%a+:") then
-        return { hash = line:match(": (%S+)") }
-    end
-    return { hash = line:match("%w+") }
+    return { hash = hash }
 end
 
 local DEFAULT_LOG_FORMAT = "--pretty='format:%h %<(25)%cr %<(25)%an %<(25)%s'"
