@@ -8,7 +8,7 @@
 }
 ```
 
-Note: lazy loading is handled internally, so it is not required to lazy load Ever. With that being said, if you really want to lazy load Ever, you should be able to lazy load it however you normally lazy load plugins.
+Note: lazy loading is handled internally, so it is not required to lazy load Ever. With that being said, if you want to lazy load Ever, you should be able to lazy load it however you normally lazy load plugins.
 
 
 # Configuration
