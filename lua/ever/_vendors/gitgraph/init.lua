@@ -32,7 +32,7 @@ end
 
 --- Tests the gitgraph plugin
 function M.test()
-    local lines, _failure = require("ever._vendors.gitgraph.tests").run_tests(M.config.symbols, M.config.format.fields)
+    local lines, _ = require("ever._vendors.gitgraph.tests").run_tests(M.config.symbols, M.config.format.fields)
 
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(0, buf)

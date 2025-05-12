@@ -74,18 +74,14 @@ function M.resolve_bi_crossing(prev_commit_row, prev_connector_row, commit_row, 
     do
         local start_voiding = false
         local ctr = 0
-        ---@type I.Cell?
-        local replacer = nil
         for k, cell in ipairs(prev_prev_row.cells) do
             if cell.commit and cell.commit.hash == next.hash then
                 if not start_voiding then
                     start_voiding = true
-                    replacer = cell
                 elseif k ~= prev_prev_prev_row.commit.j then
                     local ppcell = prev_prev_prev_row.cells[k]
                     if (not ppcell) or (ppcell and ppcell.connector == " ") then
                         prev_prev_row.cells[k] = { connector = " " } -- void it
-                        replacer.emphasis = true
                         ctr = ctr + 1
                     end
                 end
@@ -306,36 +302,6 @@ function M.apply_buffer_options(buf)
     }
     -- Vim's `setlocal` is currently more robust compared to `opt_local`
     vim.cmd(("silent! noautocmd setlocal %s"):format(table.concat(options, " ")))
-end
-
----@param cmd string
----@return boolean -- true if failure (exit code ~= 0) false otherwise (exit code == 0)
---- note that this method was sadly neede since there's some strange bug with lua's handle:close?
---- it doesn't get the exit code correctly by itself?
-function M.check_cmd(cmd)
-    local is_windows = package.config:sub(1, 1) == "\\"
-    local final_cmd = cmd
-
-    if is_windows then
-        final_cmd = final_cmd .. " && echo 0 || echo 1"
-    else
-        final_cmd = final_cmd .. " 2>&1; echo $?"
-    end
-
-    local res = io.popen(final_cmd)
-    if not res then
-        return true
-    end
-
-    local output, last_line = {}, "1"
-    for line in res:lines() do
-        table.insert(output, line)
-    end
-    last_line = output[#output] -- in both cases, the last line contains the exit status
-
-    res:close()
-
-    return vim.trim(last_line or "") ~= "0"
 end
 
 return M
