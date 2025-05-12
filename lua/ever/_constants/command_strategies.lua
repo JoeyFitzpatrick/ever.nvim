@@ -108,6 +108,10 @@ M.reset = {
     trigger_redraw = true,
 }
 
+M.revert = {
+    trigger_redraw = true,
+}
+
 M.show = {
     display_strategy = M.STRATEGIES.FULL,
     insert = true,

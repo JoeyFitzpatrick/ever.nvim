@@ -81,7 +81,8 @@ return {
             push = "<leader>p",
             rebase = "rb", -- Interactive rebase from current commit to commit under cursor
             reset = "rs", -- Reset to commit under cursor
-            revert = "rv", -- Revert commit under cursor
+            revert = "rv", -- Revert commit under cursor, but don't commit changes
+            revert_and_commit = "rV", -- Revert commit under cursor, and commit the revert
             show = "s",
         },
     },

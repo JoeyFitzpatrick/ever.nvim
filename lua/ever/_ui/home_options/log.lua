@@ -230,7 +230,22 @@ local function set_keymaps(bufnr, get_line, opts)
         if not ok or not line_data then
             return
         end
-        vim.cmd("G revert " .. line_data.hash .. " --no-commit")
+        require("ever._core.run_cmd").run_hidden_cmd("git revert " .. line_data.hash .. " --no-commit")
+        if vim.v.shell_error == 0 then
+            vim.notify("Reverted commit " .. line_data.hash .. " and staged changes")
+            require("ever._core.run_cmd").run_hidden_cmd("git revert --quit")
+        end
+    end, keymap_opts)
+
+    set("n", keymaps.revert_and_commit, function()
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
+            return
+        end
+        vim.cmd("G revert " .. line_data.hash)
+        if vim.v.shell_error == 0 then
+            vim.notify("Reverted commit " .. line_data.hash)
+        end
     end, keymap_opts)
 
     set("n", keymaps.show, function()

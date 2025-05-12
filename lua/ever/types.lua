@@ -129,6 +129,7 @@
 ---@field rebase? string
 ---@field reset? string
 ---@field revert? string
+---@field revert_and_commit? string
 ---@field show? string
 
 ---@class ever.OpenFilesKeymaps
