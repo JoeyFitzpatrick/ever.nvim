@@ -126,11 +126,13 @@ function M.render(commit, is_stash)
             if not ok or not line_data then
                 return
             end
-            -- the -m flag diffs both merge commits and normal commits
-            local cmd = "git show -m --no-notes " .. commit .. " -- " .. line_data.safe_filename
+            -- The -m flag diffs both merge commits and normal commits.
+            -- Empty pretty format omits commit message, and everything aside from the diff itself.
+            local cmd = "git show -m --pretty=format:'' " .. commit .. " -- " .. line_data.safe_filename
             if is_stash then
                 cmd = string.format("git diff %s^1 %s -- %s", commit, commit, line_data.safe_filename)
             end
+            vim.print(cmd)
             return cmd
         end,
         get_current_diff = function()
