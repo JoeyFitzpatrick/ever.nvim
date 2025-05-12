@@ -240,3 +240,20 @@ describe("User management controls #simple", function ()...
 
 # Tracking Updates
 See [doc/news.txt](doc/news.txt) for updates.
+
+# Credits
+Thank you to Samuel Williams and the maintainers of [nvim-unception](https://github.com/samjwill/nvim-unception).
+Some code from that plugin was vendored into Ever to support preventing nested nvim sessions when opening an editor
+from within an nvim terminal, e.g. the commit editor when running `:G commit`.
+
+Thank you to Isak Buhl-Mortensen and the maintainers of [gitgraph.nvim](https://github.com/isakbm/gitgraph.nvim).
+This plugin was vendored into Ever to support a beautiful graph for `:G log --graph`.
+
+Thanks to Tim Pope and the maintainers of [vim-fugitive](https://github.com/tpope/vim-fugitive), an absolutely incredible vim 
+plugin that _heavily_ influenced Ever.
+
+Thanks to Jesse Duffield and the maintainers of [lazygit](https://github.com/jesseduffield/lazygit), a sick terminal
+git TUI that also heavily influenced Ever.
+
+Thanks to Jonas Bernoulli, Kyle Meyer, and the maintainers of [magit](https://github.com/magit/magit). I've never
+personally used it, but its wonderful documentation inspired both some features and design priniciples of Ever.
