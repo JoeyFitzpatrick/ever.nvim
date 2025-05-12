@@ -205,6 +205,7 @@ Fields ~
     {rebase} `(optional)` `(string)`
     {reset} `(optional)` `(string)`
     {revert} `(optional)` `(string)`
+    {revert_and_commit} `(optional)` `(string)`
     {show} `(optional)` `(string)`
 
 ------------------------------------------------------------------------------
