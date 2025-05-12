@@ -38,7 +38,7 @@ end
 ---@param bufnr integer
 ---@param line_num? integer
 ---@return { hash: string } | nil
-local function get_graph_line(bufnr, line_num)
+function M._get_graph_line(bufnr, line_num)
     line_num = line_num or vim.api.nvim_win_get_cursor(0)[1]
     local lines = vim.api.nvim_buf_get_lines(bufnr, math.max(0, line_num - 2), line_num, false)
     local line, line_before = lines[2], lines[1]
@@ -46,7 +46,9 @@ local function get_graph_line(bufnr, line_num)
     if not line then
         line = line_before
     end
-    local commit_pattern = "^%w+"
+    local commit_hash_length = 7
+    -- Match on 7 consecutive hexadecimal characters
+    local commit_pattern = string.rep("%x", commit_hash_length)
     local commit_start_index = 9
     local hash = line:match(commit_pattern, commit_start_index)
     if not hash then
@@ -255,7 +257,7 @@ function M.render(bufnr, opts)
     if set_lines_result.use_native_keymaps then
         require("ever._ui.keymaps.git_filetype_keymaps").set_keymaps(bufnr)
     else
-        local get_line_fn = set_lines_result.use_graph_output and get_graph_line or base_get_line
+        local get_line_fn = set_lines_result.use_graph_output and M._get_graph_line or base_get_line
         set_keymaps(bufnr, get_line_fn, opts)
     end
 end
