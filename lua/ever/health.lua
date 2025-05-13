@@ -88,7 +88,6 @@ function M.check()
 
     vim.health.start("Executables")
     check_executable("git")
-    check_executable("delta", true)
     vim.fn.system("git -C . rev-parse 2>/dev/null")
     local in_git_repo = vim.v.shell_error == 0
     if in_git_repo then
