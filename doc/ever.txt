@@ -300,7 +300,7 @@ command.
 
 LOG                                                *ever-special-commands-log*
 
-`:G` log commands will typically open a UI. The
+`:G log` commands will typically open a UI. The
 |ever-default-configuration-section| shows every keymap, as does pressing `g?`
 in the log UI.
 
@@ -372,8 +372,8 @@ it by pressing `q` to return to your last buffer.
 
 When Ever opens a UI, this will typically either open a new buffer in the
 current window, or open a new window in a split. In either case, the window can
-be closed with the `q` keymap, which will return you to the last non-Ever
-buffer that was open.
+be closed with the `q` keymap, which will return you to the last buffer that
+was open.
 
 If you want to open something in a non-standard ui, this is supported natively
 via command mode: Open `G status` in a left split instead of a full window:
@@ -390,9 +390,8 @@ for the file under the cursor The commit details UI displays a diff for the
 file under the cursor for the given commit The stash UI displays a diff for the
 entire stash under the cursor
 
-To toggle the auto-display, enter the toggle keymap. This is `<tab>` by
-default, and can be changed in the configuration. You can find this keymap by
-pressing the `g?` keymap.
+To toggle the auto-display, enter the toggle keymap, which by default is
+`<tab>`.
 
 
 ==============================================================================
@@ -427,8 +426,10 @@ stash popup
 ==============================================================================
 8. Optional Dependencies                          *ever-optional-dependencies*
 
-Delta <https://github.com/dandavison/delta> - improved git diff output (used in
-the demos/examples)
+It is recommended, though not required, to use a tool that improves the output
+of git commands. Some recommendations: delta
+<https://github.com/dandavison/delta>used in the demos/examples diff-so-fancy
+<https://github.com/so-fancy/diff-so-fancy>
 
 
 ==============================================================================
@@ -442,8 +443,9 @@ you catch issues before pushing up code. Note that you may need to run `chmod
 +x scripts/dev_setup/dev_setup.sh` first, to set up correct permissions to run
 the script.
 
-There are templates for asking questions, bug reports, and feature requests,
-all which are also good ways to contribute.
+Improvements to the documentation are also welcome. Additionally, there are
+templates for asking questions, bug reports, and feature requests, all which
+are also good ways to contribute.
 
 
 ==============================================================================
