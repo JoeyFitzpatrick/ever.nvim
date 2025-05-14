@@ -219,20 +219,18 @@ to (un)stage selected lines. If you want to (un)stage single lines at a time, yo
 
 ## Difftool
 Passing commit(s) to Ever's `difftool` command, e.g. `:G difftool abc123` or `:G difftool abc123..def456`,
-will open a UI that allows for seeing the diff introduced
-by a commit, or the diff between two commits. Note that if a commit range is given, e.g. `abc123..def456`,
-using the open-file keymaps will use the latter commit.
-So in this example, using `oh` to open a file in a horizontal split would use commit `def456`.
+will open a UI that allows for seeing the diff introduced by a commit, or the diff between two commits. Note that if a commit range is given, e.g. `abc123..def456`,
+using the open-file keymaps will use the latter commit. So in this example, using `oh` to open a file in a horizontal split would use commit `def456`.
 
 ## Branch
 `:G` commands that display a list of branches, such as `:G branch`, `:G branch --all`, `:G branch --merged`,
 and so on, bring up a branch UI, from which keymaps can be used to view commits, rename branches, merge branches, etc.
-The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the branch UI.
+The [default configuration section](#configuration) shows every keymap, as does pressing `g?` in the branch UI.
 
 G branch commands that do not display a list of branches, such as `:G branch --delete`, run the command in terminal mode, as if it were a non-special command.
 
 ## Log
-`:G` log commands will typically open a UI. The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the log UI.
+`:G log` commands will typically open a UI. The [default configuration section](#configuration) shows every keymap, as does pressing `g?` in the log UI.
 
 When using the `:G log` command without arguments, a default [`--pretty`](https://git-scm.com/docs/pretty-formats) format option 
 is passed to the `log` command to change how the output looks.
@@ -258,7 +256,7 @@ If the commit message editor doesn't need to open, the command will just run in 
 ## Blame
 Like vim-fugitive, running `:G blame` will open a blame window to the left, that uses `:h scrollbind` to sync with with the opened file.
 From there, many of the keymaps for the commit UI also work in the blame UI.
-The [default configuration section](#default-configuration) shows every keymap, as does pressing `g?` in the blame UI.
+The [default configuration section](#configuration) shows every keymap, as does pressing `g?` in the blame UI.
 
 ## Stash List
 Running `:G stash list` will open a UI, in which you can view, pop, apply, and drop stashes. 
@@ -274,7 +272,7 @@ You can close it by pressing `q` to return to your last buffer.
 
 # UI Management (Tabs, Windows, Buffers)
 When Ever opens a UI, this will typically either open a new buffer in the current window, or open a new window in a split. 
-In either case, the window can be closed with the `q` keymap, which will return you to the last non-Ever buffer that was open.
+In either case, the window can be closed with the `q` keymap, which will return you to the last buffer that was open.
 
 If you want to open something in a non-standard ui, this is supported natively via command mode:
 Open `G status` in a left split instead of a full window: `split | G status`
@@ -287,8 +285,7 @@ Some UIs, such as the status UI, will automatically display another window in a 
 * The commit details UI displays a diff for the file under the cursor for the given commit
 * The stash UI displays a diff for the entire stash under the cursor
 
-To toggle the auto-display, enter the toggle keymap. This is `<tab>` by default, and can be changed in the configuration. 
-You can find this keymap by pressing the `g?` keymap.
+To toggle the auto-display, enter the toggle keymap, which by default is `<tab>`.
 
 # Plug mappings
 Ever provides some plug mappings, so you can conveniently create your own mappings for some actions if you want. 
@@ -312,13 +309,14 @@ Ever doesn't have an integrated merge conflict resolution solution currently, so
 
 
 # Optional Dependencies
-
-[Delta](https://github.com/dandavison/delta) - improved git diff output (used in the demos/examples)
+It is recommended, though not required, to use a tool that improves the output of git commands. Some recommendations:
+* [delta](https://github.com/dandavison/delta): used in the demos/examples
+* [diff-so-fancy](https://github.com/so-fancy/diff-so-fancy)
 
 # Development and Contributing
 I welcome users of any experience level to contribute to Ever and improve the project. If you'd like to contribute by writing code, please run `scripts/dev_setup/dev_setup.sh` first, which will set up a pre-commit hook that runs tests and some checks. The same checks run in CI, but this will help you catch issues before pushing up code. Note that you may need to run `chmod +x scripts/dev_setup/dev_setup.sh` first, to set up correct permissions to run the script.
 
-There are templates for asking questions, bug reports, and feature requests, all which are also good ways to contribute.
+Improvements to the documentation are also welcome. Additionally, there are templates for asking questions, bug reports, and feature requests, all which are also good ways to contribute.
 
 # Tests
 ## Initialization
