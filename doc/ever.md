@@ -166,31 +166,39 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
 There are some advantages to using terminal mode for these commands, as opposed to a regular buffer or printing command output:
 * Command output will sometimes be mangled when translated to a buffer or printed, this is avoided with a terminal
 * Command output keeps it's coloring
-* Existing tools such as `delta` that improve git output can still be leveraged
+* Existing tools such as `delta` or `diff-so-fancy` that improve git output can still be leveraged
 
-Note that using the `%` character will expand it to the current buffer's filename, similar to vim-fugitive, e.g. `:G log --follow %` to see commits that changed the current file.
+Note that using the `%` character will expand it to the current buffer's filename, similar to vim-fugitive, e.g. `:G log --follow %` to see commits that changed the current file. The `%` character will not expand if it is between quotes, so a command like `:G commit -m 'improved performance by 2%'` won't expand the `%` character, it will just be `%`.
 
 # Keymaps for Raw Git Output
-When a command outputs raw git output (for example, `:G log -p`), a keymap is created to show details for the item under the cursor. 
-By default, this is `<enter>`. Some details:
-* If the current line is a filepath, e.g. `--- a/lua/ever/_ui/keymaps/git_filetype_keymaps.lua`, it opens the file at that revision. Lines that start with `---` are the revision
-before the commit associated with this change, lines that begin with `+++` are the revision at that commit.
+When a command outputs raw git output (for example, `:G log -p`), a keymap is created to show details for the item under the cursor. By default, this is `<enter>`. Some details:
+* If the current line is a filepath, e.g. `--- a/lua/ever/_ui/keymaps/git_filetype_keymaps.lua`, it opens the file at that revision. Lines that start with `---` are the revision before the commit associated with this change, lines that begin with `+++` are the revision at that commit.
 * If the line begins with `diff` or `@@`, the previous and next versions of the file, relative to that commit, are opened in a vim diff.
 * Otherwise, the commit is opened in the commit details UI.
 
-It's worth noting that this functionality already exists in vim-fugitive, with some minor differences.
+It's worth noting that similar functionality already exists in vim-fugitive, with some minor differences.
+
+Additionally, keymaps are added to open a file under the cursor in a split, tab, or the current window. These are mnemonic by default:
+* `ow` to [o]pen in current [w]indow
+* `oh` to [o]pen in [h]orizontal split
+* `ov` to [o]pen in [v]ertical split
+* `ot` to [o]pen in a [t]ab
+
+There are other UIs for which these "open file" keymaps are added as well.
 
 # Special Commands
-
-Some commands that are often used, or are normally cumbersome to use, are handled differently than just running the command in terminal mode. This typically means opening a buffer that serves as a UI for the command. Here are the special commands:
-* `git branch`
-* `git log`
-* `git commit`
-* `git blame`
-* `git stash list`
-* `git show`
-* `git {command} -h`
-* `git {command} --help`
+Some git commands that are often used, or are normally cumbersome to use, are handled differently than just running the command in terminal mode. This typically means opening a buffer that serves as a UI for the command. Here are the special commands:
+* `:G blame`
+* `:G branch`
+* `:G commit`
+* `:G difftool`
+* `:G log`
+* `:G mergetool`
+* `:G reflog`
+* `:G show`
+* `:G stash list`
+* `:G {command} -h`
+* `:G {command} --help`
 
 Note that for any command that brings up a UI:
 * You can close the UI by pressing `q`, in addition to the normal methods, such as `:q`
