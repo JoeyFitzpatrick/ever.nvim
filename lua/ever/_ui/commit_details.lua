@@ -132,7 +132,6 @@ function M.render(commit, is_stash)
             if is_stash then
                 cmd = string.format("git diff %s^1 %s -- %s", commit, commit, line_data.safe_filename)
             end
-            vim.print(cmd)
             return cmd
         end,
         get_current_diff = function()

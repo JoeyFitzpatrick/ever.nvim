@@ -9,6 +9,8 @@
 
 local M = {}
 
+local register = require("ever._vendors.lazy_require").require_on_index("ever._core.register")
+
 --- Some commands parse command options to determine what display strat to use.
 --- In this case, run the parse function, otherwise return the display strat.
 ---@param cmd string[]
@@ -72,7 +74,7 @@ local function open_dynamic_terminal(cmd, bufnr, win, strategy)
         end,
         on_exit = function()
             if strategy.trigger_redraw then
-                require("ever._core.register").rerender_buffers()
+                register.rerender_buffers()
             end
             local trim_terminal_output = function()
                 local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
@@ -133,7 +135,7 @@ local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
             term = true,
             on_exit = function()
                 if strategy.trigger_redraw then
-                    require("ever._core.register").rerender_buffers()
+                    register.rerender_buffers()
                 end
             end,
         })
@@ -219,8 +221,10 @@ function M.new_buffer(opts)
             end
         end
     end
+
+    register.register_buffer(bufnr, {})
     vim.keymap.set("n", "q", function()
-        require("ever._core.register").deregister_buffer(bufnr, {})
+        register.deregister_buffer(bufnr, {})
     end, { buffer = bufnr })
     return bufnr, win
 end

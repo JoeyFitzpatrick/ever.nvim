@@ -48,7 +48,7 @@ local standard_output_commands = {
 
 for _, command in ipairs(standard_output_commands) do
     cmd_ui_map[command] = function(cmd)
-        require("ever._ui.interceptors.standard_interceptor").render(cmd .. " | col -b")
+        require("ever._ui.interceptors.standard_interceptor").render(cmd)
     end
 end
 
