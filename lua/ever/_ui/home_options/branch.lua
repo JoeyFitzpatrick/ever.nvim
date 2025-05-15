@@ -1,6 +1,6 @@
---- Branch rendering
-
 local M = {}
+
+local run_cmd = require("ever._vendors.lazy_require").require_on_index("ever._core.run_cmd")
 
 --- Highlight branch lines
 ---@param bufnr integer
@@ -42,7 +42,7 @@ local function set_lines(bufnr, opts)
         -- This sorts branches such that the current branch appears first
         opts.cmd = "branch --sort=-HEAD"
     end
-    local output = require("ever._core.run_cmd").run_cmd(string.format("git %s", opts.cmd))
+    local output = run_cmd.run_cmd(string.format("git %s", opts.cmd))
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, start_line, -1, false, output)
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
@@ -78,24 +78,21 @@ local function set_keymaps(bufnr, opts)
     ---@param branch_name string
     ---@param delete_type "local" | "remote" | "both"
     local function delete_branch(branch_name, delete_type)
-        local run_cmd = function(cmd)
-            return require("ever._core.run_cmd").run_hidden_cmd(cmd, { error_codes_to_ignore = { 1 } })
-        end
         local delete_actions = {
             local_only = function()
-                return run_cmd("git branch --delete " .. branch_name)
+                return run_cmd.run_hidden_cmd("git branch --delete " .. branch_name)
             end,
             remote_only = function()
-                return run_cmd("git push origin --delete " .. branch_name)
+                return run_cmd.run_hidden_cmd("git push origin --delete " .. branch_name)
             end,
             both = function()
                 -- Try local deletion first
-                local status, code = run_cmd("git branch --delete " .. branch_name)
+                local status, code = run_cmd.run_hidden_cmd("git branch --delete " .. branch_name)
                 if status == "error" then
                     return status, code
                 end
                 -- Then try remote deletion
-                local output, _ = run_cmd("git push origin --delete " .. branch_name)
+                local output, _ = run_cmd.run_hidden_cmd("git push origin --delete " .. branch_name)
                 return output
             end,
         }
@@ -117,7 +114,7 @@ local function set_keymaps(bufnr, opts)
                         keys = "y",
                         description = "Yes",
                         action = function()
-                            require("ever._core.run_cmd").run_hidden_cmd("git branch -D " .. branch_name)
+                            run_cmd.run_hidden_cmd("git branch -D " .. branch_name)
                             set_lines(bufnr, opts)
                         end,
                     },
@@ -200,7 +197,7 @@ local function set_keymaps(bufnr, opts)
             if not input then
                 return
             end
-            local result = require("ever._core.run_cmd").run_hidden_cmd("git switch --create " .. input)
+            local result = run_cmd.run_hidden_cmd("git switch --create " .. input)
             if result == "error" then
                 return
             end
@@ -217,7 +214,7 @@ local function set_keymaps(bufnr, opts)
             if not input then
                 return
             end
-            require("ever._core.run_cmd").run_hidden_cmd(
+            run_cmd.run_hidden_cmd(
                 string.format("git branch -m %s %s", line_data.branch_name, input),
                 { rerender = true }
             )
@@ -229,7 +226,7 @@ local function set_keymaps(bufnr, opts)
         if not ok or not line_data then
             return
         end
-        local result = require("ever._core.run_cmd").run_hidden_cmd("git switch " .. line_data.branch_name)
+        local result = run_cmd.run_hidden_cmd("git switch " .. line_data.branch_name)
         if result == "error" then
             return
         end
