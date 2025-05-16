@@ -38,11 +38,41 @@ local function parse_visual_command(cmd, input_args)
     return cmd
 end
 
+---@type table<string, fun(cmd: string): string>
+local subcommand_parsers = {
+    switch = function(cmd)
+        if cmd:match("switch%s%S+$") then
+            local parsed_cmd, _ = cmd:gsub("origin/", "", 1)
+            return parsed_cmd
+        end
+        return cmd
+    end,
+}
+
+--- Parsing rules for subcommands. For instance, if `:G switch origin/some-branch`
+--- is invoked with no options, remove 'origin/' from the branch to switch to.
+---
+--- If there is no parser for the given subcommand, just return the command.
+---@param cmd string
+---@return string
+local function parse_subcommand(cmd)
+    local subcommand = cmd:match("^%S+")
+    if not subcommand then
+        return cmd
+    end
+    local parser = subcommand_parsers[subcommand]
+    if not parser then
+        return cmd
+    end
+    return parser(cmd)
+end
+
 --- Expand `%` to current file
 ---@param input_args vim.api.keyset.create_user_command.command_args
 ---@return string
 M.parse = function(input_args)
     local parsed_cmd = replace_percent_outside_quotes(input_args.args)
+    parsed_cmd = parse_subcommand(parsed_cmd)
 
     local is_visual_command = input_args.range == 2
     if is_visual_command then

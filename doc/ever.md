@@ -270,6 +270,14 @@ Running a git help command, such as `:G commit -h` or `:G log --help`, will open
 This way, you can use your normal vim navigation to move through the docs, versus opening a pager. 
 You can close it by pressing `q` to return to your last buffer.
 
+# Miscellaneous Command Changes
+Some git commands are changed for convenience.
+
+## Git Switch
+When running `:G switch origin/some-branch`, with no command options like `--create`, `origin/` is removed from the command, in order to make auto-completion work and still allow switch to the branch. In other words, if the actual command that runs is `git switch origin/some-branch`, you'll get an error, but running `git switch some-branch` will create a local branch off of that remote branch, which is normally what you'd want.
+
+If you pass any options to the command, like `:G switch origin/some-branch --create`, this behavior is not used.
+
 # UI Management (Tabs, Windows, Buffers)
 When Ever opens a UI, this will typically either open a new buffer in the current window, or open a new window in a split. 
 In either case, the window can be closed with the `q` keymap, which will return you to the last buffer that was open.
