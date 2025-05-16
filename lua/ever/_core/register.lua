@@ -14,6 +14,9 @@ local M = {}
 ---@type table<integer, ever.RegisterOptsWithState>
 M.buffers = {}
 
+---@type table<integer, integer>
+M.last_non_ever_buffer_for_win = {}
+
 ---@param bufnr integer
 ---@param opts ever.RegisterOpts
 function M.register_buffer(bufnr, opts)
@@ -22,6 +25,19 @@ function M.register_buffer(bufnr, opts)
     end
     ---@diagnostic disable-next-line: assign-type-mismatch
     M.buffers[bufnr] = opts
+end
+
+---@param bufnr integer
+local function navigate_to_last_non_ever_buffer(bufnr)
+    local win = vim.fn.bufwinid(bufnr)
+    if not win then
+        return
+    end
+    local buf_to_navigate_to = M.last_non_ever_buffer_for_win[win]
+    if not buf_to_navigate_to or not vim.api.nvim_buf_is_valid(buf_to_navigate_to) then
+        return
+    end
+    vim.api.nvim_win_set_buf(win, M.last_non_ever_buffer_for_win[win])
 end
 
 ---@param bufnr? integer
@@ -33,12 +49,7 @@ function M.deregister_buffer(bufnr, opts)
     M.buffers[bufnr] = nil
     if vim.api.nvim_buf_is_valid(bufnr) then
         if not opts.skip_go_to_last_buffer then
-            -- Navigate to previous buffer before removing this buffer.
-            -- This is to prevent issues where calling deregister in a
-            -- split or tab closes that split or tab.
-            pcall(function()
-                vim.cmd("b#")
-            end)
+            navigate_to_last_non_ever_buffer(bufnr)
         end
         vim.api.nvim_buf_delete(bufnr, { force = true })
     end

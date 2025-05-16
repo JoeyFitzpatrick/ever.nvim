@@ -9,8 +9,6 @@
 
 local M = {}
 
-local register = require("ever._vendors.lazy_require").require_on_index("ever._core.register")
-
 --- Some commands parse command options to determine what display strat to use.
 --- In this case, run the parse function, otherwise return the display strat.
 ---@param cmd string[]
@@ -74,7 +72,7 @@ local function open_dynamic_terminal(cmd, bufnr, win, strategy)
         end,
         on_exit = function()
             if strategy.trigger_redraw then
-                register.rerender_buffers()
+                require("ever._core.register").rerender_buffers()
             end
             local trim_terminal_output = function()
                 local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
@@ -135,7 +133,7 @@ local function open_terminal_buffer(cmd, split_cmd, bufnr, strategy)
             term = true,
             on_exit = function()
                 if strategy.trigger_redraw then
-                    register.rerender_buffers()
+                    require("ever._core.register").rerender_buffers()
                 end
             end,
         })
@@ -192,10 +190,26 @@ function M.float(bufnr, float_opts)
     return win
 end
 
+--- This sets up buffer local variables, so that when an Ever buffer is closed,
+--- we can navigate back to the last non-Ever buffer, and close all Ever
+--- buffers associated with the current window.
+---@param current_buf integer
+---@param new_buf integer
+---@param win integer
+local function setup_last_non_ever_buffer(current_buf, new_buf, win)
+    vim.b[new_buf].is_ever_buffer = true
+
+    if not vim.b[current_buf].is_ever_buffer then
+        require("ever._core.register").last_non_ever_buffer_for_win[win] = current_buf
+    end
+end
+
 ---@param opts ever.ElementNewBufferOpts -- opts for new buffer
 ---@return integer, integer -- buffer id, window id
 function M.new_buffer(opts)
+    local current_buf = vim.api.nvim_get_current_buf()
     local bufnr = vim.api.nvim_create_buf(false, true)
+
     local win
     if opts.win_config then
         local enter = true
@@ -207,9 +221,11 @@ function M.new_buffer(opts)
         win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(win, bufnr)
     end
+
     if opts.filetype then
         vim.api.nvim_set_option_value("filetype", opts.filetype, { buf = bufnr })
     end
+
     if opts.buffer_name then
         local ok = pcall(vim.api.nvim_buf_set_name, bufnr, opts.buffer_name)
         if not ok then
@@ -222,10 +238,15 @@ function M.new_buffer(opts)
         end
     end
 
+    local register = require("ever._core.register")
     register.register_buffer(bufnr, {})
+
     vim.keymap.set("n", "q", function()
         register.deregister_buffer(bufnr, {})
     end, { buffer = bufnr })
+
+    setup_last_non_ever_buffer(current_buf, bufnr, win)
+
     return bufnr, win
 end
 

@@ -140,9 +140,7 @@ local tab_render_map = {
 ---@param tab ever.TabOption
 ---@param indices ever.TabHighlightIndices[]
 local function create_and_render_buffer(tab, indices)
-    local bufnr = vim.api.nvim_create_buf(true, true)
-    local win = vim.api.nvim_get_current_win()
-    vim.api.nvim_win_set_buf(win, bufnr)
+    local bufnr, win = require("ever._ui.elements").new_buffer({})
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, tabs_text)
 
     local ui_render = tab_render_map[tab]

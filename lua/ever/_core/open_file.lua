@@ -46,8 +46,7 @@ end
 ---@param split "above" | "below" | "right" | "left"
 function M.open_file_in_split(filename, commit, split)
     delete_existing_buffer(get_filename(filename, commit))
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_open_win(bufnr, true, { split = split })
+    local bufnr = require("ever._ui.elements").new_buffer({ win_config = { split = split } })
     setup_git_file(bufnr, filename, commit)
 end
 
@@ -56,8 +55,7 @@ end
 function M.open_file_in_tab(filename, commit)
     vim.cmd("tabnew")
     delete_existing_buffer(get_filename(filename, commit))
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, bufnr)
+    local bufnr = require("ever._ui.elements").new_buffer({})
     setup_git_file(bufnr, filename, commit)
 end
 
@@ -65,8 +63,7 @@ end
 ---@param commit string
 function M.open_file_in_current_window(filename, commit)
     delete_existing_buffer(get_filename(filename, commit))
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, bufnr)
+    local bufnr = require("ever._ui.elements").new_buffer({})
     setup_git_file(bufnr, filename, commit)
 end
 

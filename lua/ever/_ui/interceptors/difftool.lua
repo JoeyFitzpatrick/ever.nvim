@@ -132,8 +132,7 @@ end
 
 ---@param cmd string
 M.render = function(cmd)
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_win_set_buf(0, bufnr)
+    local bufnr = require("ever._ui.elements").new_buffer({})
     local commits_to_diff = M._get_commits_to_diff(cmd)
     vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_diff_files(commits_to_diff))
