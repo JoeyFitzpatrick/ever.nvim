@@ -3,6 +3,8 @@ ever-credits	ever.txt	/*ever-credits*
 ever-development-and-contributing	ever.txt	/*ever-development-and-contributing*
 ever-installation	ever.txt	/*ever-installation*
 ever-keymaps-for-raw-git-output	ever.txt	/*ever-keymaps-for-raw-git-output*
+ever-miscellaneous-command-changes	ever.txt	/*ever-miscellaneous-command-changes*
+ever-miscellaneous-command-changes-git-switch	ever.txt	/*ever-miscellaneous-command-changes-git-switch*
 ever-new-breaking	news.txt	/*ever-new-breaking*
 ever-new-features	news.txt	/*ever-new-features*
 ever-news.txt	news.txt	/*ever-news.txt*

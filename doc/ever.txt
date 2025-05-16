@@ -1,4 +1,4 @@
-*ever.txt*            For Neovim >= 0.11.0            Last change: 2025 May 15
+*ever.txt*            For Neovim >= 0.11.0            Last change: 2025 May 16
 
 ==============================================================================
 Table of Contents                                     *ever-table-of-contents*
@@ -16,15 +16,17 @@ Table of Contents                                     *ever-table-of-contents*
   - Stash List                              |ever-special-commands-stash-list|
   - Show                                          |ever-special-commands-show|
   - Help Commands                        |ever-special-commands-help-commands|
-6. UI Management (Tabs, Windows, Buffers)|ever-ui-management-(tabs,-windows,-buffers)|
-7. Plug mappings                                          |ever-plug-mappings|
-8. Optional Dependencies                          |ever-optional-dependencies|
-9. Development and Contributing            |ever-development-and-contributing|
-10. Tests                                                         |ever-tests|
+6. Miscellaneous Command Changes          |ever-miscellaneous-command-changes|
+  - Git Switch                 |ever-miscellaneous-command-changes-git-switch|
+7. UI Management (Tabs, Windows, Buffers)|ever-ui-management-(tabs,-windows,-buffers)|
+8. Plug mappings                                          |ever-plug-mappings|
+9. Optional Dependencies                          |ever-optional-dependencies|
+10. Development and Contributing           |ever-development-and-contributing|
+11. Tests                                                         |ever-tests|
   - Initialization                                 |ever-tests-initialization|
   - Running                                               |ever-tests-running|
-11. Tracking Updates                                   |ever-tracking-updates|
-12. Credits                                                     |ever-credits|
+12. Tracking Updates                                   |ever-tracking-updates|
+13. Credits                                                     |ever-credits|
 
 ==============================================================================
 1. Installation                                            *ever-installation*
@@ -368,7 +370,26 @@ it by pressing `q` to return to your last buffer.
 
 
 ==============================================================================
-6. UI Management (Tabs, Windows, Buffers)*ever-ui-management-(tabs,-windows,-buffers)*
+6. Miscellaneous Command Changes          *ever-miscellaneous-command-changes*
+
+Some git commands are changed for convenience.
+
+
+GIT SWITCH                     *ever-miscellaneous-command-changes-git-switch*
+
+When running `:G switch origin/some-branch`, with no command options like
+`--create`, `origin/` is removed from the command, in order to make
+auto-completion work and still allow switch to the branch. In other words, if
+the actual command that runs is `git switch origin/some-branch`, you’ll get
+an error, but running `git switch some-branch` will create a local branch off
+of that remote branch, which is normally what you’d want.
+
+If you pass any options to the command, like `:G switch origin/some-branch
+--create`, this behavior is not used.
+
+
+==============================================================================
+7. UI Management (Tabs, Windows, Buffers)*ever-ui-management-(tabs,-windows,-buffers)*
 
 When Ever opens a UI, this will typically either open a new buffer in the
 current window, or open a new window in a split. In either case, the window can
@@ -395,7 +416,7 @@ To toggle the auto-display, enter the toggle keymap, which by default is
 
 
 ==============================================================================
-7. Plug mappings                                          *ever-plug-mappings*
+8. Plug mappings                                          *ever-plug-mappings*
 
 Ever provides some plug mappings, so you can conveniently create your own
 mappings for some actions if you want. To use such a mapping, you can do
@@ -424,7 +445,7 @@ stash popup
 
 
 ==============================================================================
-8. Optional Dependencies                          *ever-optional-dependencies*
+9. Optional Dependencies                          *ever-optional-dependencies*
 
 It is recommended, though not required, to use a tool that improves the output
 of git commands. Some recommendations: delta
@@ -433,7 +454,7 @@ of git commands. Some recommendations: delta
 
 
 ==============================================================================
-9. Development and Contributing            *ever-development-and-contributing*
+10. Development and Contributing           *ever-development-and-contributing*
 
 I welcome users of any experience level to contribute to Ever and improve the
 project. If you’d like to contribute by writing code, please run
@@ -449,7 +470,7 @@ are also good ways to contribute.
 
 
 ==============================================================================
-10. Tests                                                         *ever-tests*
+11. Tests                                                         *ever-tests*
 
 
 INITIALIZATION                                     *ever-tests-initialization*
@@ -491,13 +512,13 @@ We might not have any tagged tests, but to make one, set up as test like this:
 
 
 ==============================================================================
-11. Tracking Updates                                   *ever-tracking-updates*
+12. Tracking Updates                                   *ever-tracking-updates*
 
 See doc/news.txt <doc/news.txt> for updates.
 
 
 ==============================================================================
-12. Credits                                                     *ever-credits*
+13. Credits                                                     *ever-credits*
 
 Thank you to Samuel Williams and the maintainers of nvim-unception
 <https://github.com/samjwill/nvim-unception>. Some code from that plugin was
