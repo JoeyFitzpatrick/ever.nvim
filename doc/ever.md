@@ -297,12 +297,6 @@ To toggle the auto-display, enter the toggle keymap, which by default is `<tab>`
 
 # Plug mappings
 Ever provides some plug mappings, so you can conveniently create your own mappings for some actions if you want. 
-To use such a mapping, you can do something like this:
-
-```lua
--- Keymap to display the commit popup
-vim.keymap.set("n", "<leader>gc", "<Plug>(Ever-commit-popup)")
-```
 
 ### Merge conflict mappings
 Ever doesn't have an integrated merge conflict resolution solution currently, so in the meantime, we have these mappings:
@@ -311,10 +305,12 @@ Ever doesn't have an integrated merge conflict resolution solution currently, so
 <Plug>(Ever-resolve-theirs): when the cursor is on a merge conflict, keep the "theirs" code
 <Plug>(Ever-resolve-all): when the cursor is on a merge conflict, keep all code
 
-### Popup mappings
-<Plug>(Ever-commit-popup): display the commit popup
-<Plug>(Ever-stash-popup): display the stash popup
+To use such a mapping, you can do something like this:
 
+```lua
+-- Keymap to display the commit popup
+vim.keymap.set("n", "<leader>rb", "<Plug>(Ever-resolve-base)")
+```
 
 # Optional Dependencies
 It is recommended, though not required, to use a tool that improves the output of git commands. Some recommendations:

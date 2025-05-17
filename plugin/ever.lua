@@ -44,5 +44,4 @@ end, {
     end,
 })
 
-require("ever._ui.popups.plug_mappings").setup_plug_mappings()
 require("ever._core.nested-buffers").prevent_nested_buffers()

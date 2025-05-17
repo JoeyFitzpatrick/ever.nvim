@@ -164,7 +164,9 @@ function M.set_keymaps(bufnr, opts)
         end, keymap_opts)
     end
 
-    set("n", keymaps.commit_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_COMMIT_POPUP, keymap_opts)
+    set("n", keymaps.commit_popup, function()
+        require("ever._ui.popups.commit_popup").render()
+    end, keymap_opts)
 
     set("n", keymaps.diff_file, function()
         local ok, line_data = pcall(M.get_line, bufnr, start_line)
@@ -317,7 +319,9 @@ function M.set_keymaps(bufnr, opts)
         end)
     end, keymap_opts)
 
-    set("n", keymaps.stash_popup, require("ever._ui.popups.plug_mappings").MAPPINGS.EVER_STASH_POPUP, keymap_opts)
+    set("n", keymaps.stash_popup, function()
+        require("ever._ui.popups.commit_popup").render()
+    end, keymap_opts)
 end
 
 ---@param status string
