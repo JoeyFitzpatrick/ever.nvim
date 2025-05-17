@@ -43,6 +43,21 @@ In a file from a previous commit, be able to:
 In a git patch, be able to do the above, as well as:
 * restore a single hunk
 
+### Allow users to create custome command mappings
+Users should be able to create their own keymaps for different UIs. This can be done in a couple of ways:
+1. In the config, allow specifying a map/function combination. For instance:
+```lua
+    commit = {
+        keymaps = {
+            p = function()
+                -- Ever lua API used here?
+            end
+        }
+    }
+```
+A potential pitfall here is that we currently map from command to key, not key to map. So we'd either need to invert existing keymaps, or support current mappings but allow new ones to be inverted.
+2. Create autocmds for different UIs, so that keymaps could be created for a given UI as part of its autocmd. Not a huge fan of this approach, but there might be other reasons to create these autocmds anyways.
+
 ## Improvements
 
 ### Diff highlight engine
