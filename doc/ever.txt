@@ -419,13 +419,7 @@ To toggle the auto-display, enter the toggle keymap, which by default is
 8. Plug mappings                                          *ever-plug-mappings*
 
 Ever provides some plug mappings, so you can conveniently create your own
-mappings for some actions if you want. To use such a mapping, you can do
-something like this:
-
->lua
-    -- Keymap to display the commit popup
-    vim.keymap.set("n", "<leader>gc", "<Plug>(Ever-commit-popup)")
-<
+mappings for some actions if you want.
 
 
 MERGE CONFLICT MAPPINGS ~
@@ -437,11 +431,12 @@ the cursor is on a merge conflict, keep the "ours" code (Ever-resolve-theirs):
 when the cursor is on a merge conflict, keep the "theirs" code
 (Ever-resolve-all): when the cursor is on a merge conflict, keep all code
 
+To use such a mapping, you can do something like this:
 
-POPUP MAPPINGS ~
-
-(Ever-commit-popup): display the commit popup (Ever-stash-popup): display the
-stash popup
+>lua
+    -- Keymap to display the commit popup
+    vim.keymap.set("n", "<leader>rb", "<Plug>(Ever-resolve-base)")
+<
 
 
 ==============================================================================
