@@ -67,7 +67,8 @@ local function parse_subcommand(cmd)
     return parser(cmd)
 end
 
---- Expand `%` to current file
+--- Expand `%` to current file.
+--- Also modify command in some special cases.
 ---@param input_args vim.api.keyset.create_user_command.command_args
 ---@return string
 M.parse = function(input_args)

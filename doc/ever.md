@@ -278,6 +278,15 @@ When running `:G switch origin/some-branch`, with no command options like `--cre
 
 If you pass any options to the command, like `:G switch origin/some-branch --create`, this behavior is not used.
 
+# Custom Commands
+Ever provides some commands that are not valid git commands.
+
+### Vdiff
+`:G Vdiff` opens a vertical split and uses `vimdiff` to diff the current file against `HEAD`. You can pass a commit, e.g. `:G Vdiff abc123`, to diff the current file against the same file in the given commit. See `:h vimdiff`.
+
+### Hdiff
+Like `:G Vdiff`, except horizontal instead of vertical. `:G Hdiff` opens a horizontal split and uses `vimdiff` to diff the current file against `HEAD`. You can pass a commit, e.g. `:G Hdiff abc123`, to diff the current file against the same file in the given commit. See `:h vimdiff`.
+
 # UI Management (Tabs, Windows, Buffers)
 When Ever opens a UI, this will typically either open a new buffer in the current window, or open a new window in a split. 
 In either case, the window can be closed with the `q` keymap, which will return you to the last buffer that was open.

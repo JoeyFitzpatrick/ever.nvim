@@ -1,6 +1,13 @@
 local M = {}
 
+---@type table<string, fun(cmd?: string)>
 local cmd_ui_map = {
+    Hdiff = function(cmd)
+        require("ever._ui.interceptors.split_diff").split_diff(cmd, "below")
+    end,
+    Vdiff = function(args)
+        require("ever._ui.interceptors.split_diff").split_diff(args, "right")
+    end,
     blame = function(cmd)
         require("ever._ui.interceptors.blame").render(cmd)
     end,
