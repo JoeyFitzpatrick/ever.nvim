@@ -1,11 +1,17 @@
 local M = {}
 
 ---@param subcommand string
----@return table<string, string>
+---@return table<string, string> | nil
 local function subcommand_options(subcommand)
-    return require("ever._constants.command_options")[subcommand].options
+    local subcommand_tbl = require("ever._constants.command_options")[subcommand]
+    if not subcommand_tbl then
+        return nil
+    end
+    return subcommand_tbl.options
 end
 
+---@param cmdline string
+---@return string | nil
 local function get_subcommand(cmdline)
     local words = {}
     for word in cmdline:gmatch("%S+") do
@@ -14,13 +20,15 @@ local function get_subcommand(cmdline)
     return words[2]
 end
 
-local local_branches_command = "git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/"
+local all_branches_command = "git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/"
 local SUBCOMMAND_TO_ARGUMENTS_MAP = {
-    checkout = local_branches_command,
-    switch = local_branches_command,
-    merge = local_branches_command,
-    rebase = local_branches_command,
-    revert = local_branches_command,
+    Vdiff = all_branches_command,
+    Hdiff = all_branches_command,
+    checkout = all_branches_command,
+    switch = all_branches_command,
+    merge = all_branches_command,
+    rebase = all_branches_command,
+    revert = all_branches_command,
 }
 
 ---@param subcommand string
@@ -51,8 +59,11 @@ M.complete_git_command = function(arglead, cmdline)
     end
     if space_count > 1 then
         local subcommand = get_subcommand(cmdline)
+        if not subcommand then
+            return { arglead, cmdline }
+        end
         if arglead:sub(1, 1) == "-" then
-            return subcommand_options(subcommand) or { arglead, cmdline }
+            return subcommand_options(subcommand) or {}
         end
         local completion_arguments = get_arguments(subcommand)
         if completion_arguments ~= nil then
@@ -63,7 +74,7 @@ M.complete_git_command = function(arglead, cmdline)
             return completion_options
         end
     end
-    return { arglead, cmdline }
+    return {}
 end
 
 return M

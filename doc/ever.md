@@ -282,10 +282,10 @@ If you pass any options to the command, like `:G switch origin/some-branch --cre
 Ever provides some commands that are not valid git commands.
 
 ### Vdiff
-`:G Vdiff` opens a vertical split and uses `vimdiff` to diff the current file against `HEAD`. You can pass a commit, e.g. `:G Vdiff abc123`, to diff the current file against the same file in the given commit. See `:h vimdiff`.
+`:G Vdiff` opens a vertical split and uses `vimdiff` to diff the current file against `HEAD`. You can pass a commit, e.g. `:G Vdiff abc123`, to diff the current file against the same file in the given commit. You can also pass a branch, e.g. `:G Vdiff some-branch`. See `:h vimdiff`.
 
 ### Hdiff
-Like `:G Vdiff`, except horizontal instead of vertical. `:G Hdiff` opens a horizontal split and uses `vimdiff` to diff the current file against `HEAD`. You can pass a commit, e.g. `:G Hdiff abc123`, to diff the current file against the same file in the given commit. See `:h vimdiff`.
+Like `:G Vdiff`, except horizontal instead of vertical. `:G Hdiff` opens a horizontal split and uses `vimdiff` to diff the current file against `HEAD`. You can pass a commit, e.g. `:G Hdiff abc123`, to diff the current file against the same file in the given commit. You can also pass a branch, e.g. `:G Hdiff some-branch`. See `:h vimdiff`.
 
 # UI Management (Tabs, Windows, Buffers)
 When Ever opens a UI, this will typically either open a new buffer in the current window, or open a new window in a split. 
