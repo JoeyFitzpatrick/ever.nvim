@@ -399,7 +399,8 @@ VDIFF ~
 
 `:G Vdiff` opens a vertical split and uses `vimdiff` to diff the current file
 against `HEAD`. You can pass a commit, e.g. `:G Vdiff abc123`, to diff the
-current file against the same file in the given commit. See |vimdiff|.
+current file against the same file in the given commit. You can also pass a
+branch, e.g. `:G Vdiff some-branch`. See |vimdiff|.
 
 
 HDIFF ~
@@ -407,7 +408,8 @@ HDIFF ~
 Like `:G Vdiff`, except horizontal instead of vertical. `:G Hdiff` opens a
 horizontal split and uses `vimdiff` to diff the current file against `HEAD`.
 You can pass a commit, e.g. `:G Hdiff abc123`, to diff the current file
-against the same file in the given commit. See |vimdiff|.
+against the same file in the given commit. You can also pass a branch,
+e.g. `:G Hdiff some-branch`. See |vimdiff|.
 
 
 ==============================================================================
