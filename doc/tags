@@ -1,5 +1,6 @@
 ever-configuration	ever.txt	/*ever-configuration*
 ever-credits	ever.txt	/*ever-credits*
+ever-custom-commands	ever.txt	/*ever-custom-commands*
 ever-development-and-contributing	ever.txt	/*ever-development-and-contributing*
 ever-installation	ever.txt	/*ever-installation*
 ever-keymaps-for-raw-git-output	ever.txt	/*ever-keymaps-for-raw-git-output*

@@ -1,4 +1,4 @@
-*ever.txt*            For Neovim >= 0.11.0            Last change: 2025 May 17
+*ever.txt*            For Neovim >= 0.11.0            Last change: 2025 May 19
 
 ==============================================================================
 Table of Contents                                     *ever-table-of-contents*
@@ -18,15 +18,16 @@ Table of Contents                                     *ever-table-of-contents*
   - Help Commands                        |ever-special-commands-help-commands|
 6. Miscellaneous Command Changes          |ever-miscellaneous-command-changes|
   - Git Switch                 |ever-miscellaneous-command-changes-git-switch|
-7. UI Management (Tabs, Windows, Buffers)|ever-ui-management-(tabs,-windows,-buffers)|
-8. Plug mappings                                          |ever-plug-mappings|
-9. Optional Dependencies                          |ever-optional-dependencies|
-10. Development and Contributing           |ever-development-and-contributing|
-11. Tests                                                         |ever-tests|
+7. Custom Commands                                      |ever-custom-commands|
+8. UI Management (Tabs, Windows, Buffers)|ever-ui-management-(tabs,-windows,-buffers)|
+9. Plug mappings                                          |ever-plug-mappings|
+10. Optional Dependencies                         |ever-optional-dependencies|
+11. Development and Contributing           |ever-development-and-contributing|
+12. Tests                                                         |ever-tests|
   - Initialization                                 |ever-tests-initialization|
   - Running                                               |ever-tests-running|
-12. Tracking Updates                                   |ever-tracking-updates|
-13. Credits                                                     |ever-credits|
+13. Tracking Updates                                   |ever-tracking-updates|
+14. Credits                                                     |ever-credits|
 
 ==============================================================================
 1. Installation                                            *ever-installation*
@@ -389,7 +390,28 @@ If you pass any options to the command, like `:G switch origin/some-branch
 
 
 ==============================================================================
-7. UI Management (Tabs, Windows, Buffers)*ever-ui-management-(tabs,-windows,-buffers)*
+7. Custom Commands                                      *ever-custom-commands*
+
+Ever provides some commands that are not valid git commands.
+
+
+VDIFF ~
+
+`:G Vdiff` opens a vertical split and uses `vimdiff` to diff the current file
+against `HEAD`. You can pass a commit, e.g. `:G Vdiff abc123`, to diff the
+current file against the same file in the given commit. See |vimdiff|.
+
+
+HDIFF ~
+
+Like `:G Vdiff`, except horizontal instead of vertical. `:G Hdiff` opens a
+horizontal split and uses `vimdiff` to diff the current file against `HEAD`.
+You can pass a commit, e.g. `:G Hdiff abc123`, to diff the current file
+against the same file in the given commit. See |vimdiff|.
+
+
+==============================================================================
+8. UI Management (Tabs, Windows, Buffers)*ever-ui-management-(tabs,-windows,-buffers)*
 
 When Ever opens a UI, this will typically either open a new buffer in the
 current window, or open a new window in a split. In either case, the window can
@@ -416,7 +438,7 @@ To toggle the auto-display, enter the toggle keymap, which by default is
 
 
 ==============================================================================
-8. Plug mappings                                          *ever-plug-mappings*
+9. Plug mappings                                          *ever-plug-mappings*
 
 Ever provides some plug mappings, so you can conveniently create your own
 mappings for some actions if you want.
@@ -440,7 +462,7 @@ To use such a mapping, you can do something like this:
 
 
 ==============================================================================
-9. Optional Dependencies                          *ever-optional-dependencies*
+10. Optional Dependencies                         *ever-optional-dependencies*
 
 It is recommended, though not required, to use a tool that improves the output
 of git commands. Some recommendations: delta
@@ -449,7 +471,7 @@ of git commands. Some recommendations: delta
 
 
 ==============================================================================
-10. Development and Contributing           *ever-development-and-contributing*
+11. Development and Contributing           *ever-development-and-contributing*
 
 I welcome users of any experience level to contribute to Ever and improve the
 project. If you’d like to contribute by writing code, please run
@@ -465,7 +487,7 @@ are also good ways to contribute.
 
 
 ==============================================================================
-11. Tests                                                         *ever-tests*
+12. Tests                                                         *ever-tests*
 
 
 INITIALIZATION                                     *ever-tests-initialization*
@@ -507,13 +529,13 @@ We might not have any tagged tests, but to make one, set up as test like this:
 
 
 ==============================================================================
-12. Tracking Updates                                   *ever-tracking-updates*
+13. Tracking Updates                                   *ever-tracking-updates*
 
 See doc/news.txt <doc/news.txt> for updates.
 
 
 ==============================================================================
-13. Credits                                                     *ever-credits*
+14. Credits                                                     *ever-credits*
 
 Thank you to Samuel Williams and the maintainers of nvim-unception
 <https://github.com/samjwill/nvim-unception>. Some code from that plugin was
