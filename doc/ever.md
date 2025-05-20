@@ -237,17 +237,18 @@ is passed to the `log` command to change how the output looks.
 Passing a `--pretty` option, such as `:G log --pretty=full`, overrides the default format.
 
 ### Log -L
+`:G log` has a `-L` flag, as shown [in the docs](https://git-scm.com/docs/git-log#Documentation/git-log.txt--Lltstartgtltendgtltfilegt). This can be used to see the commits that changed just the line numbers given, e.g. `git log -L20,40:example.lua`, to see just the commits that changed lines from 20 to 40 in `example.lua`.
 
-`:G` log has a `-L` flag, as shown [in the docs](https://git-scm.com/docs/git-log#Documentation/git-log.txt--Lltstartgtltendgtltfilegt).
-This can be used to see the commits that changed just the line numbers given, e.g. `git log -L20,40:example.lua`,
-to see just the commits that changed lines from 20 to 40 in `example.lua`.
-In many cases, this can be an extremely useful way to search for changes, as opposed to running something like `git log --follow example.lua`,
-which could show commits that made changes that you don't care about.
-With Ever, if you make a visual selection and run `:'<,'>G log -L`, without passing line numbers or a file name, 
-it will pass the line numbers and file name automatically to the git command, making it much more convenient to use.
+In many cases, this can be an extremely useful way to search for changes, as opposed to running something like `git log --follow example.lua`, which could show commits that made changes that you don't care about. With Ever, if you make a visual selection and run `:'<,'>G log -L`, without passing line numbers or a file name, it will pass the line numbers and file name automatically to the git command, making it much more convenient to use.
+
+### Log -S
+`:G log` has a `-S` flag, as shown [in the docs](https://git-scm.com/docs/git-log#Documentation/git-log.txt-code-Sltstringgtcode).
+This can be used to see the commits that changed the number of times a given search term appeared in the codebase. For instance, running `:G log -S myFunc` will show all commits where `myFunc` was either added or removed.
+
+This can very useful. With Ever, running this command in visual mode will use your visually selected text as the search term., e.g. `:G log -S` while text is visually selected.
 
 ## Commit
-`:G` commit will open an editor to create the commit message when that message is not passed to the command, 
+`:G commit` will open an editor to create the commit message when that message is not passed to the command, 
 e.g. `git commit` (no message, opens the editor) vs `git commit -m "some message"` (does not open the commit message editor).
 When the commit message editor is opened, Ever opens it in the current Neovim instance.
 You can write and quit the editor (`:wq`) to apply the message, or simply close the editor without saving to abort the commit due to an empty commit message.

@@ -35,6 +35,10 @@ local function parse_visual_command(cmd, input_args)
     if cmd:match("^log %-L") then
         return "log -L " .. input_args.line1 .. "," .. input_args.line2 .. ":" .. vim.api.nvim_buf_get_name(0)
     end
+
+    if cmd:match("^log %-S") then
+        return string.format("log -S '%s' -w", require("ever._ui.utils.ui_utils").get_visual_selection())
+    end
     return cmd
 end
 

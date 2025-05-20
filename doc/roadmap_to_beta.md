@@ -79,3 +79,11 @@ The thought here is that integration tests could help ensure that our functions 
 
 ### Git branch --all is sluggish
 It probably just needs to switch to streaming lines in.
+
+### Git log -S with multiline visual selection
+It would be awesome if using `:G log -S` from visual mode worked with a multiline selection. One way this _could_ work is to use concepts from [this blog post](https://hoelz.ro/blog/applying-gits-pickaxe-option-across-multiple-lines-of-yaml-using-textconv). The gist of it is:
+* create a script that replaces new lines in a diff with a string like `\n`
+* pass this to the `log` command using the `-c` flag
+* pass the `--pickaxe-regex` option to the command to ignore any whitespace changes between lines
+
+This is hilariously over-the-top, but it would be pretty cool.
