@@ -5,6 +5,11 @@
 
 ---@alias ever.CommandCompletionType "branch" | "filepath" | "subcommand"
 
+---@class ever.CompletionParams
+---@field completion_type? ever.CommandCompletionType
+---@field options string[]
+---@field subcommands? string[]
+
 local M = {}
 
 local COMMANDS_WITH_BRANCH_COMPLETION = {
@@ -29,18 +34,22 @@ end
 
 ---@param help_text string
 ---@param cmd string
----@return { options: string[], completion_type: ever.CommandCompletionType | nil }
+---@return ever.CompletionParams
 M._parse_options_from_help_text = function(help_text, cmd)
     local completion_type = nil
-    local options = {}
+    ---@type ever.CompletionParams
+    local completion_params = { options = {} }
     for flag in help_text:gmatch(cmd_option_pattern) do
-        options[flag] = flag
+        completion_params.options[flag] = flag
     end
     for subcommand in help_text:gmatch(get_subcommand_pattern(cmd)) do
         if subcommand:match("^[^%-]") then
             completion_type = "subcommand"
         end
-        options[subcommand] = subcommand
+        if completion_params.subcommands == nil then
+            completion_params.subcommands = {}
+        end
+        completion_params.subcommands[subcommand] = subcommand
     end
     if vim.tbl_contains(COMMANDS_WITH_BRANCH_COMPLETION, cmd) then
         completion_type = "branch"
@@ -48,7 +57,11 @@ M._parse_options_from_help_text = function(help_text, cmd)
     if vim.tbl_contains(COMMANDS_WITH_FILEPATH_COMPLETION, cmd) then
         completion_type = "filepath"
     end
-    return { options = options, completion_type = completion_type }
+    return {
+        options = completion_params.options,
+        subcommands = completion_params.subcommands,
+        completion_type = completion_type,
+    }
 end
 
 ---@param cmds string[] | nil
@@ -100,6 +113,6 @@ M.get_command_options = function(cmds)
     print("done")
 end
 
-M.get_command_options({ "stash" })
+M.get_command_options({ "switch" })
 
 return M
