@@ -16,14 +16,19 @@ local COMMANDS_WITH_BRANCH_COMPLETION = {
     "Vdiff",
     "Hdiff",
     "checkout",
-    "switch",
     "merge",
     "rebase",
     "revert",
+    "switch",
 }
 
 local COMMANDS_WITH_FILEPATH_COMPLETION = {
-    "commit",
+    "add",
+    "diff",
+    "grep",
+    "mv",
+    "restore",
+    "rm",
 }
 
 local parsed_commands = {}
@@ -113,6 +118,6 @@ M.get_command_options = function(cmds)
     print("done")
 end
 
-M.get_command_options({ "switch" })
+M.get_command_options()
 
 return M

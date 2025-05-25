@@ -19,6 +19,46 @@ local function branch_completion()
     return branches
 end
 
+local function path_completion(base)
+    local cwd = vim.fn.getcwd()
+    cwd = cwd:gsub("/+$", "") .. "/"
+    local cwd_len = cwd:len()
+
+    -- List elements from (absolute) target directory
+    local target_dir = vim.fn.fnamemodify(base, ":h")
+    target_dir = (cwd .. target_dir:gsub("^%.$", "")):gsub("/+$", "") .. "/"
+    local ok, fs_entries = pcall(vim.fn.readdir, target_dir)
+    if not ok then
+        return {}
+    end
+
+    -- List directories and files separately
+    local dirs, files = {}, {}
+    for _, entry in ipairs(fs_entries) do
+        local entry_abs = target_dir .. entry
+        local arr = vim.fn.isdirectory(entry_abs) == 1 and dirs or files
+        table.insert(arr, entry_abs)
+    end
+    dirs = vim.tbl_map(function(x)
+        return x .. "/"
+    end, dirs)
+
+    -- List ordered directories first followed by ordered files
+    local order_ignore_case = function(a, b)
+        return a:lower() < b:lower()
+    end
+    table.sort(dirs, order_ignore_case)
+    table.sort(files, order_ignore_case)
+
+    -- Return candidates relative to command's cwd
+    local all = dirs
+    vim.list_extend(all, files)
+    local res = vim.tbl_map(function(x)
+        return x:sub(cwd_len + 1)
+    end, all)
+    return res, "path"
+end
+
 --- Takes a git command in command mode, and returns completion options.
 ---@param arglead string
 ---@param cmdline string
@@ -48,6 +88,10 @@ M.complete_git_command = function(arglead, cmdline)
             return completion_tbl.options or {}
         end
 
+        if cmdline:match(" %-%- ") then
+            return path_completion(arglead) or {}
+        end
+
         if completion_tbl.completion_type == "branch" then
             return branch_completion()
         end
@@ -55,6 +99,11 @@ M.complete_git_command = function(arglead, cmdline)
         if completion_tbl.completion_type == "subcommand" then
             return completion_tbl.subcommands or {}
         end
+
+        if completion_tbl.completion_type == "filepath" then
+            return path_completion(arglead) or {}
+        end
+
         return completion_tbl.options or {}
     end
     return {}

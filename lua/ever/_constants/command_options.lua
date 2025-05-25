@@ -1,5 +1,6 @@
 return {
     add = {
+        completion_type = "filepath",
         options = {
             ["--all"] = "--all",
             ["--chmod"] = "--chmod",
@@ -112,7 +113,9 @@ return {
         },
     },
     archimport = {
-        options = {},
+        options = {
+            ["--help"] = "--help",
+        },
     },
     archive = {
         options = {
@@ -127,14 +130,21 @@ return {
             ["--verbose"] = "--verbose",
             ["--worktree-attributes"] = "--worktree-attributes",
         },
+        subcommands = {
+            ["--list"] = "--list",
+            ["--remote"] = "--remote",
+        },
     },
     bisect = {
+        completion_type = "subcommand",
         options = {
             ["--first-parent"] = "--first-parent",
             ["--no-checkout"] = "--no-checkout",
             ["--term-"] = "--term-",
             ["--term-bad"] = "--term-bad",
             ["--term-good"] = "--term-good",
+        },
+        subcommands = {
             help = "help",
             log = "log",
             next = "next",
@@ -165,6 +175,37 @@ return {
             ["--show-name"] = "--show-name",
             ["--show-number"] = "--show-number",
             ["--show-stats"] = "--show-stats",
+        },
+    },
+    br = {
+        options = {
+            ["--abbrev"] = "--abbrev",
+            ["--all"] = "--all",
+            ["--color"] = "--color",
+            ["--column"] = "--column",
+            ["--contains"] = "--contains",
+            ["--copy"] = "--copy",
+            ["--create-reflog"] = "--create-reflog",
+            ["--delete"] = "--delete",
+            ["--edit-description"] = "--edit-description",
+            ["--force"] = "--force",
+            ["--format"] = "--format",
+            ["--ignore-case"] = "--ignore-case",
+            ["--list"] = "--list",
+            ["--merged"] = "--merged",
+            ["--move"] = "--move",
+            ["--no-contains"] = "--no-contains",
+            ["--no-merged"] = "--no-merged",
+            ["--points-at"] = "--points-at",
+            ["--quiet"] = "--quiet",
+            ["--recurse-submodules"] = "--recurse-submodules",
+            ["--remotes"] = "--remotes",
+            ["--set-upstream-to"] = "--set-upstream-to",
+            ["--show-current"] = "--show-current",
+            ["--sort"] = "--sort",
+            ["--track"] = "--track",
+            ["--unset-upstream"] = "--unset-upstream",
+            ["--verbose"] = "--verbose",
         },
     },
     branch = {
@@ -206,12 +247,15 @@ return {
         },
     },
     bundle = {
+        completion_type = "subcommand",
         options = {
             ["--all-progress"] = "--all-progress",
             ["--all-progress-implied"] = "--all-progress-implied",
             ["--progress"] = "--progress",
             ["--quiet"] = "--quiet",
             ["--version"] = "--version",
+        },
+        subcommands = {
             create = "create",
             ["list-heads"] = "list-heads",
             unbundle = "unbundle",
@@ -235,34 +279,8 @@ return {
             ["--use-mailmap"] = "--use-mailmap",
         },
     },
-    ["check-attr"] = {
-        options = {
-            ["--all"] = "--all",
-            ["--cached"] = "--cached",
-            ["--stdin"] = "--stdin",
-        },
-    },
-    ["check-ignore"] = {
-        options = {
-            ["--no-index"] = "--no-index",
-            ["--non-matching"] = "--non-matching",
-            ["--quiet"] = "--quiet",
-            ["--stdin"] = "--stdin",
-            ["--verbose"] = "--verbose",
-        },
-    },
-    ["check-mailmap"] = {
-        options = {
-            ["--stdin"] = "--stdin",
-        },
-    },
-    ["check-ref-format"] = {
-        options = {
-            ["--branch"] = "--branch",
-            ["--normalize"] = "--normalize",
-        },
-    },
     checkout = {
+        completion_type = "branch",
         options = {
             ["--conflict"] = "--conflict",
             ["--detach"] = "--detach",
@@ -303,6 +321,8 @@ return {
         options = {
             ["--abbrev"] = "--abbrev",
             ["--verbose"] = "--verbose",
+        },
+        subcommands = {
             ["-v"] = "-v",
         },
     },
@@ -327,6 +347,11 @@ return {
             ["--strategy-option"] = "--strategy-option",
         },
     },
+    citool = {
+        options = {
+            ["--help"] = "--help",
+        },
+    },
     clean = {
         options = {
             ["--dry-run"] = "--dry-run",
@@ -334,6 +359,8 @@ return {
             ["--force"] = "--force",
             ["--interactive"] = "--interactive",
             ["--quiet"] = "--quiet",
+        },
+        subcommands = {
             ["-d"] = "-d",
         },
     },
@@ -377,17 +404,6 @@ return {
             ["--verbose"] = "--verbose",
         },
     },
-    column = {
-        options = {
-            ["--command"] = "--command",
-            ["--indent"] = "--indent",
-            ["--mode"] = "--mode",
-            ["--nl"] = "--nl",
-            ["--padding"] = "--padding",
-            ["--raw-mode"] = "--raw-mode",
-            ["--width"] = "--width",
-        },
-    },
     commit = {
         options = {
             ["--ahead-behind"] = "--ahead-behind",
@@ -428,6 +444,8 @@ return {
             ["--trailer"] = "--trailer",
             ["--untracked-files"] = "--untracked-files",
             ["--verbose"] = "--verbose",
+        },
+        subcommands = {
             ["-a"] = "-a",
         },
     },
@@ -492,62 +510,19 @@ return {
             ["--verbose"] = "--verbose",
         },
     },
-    credential = {
-        options = {},
-    },
-    ["credential-cache"] = {
-        options = {
-            ["--socket"] = "--socket",
-            ["--timeout"] = "--timeout",
-        },
-    },
-    ["credential-netrc"] = {
-        options = {
-            ["--compilation"] = "--compilation",
-        },
-    },
-    ["credential-osxkeychain"] = {
-        options = {},
-    },
-    ["credential-store"] = {
-        options = {
-            ["--file"] = "--file",
-        },
-    },
     cvsexportcommit = {
         options = {
-            ["-h"] = "-h",
+            ["--help"] = "--help",
         },
     },
     cvsimport = {
-        options = {},
+        options = {
+            ["--help"] = "--help",
+        },
     },
     cvsserver = {
-        options = {},
-    },
-    daemon = {
         options = {
-            ["--access-hook"] = "--access-hook",
-            ["--base-path"] = "--base-path",
-            ["--base-path-relaxed"] = "--base-path-relaxed",
-            ["--detach"] = "--detach",
-            ["--export-all"] = "--export-all",
-            ["--group"] = "--group",
-            ["--inetd"] = "--inetd",
-            ["--init-timeout"] = "--init-timeout",
-            ["--interpolated-path"] = "--interpolated-path",
-            ["--listen"] = "--listen",
-            ["--log-destination"] = "--log-destination",
-            ["--max-connections"] = "--max-connections",
-            ["--pid-file"] = "--pid-file",
-            ["--port"] = "--port",
-            ["--reuseaddr"] = "--reuseaddr",
-            ["--strict-paths"] = "--strict-paths",
-            ["--syslog"] = "--syslog",
-            ["--timeout"] = "--timeout",
-            ["--user"] = "--user",
-            ["--user-path"] = "--user-path",
-            ["--verbose"] = "--verbose",
+            ["--help"] = "--help",
         },
     },
     describe = {
@@ -567,6 +542,9 @@ return {
             ["--match"] = "--match",
             ["--tags"] = "--tags",
         },
+        subcommands = {
+            ["--all"] = "--all",
+        },
     },
     diagnose = {
         options = {
@@ -576,6 +554,7 @@ return {
         },
     },
     diff = {
+        completion_type = "filepath",
         options = {
             ["--abbrev"] = "--abbrev",
             ["--cached"] = "--cached",
@@ -736,19 +715,9 @@ return {
             ["--write-commit-graph"] = "--write-commit-graph",
             ["--write-fetch-head"] = "--write-fetch-head",
         },
-    },
-    ["fetch-pack"] = {
-        options = {
+        subcommands = {
             ["--all"] = "--all",
-            ["--depth"] = "--depth",
-            ["--diag-url"] = "--diag-url",
-            ["--include-tag"] = "--include-tag",
-            ["--keep"] = "--keep",
-            ["--no-progress"] = "--no-progress",
-            ["--quiet"] = "--quiet",
-            ["--stdin"] = "--stdin",
-            ["--thin"] = "--thin",
-            ["--upload-pack"] = "--upload-pack",
+            ["--multiple"] = "--multiple",
         },
     },
     ["filter-branch"] = {
@@ -765,15 +734,6 @@ return {
             ["--subdirectory-filter"] = "--subdirectory-filter",
             ["--tag-name-filter"] = "--tag-name-filter",
             ["--tree-filter"] = "--tree-filter",
-        },
-    },
-    ["fmt-merge-msg"] = {
-        options = {
-            ["--file"] = "--file",
-            ["--into-name"] = "--into-name",
-            ["--log"] = "--log",
-            ["--message"] = "--message",
-            ["--no-log"] = "--no-log",
         },
     },
     ["for-each-ref"] = {
@@ -856,23 +816,8 @@ return {
             ["--unreachable"] = "--unreachable",
             ["--verbose"] = "--verbose",
         },
-    },
-    ["fsck-objects"] = {
-        options = {
-            ["--cache"] = "--cache",
-            ["--connectivity-only"] = "--connectivity-only",
-            ["--dangling"] = "--dangling",
-            ["--full"] = "--full",
-            ["--lost-found"] = "--lost-found",
-            ["--name-objects"] = "--name-objects",
-            ["--no-reflogs"] = "--no-reflogs",
-            ["--progress"] = "--progress",
-            ["--reflogs"] = "--reflogs",
-            ["--root"] = "--root",
-            ["--strict"] = "--strict",
+        subcommands = {
             ["--tags"] = "--tags",
-            ["--unreachable"] = "--unreachable",
-            ["--verbose"] = "--verbose",
         },
     },
     gc = {
@@ -889,7 +834,18 @@ return {
     ["get-tar-commit-id"] = {
         options = {},
     },
+    gitk = {
+        options = {
+            ["--help"] = "--help",
+        },
+    },
+    gitweb = {
+        options = {
+            ["--help"] = "--help",
+        },
+    },
     grep = {
+        completion_type = "filepath",
         options = {
             ["--after-context"] = "--after-context",
             ["--all-match"] = "--all-match",
@@ -935,6 +891,11 @@ return {
             ["--word-regexp"] = "--word-regexp",
         },
     },
+    gui = {
+        options = {
+            ["--help"] = "--help",
+        },
+    },
     ["hash-object"] = {
         options = {
             ["--literally"] = "--literally",
@@ -957,33 +918,13 @@ return {
             ["--user-interfaces"] = "--user-interfaces",
             ["--verbose"] = "--verbose",
             ["--web"] = "--web",
+        },
+        subcommands = {
+            ["--developer-interfaces"] = "--developer-interfaces",
+            ["--user-interfaces"] = "--user-interfaces",
             ["-a"] = "-a",
             ["-c"] = "-c",
             ["-g"] = "-g",
-        },
-    },
-    hook = {
-        options = {
-            ["--ignore-missing"] = "--ignore-missing",
-            run = "run",
-        },
-    },
-    ["http-backend"] = {
-        options = {},
-    },
-    ["http-fetch"] = {
-        options = {
-            ["--packfile"] = "--packfile",
-            ["--recover"] = "--recover",
-            ["--stdin"] = "--stdin",
-        },
-    },
-    ["http-push"] = {
-        options = {
-            ["--all"] = "--all",
-            ["--dry-run"] = "--dry-run",
-            ["--force"] = "--force",
-            ["--verbose"] = "--verbose",
         },
     },
     ["imap-send"] = {
@@ -1011,47 +952,18 @@ return {
             ["--separate-git-dir"] = "--separate-git-dir",
             ["--shared"] = "--shared",
             ["--template"] = "--template",
-            ["-q"] = "-q",
         },
-    },
-    ["init-db"] = {
-        options = {
-            ["--bare"] = "--bare",
-            ["--initial-branch"] = "--initial-branch",
-            ["--object-format"] = "--object-format",
-            ["--quiet"] = "--quiet",
-            ["--separate-git-dir"] = "--separate-git-dir",
-            ["--shared"] = "--shared",
-            ["--template"] = "--template",
+        subcommands = {
+            ["-q"] = "-q",
         },
     },
     instaweb = {
         options = {
-            ["--browser"] = "--browser",
-            ["--httpd"] = "--httpd",
-            ["--local"] = "--local",
-            ["--module-path"] = "--module-path",
-            ["--port"] = "--port",
-            ["--restart"] = "--restart",
-            ["--start"] = "--start",
-            ["--stop"] = "--stop",
-            options = "options",
+            ["--help"] = "--help",
         },
     },
-    ["interpret-trailers"] = {
-        options = {
-            ["--if-exists"] = "--if-exists",
-            ["--if-missing"] = "--if-missing",
-            ["--in-place"] = "--in-place",
-            ["--no-divider"] = "--no-divider",
-            ["--only-input"] = "--only-input",
-            ["--only-trailers"] = "--only-trailers",
-            ["--parse"] = "--parse",
-            ["--trailer"] = "--trailer",
-            ["--trim-empty"] = "--trim-empty",
-            ["--unfold"] = "--unfold",
-            ["--where"] = "--where",
-        },
+    lfs = {
+        options = {},
     },
     log = {
         options = {
@@ -1160,6 +1072,8 @@ return {
             ["--until"] = "--until",
             ["--verify"] = "--verify",
             ["--walk-reflogs"] = "--walk-reflogs",
+        },
+        subcommands = {
             ["-p"] = "-p",
         },
     },
@@ -1218,24 +1132,11 @@ return {
             ["--object-only"] = "--object-only",
         },
     },
-    mailinfo = {
-        options = {
-            ["--encoding"] = "--encoding",
-            ["--message-id"] = "--message-id",
-            ["--quoted-cr"] = "--quoted-cr",
-            ["--scissors"] = "--scissors",
-        },
-    },
-    mailsplit = {
-        options = {
-            ["--keep-cr"] = "--keep-cr",
-            ["-d"] = "-d",
-        },
-    },
     maintenance = {
         options = {},
     },
     merge = {
+        completion_type = "branch",
         options = {
             ["--abort"] = "--abort",
             ["--allow-unrelated-histories"] = "--allow-unrelated-histories",
@@ -1266,6 +1167,10 @@ return {
             ["--verbose"] = "--verbose",
             ["--verify-signatures"] = "--verify-signatures",
         },
+        subcommands = {
+            ["--abort"] = "--abort",
+            ["--continue"] = "--continue",
+        },
     },
     ["merge-base"] = {
         options = {
@@ -1291,30 +1196,6 @@ return {
     ["merge-index"] = {
         options = {},
     },
-    ["merge-octopus"] = {
-        options = {},
-    },
-    ["merge-one-file"] = {
-        options = {},
-    },
-    ["merge-ours"] = {
-        options = {},
-    },
-    ["merge-recursive"] = {
-        options = {},
-    },
-    ["merge-recursive-ours"] = {
-        options = {},
-    },
-    ["merge-recursive-theirs"] = {
-        options = {},
-    },
-    ["merge-resolve"] = {
-        options = {},
-    },
-    ["merge-subtree"] = {
-        options = {},
-    },
     ["merge-tree"] = {
         options = {
             ["--allow-unrelated-histories"] = "--allow-unrelated-histories",
@@ -1334,6 +1215,9 @@ return {
             ["--tool"] = "--tool",
             ["--tool-help"] = "--tool-help",
         },
+        subcommands = {
+            ["--tool"] = "--tool",
+        },
     },
     mktag = {
         options = {
@@ -1344,6 +1228,8 @@ return {
         options = {
             ["--batch"] = "--batch",
             ["--missing"] = "--missing",
+        },
+        subcommands = {
             ["-z"] = "-z",
         },
     },
@@ -1356,6 +1242,7 @@ return {
         },
     },
     mv = {
+        completion_type = "filepath",
         options = {
             ["--dry-run"] = "--dry-run",
             ["--force"] = "--force",
@@ -1377,16 +1264,22 @@ return {
         },
     },
     notes = {
+        completion_type = "subcommand",
         options = {
             ["--abort"] = "--abort",
             ["--allow-empty"] = "--allow-empty",
             ["--commit"] = "--commit",
             ["--ref"] = "--ref",
+        },
+        subcommands = {
+            ["--ref"] = "--ref",
             merge = "merge",
         },
     },
     p4 = {
-        options = {},
+        options = {
+            ["--help"] = "--help",
+        },
     },
     ["pack-objects"] = {
         options = {
@@ -1449,34 +1342,6 @@ return {
             ["--prune"] = "--prune",
         },
     },
-    ["patch-id"] = {
-        options = {
-            ["--stable"] = "--stable",
-            ["--unstable"] = "--unstable",
-            ["--verbatim"] = "--verbatim",
-        },
-    },
-    pickaxe = {
-        options = {
-            ["--abbrev"] = "--abbrev",
-            ["--color-by-age"] = "--color-by-age",
-            ["--color-lines"] = "--color-lines",
-            ["--contents"] = "--contents",
-            ["--ignore-rev"] = "--ignore-rev",
-            ["--ignore-revs-file"] = "--ignore-revs-file",
-            ["--incremental"] = "--incremental",
-            ["--line-porcelain"] = "--line-porcelain",
-            ["--minimal"] = "--minimal",
-            ["--porcelain"] = "--porcelain",
-            ["--progress"] = "--progress",
-            ["--root"] = "--root",
-            ["--score-debug"] = "--score-debug",
-            ["--show-email"] = "--show-email",
-            ["--show-name"] = "--show-name",
-            ["--show-number"] = "--show-number",
-            ["--show-stats"] = "--show-stats",
-        },
-    },
     prune = {
         options = {
             ["--dry-run"] = "--dry-run",
@@ -1484,6 +1349,8 @@ return {
             ["--expire"] = "--expire",
             ["--progress"] = "--progress",
             ["--verbose"] = "--verbose",
+        },
+        subcommands = {
             ["-n"] = "-n",
         },
     },
@@ -1571,12 +1438,15 @@ return {
         },
     },
     quiltimport = {
+        completion_type = "subcommand",
         options = {
             ["--author"] = "--author",
             ["--dry-run"] = "--dry-run",
             ["--keep-non-patch"] = "--keep-non-patch",
             ["--patches"] = "--patches",
             ["--series"] = "--series",
+        },
+        subcommands = {
             options = "options",
         },
     },
@@ -1684,6 +1554,7 @@ return {
         },
     },
     rebase = {
+        completion_type = "branch",
         options = {
             ["--abort"] = "--abort",
             ["--apply"] = "--apply",
@@ -1721,15 +1592,14 @@ return {
             ["--update-refs"] = "--update-refs",
             ["--verbose"] = "--verbose",
             ["--whitespace"] = "--whitespace",
+        },
+        subcommands = {
+            ["--continue"] = "--continue",
             ["-i"] = "-i",
         },
     },
-    ["receive-pack"] = {
-        options = {
-            ["--quiet"] = "--quiet",
-        },
-    },
     reflog = {
+        completion_type = "subcommand",
         options = {
             ["--all"] = "--all",
             ["--dry-run"] = "--dry-run",
@@ -1740,13 +1610,58 @@ return {
             ["--stale-fix"] = "--stale-fix",
             ["--updateref"] = "--updateref",
             ["--verbose"] = "--verbose",
+        },
+        subcommands = {
             delete = "delete",
             exists = "exists",
             expire = "expire",
             show = "show",
         },
     },
+    refresh = {
+        options = {
+            ["--ahead-behind"] = "--ahead-behind",
+            ["--all"] = "--all",
+            ["--allow-empty"] = "--allow-empty",
+            ["--allow-empty-message"] = "--allow-empty-message",
+            ["--amend"] = "--amend",
+            ["--author"] = "--author",
+            ["--branch"] = "--branch",
+            ["--cleanup"] = "--cleanup",
+            ["--date"] = "--date",
+            ["--dry-run"] = "--dry-run",
+            ["--edit"] = "--edit",
+            ["--file"] = "--file",
+            ["--fixup"] = "--fixup",
+            ["--gpg-sign"] = "--gpg-sign",
+            ["--include"] = "--include",
+            ["--interactive"] = "--interactive",
+            ["--long"] = "--long",
+            ["--message"] = "--message",
+            ["--no-post-rewrite"] = "--no-post-rewrite",
+            ["--no-verify"] = "--no-verify",
+            ["--null"] = "--null",
+            ["--only"] = "--only",
+            ["--patch"] = "--patch",
+            ["--pathspec-file-nul"] = "--pathspec-file-nul",
+            ["--pathspec-from-file"] = "--pathspec-from-file",
+            ["--porcelain"] = "--porcelain",
+            ["--quiet"] = "--quiet",
+            ["--reedit-message"] = "--reedit-message",
+            ["--reset-author"] = "--reset-author",
+            ["--reuse-message"] = "--reuse-message",
+            ["--short"] = "--short",
+            ["--signoff"] = "--signoff",
+            ["--squash"] = "--squash",
+            ["--status"] = "--status",
+            ["--template"] = "--template",
+            ["--trailer"] = "--trailer",
+            ["--untracked-files"] = "--untracked-files",
+            ["--verbose"] = "--verbose",
+        },
+    },
     remote = {
+        completion_type = "subcommand",
         options = {
             ["--add"] = "--add",
             ["--all"] = "--all",
@@ -1759,6 +1674,8 @@ return {
             ["--push"] = "--push",
             ["--tags"] = "--tags",
             ["--verbose"] = "--verbose",
+        },
+        subcommands = {
             ["-v"] = "-v",
             add = "add",
             ["get-url"] = "get-url",
@@ -1769,24 +1686,6 @@ return {
             ["set-head"] = "set-head",
             ["set-url"] = "set-url",
         },
-    },
-    ["remote-ext"] = {
-        options = {},
-    },
-    ["remote-fd"] = {
-        options = {},
-    },
-    ["remote-ftp"] = {
-        options = {},
-    },
-    ["remote-ftps"] = {
-        options = {},
-    },
-    ["remote-http"] = {
-        options = {},
-    },
-    ["remote-https"] = {
-        options = {},
     },
     repack = {
         options = {
@@ -1822,6 +1721,9 @@ return {
             ["--graft"] = "--graft",
             ["--list"] = "--list",
             ["--raw"] = "--raw",
+        },
+        subcommands = {
+            ["--format"] = "--format",
             ["-d"] = "-d",
             ["-f"] = "-f",
         },
@@ -1830,8 +1732,11 @@ return {
         options = {},
     },
     rerere = {
+        completion_type = "subcommand",
         options = {
             ["--rerere-autoupdate"] = "--rerere-autoupdate",
+        },
+        subcommands = {
             clear = "clear",
         },
     },
@@ -1849,10 +1754,15 @@ return {
             ["--quiet"] = "--quiet",
             ["--recurse-submodules"] = "--recurse-submodules",
             ["--soft"] = "--soft",
+        },
+        subcommands = {
+            ["--mixed"] = "--mixed",
+            ["--patch"] = "--patch",
             ["-q"] = "-q",
         },
     },
     restore = {
+        completion_type = "filepath",
         options = {
             ["--conflict"] = "--conflict",
             ["--ignore-skip-worktree-bits"] = "--ignore-skip-worktree-bits",
@@ -1919,8 +1829,8 @@ return {
         },
     },
     revert = {
+        completion_type = "branch",
         options = {
-            ["--"] = "--",
             ["--abort"] = "--abort",
             ["--cleanup"] = "--cleanup",
             ["--continue"] = "--continue",
@@ -1936,8 +1846,12 @@ return {
             ["--strategy"] = "--strategy",
             ["--strategy-option"] = "--strategy-option",
         },
+        subcommands = {
+            ["--"] = "--",
+        },
     },
     rm = {
+        completion_type = "filepath",
         options = {
             ["--cached"] = "--cached",
             ["--dry-run"] = "--dry-run",
@@ -1947,7 +1861,14 @@ return {
             ["--pathspec-from-file"] = "--pathspec-from-file",
             ["--quiet"] = "--quiet",
             ["--sparse"] = "--sparse",
+        },
+        subcommands = {
             ["-f"] = "-f",
+        },
+    },
+    scalar = {
+        options = {
+            ["--help"] = "--help",
         },
     },
     ["send-email"] = {
@@ -1986,32 +1907,6 @@ return {
             ["--to-cmd"] = "--to-cmd",
             ["--transfer-encoding"] = "--transfer-encoding",
         },
-    },
-    ["send-pack"] = {
-        options = {
-            ["--all"] = "--all",
-            ["--atomic"] = "--atomic",
-            ["--dry-run"] = "--dry-run",
-            ["--exec"] = "--exec",
-            ["--force"] = "--force",
-            ["--force-if-includes"] = "--force-if-includes",
-            ["--force-with-lease"] = "--force-with-lease",
-            ["--helper-status"] = "--helper-status",
-            ["--mirror"] = "--mirror",
-            ["--progress"] = "--progress",
-            ["--push-option"] = "--push-option",
-            ["--quiet"] = "--quiet",
-            ["--receive-pack"] = "--receive-pack",
-            ["--remote"] = "--remote",
-            ["--signed"] = "--signed",
-            ["--stateless-rpc"] = "--stateless-rpc",
-            ["--stdin"] = "--stdin",
-            ["--thin"] = "--thin",
-            ["--verbose"] = "--verbose",
-        },
-    },
-    shell = {
-        options = {},
     },
     shortlog = {
         options = {
@@ -2076,30 +1971,8 @@ return {
     ["sparse-checkout"] = {
         options = {},
     },
-    stage = {
-        options = {
-            ["--all"] = "--all",
-            ["--chmod"] = "--chmod",
-            ["--dry-run"] = "--dry-run",
-            ["--edit"] = "--edit",
-            ["--force"] = "--force",
-            ["--ignore-errors"] = "--ignore-errors",
-            ["--ignore-missing"] = "--ignore-missing",
-            ["--ignore-removal"] = "--ignore-removal",
-            ["--intent-to-add"] = "--intent-to-add",
-            ["--interactive"] = "--interactive",
-            ["--no-all"] = "--no-all",
-            ["--patch"] = "--patch",
-            ["--pathspec-file-nul"] = "--pathspec-file-nul",
-            ["--pathspec-from-file"] = "--pathspec-from-file",
-            ["--refresh"] = "--refresh",
-            ["--renormalize"] = "--renormalize",
-            ["--sparse"] = "--sparse",
-            ["--update"] = "--update",
-            ["--verbose"] = "--verbose",
-        },
-    },
     stash = {
+        completion_type = "subcommand",
         options = {
             ["--all"] = "--all",
             ["--include-untracked"] = "--include-untracked",
@@ -2111,6 +1984,8 @@ return {
             ["--pathspec-from-file"] = "--pathspec-from-file",
             ["--quiet"] = "--quiet",
             ["--staged"] = "--staged",
+        },
+        subcommands = {
             apply = "apply",
             branch = "branch",
             clear = "clear",
@@ -2142,14 +2017,6 @@ return {
             ["--verbose"] = "--verbose",
         },
     },
-    stripspace = {
-        options = {
-            ["--comment-lines"] = "--comment-lines",
-            ["--strip-comments"] = "--strip-comments",
-            ["-c"] = "-c",
-            ["-s"] = "-s",
-        },
-    },
     submodule = {
         options = {
             ["--all"] = "--all",
@@ -2171,26 +2038,17 @@ return {
             ["--remote"] = "--remote",
             ["--summary-limit"] = "--summary-limit",
         },
+        subcommands = {
+            ["--quiet"] = "--quiet",
+        },
     },
-    subtree = {
+    svn = {
         options = {
-            ["--annotate"] = "--annotate",
-            ["--branch"] = "--branch",
             ["--help"] = "--help",
-            ["--ignore-joins"] = "--ignore-joins",
-            ["--message"] = "--message",
-            ["--onto"] = "--onto",
-            ["--prefix"] = "--prefix",
-            ["--rejoin"] = "--rejoin",
-            ["--squash"] = "--squash",
-            add = "add",
-            merge = "merge",
-            pull = "pull",
-            push = "push",
-            split = "split",
         },
     },
     switch = {
+        completion_type = "branch",
         options = {
             ["--conflict"] = "--conflict",
             ["--create"] = "--create",
@@ -2243,6 +2101,8 @@ return {
             ["--sign"] = "--sign",
             ["--sort"] = "--sort",
             ["--verify"] = "--verify",
+        },
+        subcommands = {
             ["-a"] = "-a",
             ["-d"] = "-d",
             ["-n"] = "-n",
@@ -2300,22 +2160,6 @@ return {
             ["--stdin"] = "--stdin",
         },
     },
-    ["update-server-info"] = {
-        options = {
-            ["--force"] = "--force",
-        },
-    },
-    ["upload-archive"] = {
-        options = {},
-    },
-    ["upload-pack"] = {
-        options = {
-            ["--advertise-refs"] = "--advertise-refs",
-            ["--stateless-rpc"] = "--stateless-rpc",
-            ["--strict"] = "--strict",
-            ["--timeout"] = "--timeout",
-        },
-    },
     var = {
         options = {},
     },
@@ -2343,6 +2187,9 @@ return {
         options = {
             ["--build-options"] = "--build-options",
         },
+        subcommands = {
+            ["--build-options"] = "--build-options",
+        },
     },
     whatchanged = {
         options = {
@@ -2357,6 +2204,7 @@ return {
         },
     },
     worktree = {
+        completion_type = "subcommand",
         options = {
             ["--checkout"] = "--checkout",
             ["--detach"] = "--detach",
@@ -2364,6 +2212,8 @@ return {
             ["--lock"] = "--lock",
             ["--porcelain"] = "--porcelain",
             ["--reason"] = "--reason",
+        },
+        subcommands = {
             add = "add",
             list = "list",
             lock = "lock",
