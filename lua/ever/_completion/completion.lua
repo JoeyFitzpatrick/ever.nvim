@@ -1,15 +1,5 @@
 local M = {}
 
----@param subcommand string
----@return table<string, string> | nil
-local function subcommand_options(subcommand)
-    local subcommand_tbl = require("ever._constants.command_options")[subcommand]
-    if not subcommand_tbl then
-        return nil
-    end
-    return subcommand_tbl.options
-end
-
 ---@param cmdline string
 ---@return string | nil
 local function get_subcommand(cmdline)
@@ -20,32 +10,16 @@ local function get_subcommand(cmdline)
     return words[2]
 end
 
-local all_branches_command = "git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/"
-local SUBCOMMAND_TO_ARGUMENTS_MAP = {
-    Vdiff = all_branches_command,
-    Hdiff = all_branches_command,
-    checkout = all_branches_command,
-    switch = all_branches_command,
-    merge = all_branches_command,
-    rebase = all_branches_command,
-    revert = all_branches_command,
-}
-
----@param subcommand string
----@return string[] | nil
-local function get_arguments(subcommand)
-    local cmd = SUBCOMMAND_TO_ARGUMENTS_MAP[subcommand]
-    if not cmd then
-        return nil
-    end
-    local output = vim.fn.systemlist(cmd)
+local function branch_completion()
+    local all_branches_command = "git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/"
+    local branches = vim.fn.systemlist(all_branches_command)
     if vim.v.shell_error ~= 0 then
-        return nil
+        return {}
     end
-    return output
+    return branches
 end
 
---- takes an arbitrary git command, and returns completion options
+--- Takes a git command in command mode, and returns completion options.
 ---@param arglead string
 ---@param cmdline string
 ---@return string[]
@@ -58,21 +32,30 @@ M.complete_git_command = function(arglead, cmdline)
         return require("ever._constants.porcelain_commands")
     end
     if space_count > 1 then
+        -- Check that we have a valid git subcommand
         local subcommand = get_subcommand(cmdline)
         if not subcommand then
-            return { arglead, cmdline }
+            return {}
         end
+        -- Check that we have completion for this subcommand
+        local completion_tbl = require("ever._constants.command_options")[subcommand]
+        if not completion_tbl then
+            return {}
+        end
+
+        -- If a "-" is typed, provide option completion, e.g. "--no-verify"
         if arglead:sub(1, 1) == "-" then
-            return subcommand_options(subcommand) or {}
+            return completion_tbl.options or {}
         end
-        local completion_arguments = get_arguments(subcommand)
-        if completion_arguments ~= nil then
-            return completion_arguments
+
+        if completion_tbl.completion_type == "branch" then
+            return branch_completion()
         end
-        local completion_options = subcommand_options(subcommand)
-        if completion_options ~= nil then
-            return completion_options
+
+        if completion_tbl.completion_type == "subcommand" then
+            return completion_tbl.subcommands or {}
         end
+        return completion_tbl.options or {}
     end
     return {}
 end
