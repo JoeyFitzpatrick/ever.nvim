@@ -19,6 +19,9 @@ function M._branch_completion()
     return branches
 end
 
+--- This function was copied from [mini.git](https://github.com/echasnovski/mini-git).
+--- All credit for this goes to Evgeni Chasnovski and the mini.git maintainers.
+--- Definitely check out [mini.nvim](https://github.com/echasnovski/mini.nvim), it's pretty sweet!
 function M._path_completion(base)
     local cwd = vim.fn.getcwd()
     cwd = cwd:gsub("/+$", "") .. "/"
