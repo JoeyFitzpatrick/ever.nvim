@@ -10,7 +10,7 @@ local function get_subcommand(cmdline)
     return words[2]
 end
 
-local function branch_completion()
+function M._branch_completion()
     local all_branches_command = "git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/"
     local branches = vim.fn.systemlist(all_branches_command)
     if vim.v.shell_error ~= 0 then
@@ -19,7 +19,7 @@ local function branch_completion()
     return branches
 end
 
-local function path_completion(base)
+function M._path_completion(base)
     local cwd = vim.fn.getcwd()
     cwd = cwd:gsub("/+$", "") .. "/"
     local cwd_len = cwd:len()
@@ -89,11 +89,11 @@ M.complete_git_command = function(arglead, cmdline)
         end
 
         if cmdline:match(" %-%- ") then
-            return path_completion(arglead) or {}
+            return M._path_completion(arglead) or {}
         end
 
         if completion_tbl.completion_type == "branch" then
-            return branch_completion()
+            return M._branch_completion()
         end
 
         if completion_tbl.completion_type == "subcommand" then
@@ -101,7 +101,7 @@ M.complete_git_command = function(arglead, cmdline)
         end
 
         if completion_tbl.completion_type == "filepath" then
-            return path_completion(arglead) or {}
+            return M._path_completion(arglead) or {}
         end
 
         return completion_tbl.options or {}
