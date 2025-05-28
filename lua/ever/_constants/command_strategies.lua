@@ -33,6 +33,7 @@ M.add = {
 }
 
 M.branch = {
+    display_strategy = M.STRATEGIES.BELOW,
     trigger_redraw = true,
 }
 
