@@ -244,9 +244,9 @@ M.render = function(cmd)
 
     cmd = get_blame_command(cmd, current_filename)
 
-    local file_win = vim.api.nvim_get_current_win()
-    local original_cursor_pos = vim.api.nvim_win_get_cursor(file_win)
-    local file_win_line_num = vim.fn.line("w0", file_win)
+    local original_win = vim.api.nvim_get_current_win()
+    local original_cursor_pos = vim.api.nvim_win_get_cursor(original_win)
+    local file_win_line_num = vim.fn.line("w0", original_win)
     local bufnr = require("ever._ui.elements").new_buffer({
         win_config = { split = "left", width = math.floor(vim.o.columns * 0.33) },
         buffer_name = blame_buffer_name,
@@ -262,19 +262,19 @@ M.render = function(cmd)
     end
 
     set_keymaps(bufnr)
-    set_autocmds(bufnr, file_win, blame_buffer_name)
+    set_autocmds(bufnr, original_win, blame_buffer_name)
 
     local ok = pcall(function()
-        local blame_win_initial_line = file_win_line_num
-            + vim.api.nvim_get_option_value("scrolloff", { win = file_win })
+        local blame_win_initial_line = file_win_line_num + vim.wo[original_win].scrolloff
         vim.api.nvim_win_set_cursor(0, { blame_win_initial_line, 0 })
     end)
     if not ok then
         vim.api.nvim_win_set_cursor(0, { file_win_line_num, 0 })
     end
-    vim.cmd.normal("zt!")
-    vim.api.nvim_win_set_cursor(0, original_cursor_pos)
-    vim.api.nvim_win_set_cursor(file_win, original_cursor_pos)
+    -- Make the top line of the blame window the same as the original window
+    vim.fn.winrestview({ topline = vim.fn.line("w0", original_win) })
+    vim.api.nvim_win_set_cursor(0, { original_cursor_pos[1], 0 })
+    vim.api.nvim_win_set_cursor(original_win, original_cursor_pos)
     vim.cmd("syncbind")
 end
 
