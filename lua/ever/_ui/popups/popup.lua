@@ -64,16 +64,6 @@ local function set_keymaps(bufnr)
     end, { buffer = bufnr, noremap = true, nowait = true })
 end
 
-local function set_autocmds(bufnr)
-    vim.api.nvim_create_autocmd("BufLeave", {
-        buffer = bufnr,
-        callback = function()
-            vim.api.nvim_buf_delete(bufnr, { force = true })
-        end,
-        group = vim.api.nvim_create_augroup("EverPopupLeave", { clear = true }),
-    })
-end
-
 ---@param opts ever.RenderPopupOpts
 function M.render_popup(opts)
     local bufnr = require("ever._ui.elements").new_buffer({
@@ -91,7 +81,6 @@ function M.render_popup(opts)
     set_popup_settings()
     highlight(bufnr)
     set_keymaps(bufnr)
-    set_autocmds(bufnr)
     return bufnr
 end
 
