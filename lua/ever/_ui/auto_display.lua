@@ -16,9 +16,9 @@ local function clear_state(state, ui_type, display_auto_display)
     state.diff_channel_id = nil
     state.current_diff = nil
 
-    if display_auto_display == nil then
+    if display_auto_display == nil and state.display_auto_display == nil then
         state.display_auto_display = require("ever._core.configuration").DATA[ui_type].auto_display_on
-    else
+    elseif display_auto_display ~= nil then
         state.display_auto_display = display_auto_display
     end
 end
