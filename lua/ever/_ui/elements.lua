@@ -239,7 +239,7 @@ function M.new_buffer(opts)
     end
 
     local register = require("ever._core.register")
-    register.register_buffer(bufnr, {})
+    register.register_buffer(bufnr, { win = win })
 
     vim.keymap.set("n", "q", function()
         register.deregister_buffer(bufnr, {})

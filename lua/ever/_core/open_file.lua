@@ -40,7 +40,7 @@ local function setup_git_file(bufnr, filename, commit)
     vim.api.nvim_set_option_value("filetype", vim.filetype.match({ buf = bufnr }), { buf = bufnr })
 
     vim.keymap.set("n", "q", function()
-        vim.api.nvim_buf_delete(bufnr, { force = true })
+        require("ever._core.register").deregister_buffer(bufnr, {})
     end, { buffer = bufnr })
 end
 
