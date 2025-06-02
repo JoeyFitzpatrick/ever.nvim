@@ -181,6 +181,9 @@ function M.set_keymaps(bufnr, opts)
         if not ok or not line_data then
             return
         end
+        local current_buffer = vim.api.nvim_get_current_buf()
+        -- Deregister current buffer so it doesn't hang around
+        require("ever._core.register").deregister_buffer(current_buffer, {})
         vim.api.nvim_exec2("e " .. line_data.filename, {})
     end, keymap_opts)
 
