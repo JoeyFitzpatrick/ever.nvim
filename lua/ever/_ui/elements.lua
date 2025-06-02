@@ -49,6 +49,14 @@ M._get_num_lines_to_trim = function(lines)
     return num_lines_to_trim
 end
 
+local function output_is_empty(bufnr)
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    local empty_lines = vim.tbl_filter(function(line)
+        return line == ""
+    end, lines)
+    return #lines == #empty_lines
+end
+
 ---@param cmd string
 ---@param bufnr integer
 ---@param win integer
@@ -79,6 +87,9 @@ local function open_dynamic_terminal(cmd, bufnr, win, strategy)
                 local num_lines_to_trim = M._get_num_lines_to_trim(lines)
                 vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
                 vim.api.nvim_buf_set_lines(bufnr, -num_lines_to_trim, -1, false, {})
+                if output_is_empty(bufnr) then
+                    vim.api.nvim_buf_delete(bufnr, { force = true })
+                end
                 vim.api.nvim_win_set_height(win, math.min(#lines - (num_lines_to_trim - 1), max_height))
                 vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
             end
