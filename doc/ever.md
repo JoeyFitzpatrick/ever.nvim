@@ -373,9 +373,6 @@ Thank you to Samuel Williams and the maintainers of [nvim-unception](https://git
 Some code from that plugin was vendored into Ever to support preventing nested nvim sessions when opening an editor
 from within an nvim terminal, e.g. the commit editor when running `:G commit`.
 
-Thank you to Isak Buhl-Mortensen and the maintainers of [gitgraph.nvim](https://github.com/isakbm/gitgraph.nvim).
-This plugin was vendored into Ever to support a beautiful graph for `:G log --graph`.
-
 Thanks to Tim Pope and the maintainers of [vim-fugitive](https://github.com/tpope/vim-fugitive), an absolutely incredible vim 
 plugin that _heavily_ influenced Ever.
 

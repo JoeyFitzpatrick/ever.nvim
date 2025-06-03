@@ -243,8 +243,6 @@ Thank you to Samuel Williams and the maintainers of [nvim-unception](https://git
 
 Thanks to Evgeni Chasnovski and the [mini.git](https://github.com/echasnovski/mini-git) maintainers. Some code from that plugin was copied for this project (specifically, the filepath completion for command mode). Definitely check out [mini.nvim](https://github.com/echasnovski/mini.nvim), it's pretty sweet!
 
-Thank you to Isak Buhl-Mortensen and the maintainers of [gitgraph.nvim](https://github.com/isakbm/gitgraph.nvim). This plugin was vendored into Ever to support a beautiful graph for `:G log --graph`.
-
 Thanks to Tim Pope and the maintainers of [vim-fugitive](https://github.com/tpope/vim-fugitive), an absolutely incredible vim plugin that _heavily_ influenced Ever.
 
 Thanks to Jesse Duffield and the maintainers of [lazygit](https://github.com/jesseduffield/lazygit), a sick terminal git TUI that also heavily influenced Ever.

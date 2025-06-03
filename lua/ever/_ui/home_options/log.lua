@@ -2,8 +2,6 @@
 
 local M = {}
 
-local GITGRAPH_SETUP_CALLED = false
-
 ---@param bufnr integer
 ---@param line string
 ---@param line_num integer
@@ -85,7 +83,12 @@ function M._parse_log_cmd(args)
     end
 
     if contains_option(args, "--graph") then
-        return { cmd = "git " .. args, use_graph_output = true, show_head = false, use_native_output = false }
+        return {
+            cmd = string.format("git %s %s", args, DEFAULT_LOG_FORMAT),
+            use_graph_output = true,
+            show_head = false,
+            use_native_output = false,
+        }
     end
 
     local native_output = { cmd = "git " .. args, use_native_output = true, show_head = false }
@@ -108,14 +111,25 @@ function M._parse_log_cmd(args)
     return { cmd = cmd_with_format, use_native_output = false, show_head = show_head }
 end
 
----@param bufnr integer
-local function git_log_graph(bufnr)
-    if not GITGRAPH_SETUP_CALLED then
-        ---@diagnostic disable-next-line: missing-fields
-        require("ever._vendors.gitgraph").setup({})
-        GITGRAPH_SETUP_CALLED = true
+local graph_map = {
+    ["|"] = "│",
+    ["*"] = "●",
+    ["/"] = "╱",
+    ["\\"] = "╲",
+    ["-"] = "─",
+    [" "] = " ",
+}
+
+---@param line string
+---@return string
+local function transform_graph_line(line)
+    -- Only replace the graph part at the start of the line (before the commit hash)
+    local graph, rest = line:match("^([|\\/* -]+)(.*)$")
+    if not graph then
+        return line
     end
-    require("ever._vendors.gitgraph").draw(bufnr, {}, { all = true, max_count = 5000 })
+    local beautified = graph:gsub(".", graph_map)
+    return beautified .. rest
 end
 
 ---@param bufnr integer
@@ -125,11 +139,6 @@ local function set_lines(bufnr, opts)
     local start_line = opts.start_line or 0
     local cmd_tbl = M._parse_log_cmd(opts.cmd)
     vim.bo[bufnr].modifiable = true
-
-    if cmd_tbl.use_graph_output then
-        git_log_graph(bufnr)
-        return { use_graph_output = true, use_native_keymaps = false }
-    end
 
     if cmd_tbl.show_head then
         local first_line = require("ever._ui.utils.get_current_head").get_current_head(opts.cmd)
@@ -143,12 +152,13 @@ local function set_lines(bufnr, opts)
         highlight_line = highlight_line,
         start_line = start_line,
         filetype = cmd_tbl.use_native_output and "git" or nil,
+        transform_line = cmd_tbl.use_graph_output and transform_graph_line or nil,
     })
 
     -- This should already be set to false by stream_lines.
     -- Just leaving this in case there's an error there.
     vim.bo[bufnr].modifiable = false
-    return { use_native_keymaps = cmd_tbl.use_native_output }
+    return { use_native_keymaps = cmd_tbl.use_native_output, use_graph_output = cmd_tbl.use_graph_output }
 end
 
 ---@param bufnr integer
