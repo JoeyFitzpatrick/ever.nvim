@@ -25,6 +25,7 @@ local COMMANDS_WITH_BRANCH_COMPLETION = {
 local COMMANDS_WITH_FILEPATH_COMPLETION = {
     "add",
     "archive",
+    "checkout-index",
     "diff",
     "grep",
     "mv",

@@ -52,6 +52,7 @@ M.add = {
 M.annotate = { insert = true }
 M.branch = { display_strategy = M.STRATEGIES.BELOW, trigger_redraw = true }
 M.checkout = { trigger_redraw = true }
+M["checkout-index"] = { trigger_redraw = true }
 
 ---@type ever.Strategy
 M.commit = {

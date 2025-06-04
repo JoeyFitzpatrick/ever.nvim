@@ -305,6 +305,7 @@ return {
         },
     },
     ["checkout-index"] = {
+        completion_type = "filepath",
         options = {
             ["--all"] = "--all",
             ["--force"] = "--force",
