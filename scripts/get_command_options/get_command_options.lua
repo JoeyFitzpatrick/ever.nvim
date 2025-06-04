@@ -15,6 +15,7 @@ local M = {}
 local COMMANDS_WITH_BRANCH_COMPLETION = {
     "Vdiff",
     "Hdiff",
+    "archive",
     "checkout",
     "merge",
     "rebase",

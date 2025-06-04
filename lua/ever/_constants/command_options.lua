@@ -118,6 +118,7 @@ return {
         },
     },
     archive = {
+        completion_type = "filepath",
         options = {
             ["--add-file"] = "--add-file",
             ["--add-virtual-file"] = "--add-virtual-file",
