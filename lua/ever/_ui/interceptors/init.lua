@@ -85,8 +85,15 @@ local function branch_interceptor(cmd)
     local has_only_ui_options = require("ever._core.texter").only_has_options(cmd, BRANCH_UI_OPTIONS)
     if has_only_ui_options then
         return function(branch_cmd)
-            local bufnr = require("ever._ui.elements").new_buffer({ buffer_name = "EverBranch-" .. os.tmpname() })
+            local bufnr = require("ever._ui.elements").new_buffer({
+                buffer_name = "EverBranch-" .. os.tmpname(),
+                win_config = { split = "below" },
+            })
             require("ever._ui.home_options.branch").render(bufnr, { start_line = 0, cmd = branch_cmd })
+            -- By default branch UI "q" map will go back to last buffer, but in a split we just want to close it
+            require("ever._ui.keymaps.set").safe_set_keymap("n", "q", function()
+                require("ever._core.register").deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
+            end, { buffer = bufnr })
         end
     end
     return nil
