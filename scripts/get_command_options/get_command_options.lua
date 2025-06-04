@@ -80,7 +80,6 @@ M.get_command_options = function(cmds)
         "list-plumbingmanipulators",
         "list-plumbinginterrogators",
         "others",
-        "alias",
     }
     cmds = cmds or vim.fn.systemlist("git --list-cmds=" .. table.concat(cmd_types, ","))
     for _, cmd in ipairs(cmds) do
