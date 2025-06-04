@@ -93,3 +93,6 @@ Make `:G log --graph` highlight the graph characters and actually fetch the comm
 
 ### Git diff keymaps
 When using a command like `:G show abc123`, there are keymaps that allow for opening files and diffs for a the given commit. It would be nice to have the same keymaps for `:G diff abc123`. For `show`, there are maps to open a file at the given commit, or at the commit _before_ the given commit. For `diff`, we'd probably want to use that, but also support a commit range or multiple given commits, so in the case of `:G diff commit1 commit2`, the "previous" file would be `commit1`.
+
+### Quiet commands
+In git, many commands take a `--quiet` flag that surpresses informational messages. It would be nice to have this work for `:G` commands, so running a command like `:G checkout some-branch --quiet` should not open a split, for instance.
