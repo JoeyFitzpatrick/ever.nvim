@@ -15,7 +15,6 @@ local M = {}
 local COMMANDS_WITH_BRANCH_COMPLETION = {
     "Vdiff",
     "Hdiff",
-    "archive",
     "checkout",
     "merge",
     "rebase",
@@ -25,6 +24,7 @@ local COMMANDS_WITH_BRANCH_COMPLETION = {
 
 local COMMANDS_WITH_FILEPATH_COMPLETION = {
     "add",
+    "archive",
     "diff",
     "grep",
     "mv",
