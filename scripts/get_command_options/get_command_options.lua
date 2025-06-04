@@ -77,7 +77,6 @@ M.get_command_options = function(cmds)
         "list-mainporcelain",
         "list-ancillarymanipulators",
         "list-ancillaryinterrogators",
-        "list-foreignscminterface",
         "list-plumbingmanipulators",
         "list-plumbinginterrogators",
         "others",
