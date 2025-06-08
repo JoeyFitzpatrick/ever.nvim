@@ -323,7 +323,7 @@ function M.set_keymaps(bufnr, opts)
     end, keymap_opts)
 
     set("n", keymaps.stash_popup, function()
-        require("ever._ui.popups.commit_popup").render()
+        require("ever._ui.popups.stash_popup").render()
     end, keymap_opts)
 end
 

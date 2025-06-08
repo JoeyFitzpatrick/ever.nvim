@@ -112,11 +112,6 @@ return {
             ["--whitespace"] = "--whitespace",
         },
     },
-    archimport = {
-        options = {
-            ["--help"] = "--help",
-        },
-    },
     archive = {
         completion_type = "filepath",
         options = {
@@ -347,11 +342,6 @@ return {
             ["--skip"] = "--skip",
             ["--strategy"] = "--strategy",
             ["--strategy-option"] = "--strategy-option",
-        },
-    },
-    citool = {
-        options = {
-            ["--help"] = "--help",
         },
     },
     clean = {
