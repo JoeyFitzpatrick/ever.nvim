@@ -16,6 +16,7 @@ function M._branch_completion()
     if vim.v.shell_error ~= 0 then
         return {}
     end
+    table.insert(branches, "HEAD")
     return branches
 end
 
