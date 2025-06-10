@@ -1,5 +1,5 @@
 # Roadmap to Beta
-At the time of this writing, Ever.nvim is in alpha. This document shows what features, bug fixes, and improvements are needed for Ever.nvim to get to beta.
+At the time of this writing, Trunks.nvim is in alpha. This document shows what features, bug fixes, and improvements are needed for Trunks.nvim to get to beta.
 
 ## Features
 
@@ -50,7 +50,7 @@ Users should be able to create their own keymaps for different UIs. This can be 
     commit = {
         keymaps = {
             p = function()
-                -- Ever lua API used here?
+                -- Trunks lua API used here?
             end
         }
     }

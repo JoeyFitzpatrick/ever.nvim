@@ -2,13 +2,13 @@
 
 | <!-- -->     | <!-- -->                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 |--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Build Status | [![tests](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/ever.nvim/test.yml?branch=main&style=for-the-badge&label=Unittests)](https://github.com/JoeyFitzpatrick/ever.nvim/actions/workflows/test.yml)  [![documentation](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/ever.nvim/documentation.yml?branch=main&style=for-the-badge&label=Documentation)](https://github.com/JoeyFitzpatrick/ever.nvim/actions/workflows/documentation.yml)  [![luacheck](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/ever.nvim/luacheck.yml?branch=main&style=for-the-badge&label=Luacheck)](https://github.com/JoeyFitzpatrick/ever.nvim/actions/workflows/luacheck.yml) [![llscheck](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/ever.nvim/llscheck.yml?branch=main&style=for-the-badge&label=llscheck)](https://github.com/JoeyFitzpatrick/ever.nvim/actions/workflows/llscheck.yml) [![stylua](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/ever.nvim/stylua.yml?branch=main&style=for-the-badge&label=Stylua)](https://github.com/JoeyFitzpatrick/ever.nvim/actions/workflows/stylua.yml)  [![urlchecker](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/ever.nvim/urlchecker.yml?branch=main&style=for-the-badge&label=URLChecker)](https://github.com/JoeyFitzpatrick/ever.nvim/actions/workflows/urlchecker.yml)  |
-| License      | [![License-MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](https://github.com/JoeyFitzpatrick/ever.nvim/blob/main/LICENSE)
+| Build Status | [![tests](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/trunks.nvim/test.yml?branch=main&style=for-the-badge&label=Unittests)](https://github.com/JoeyFitzpatrick/trunks.nvim/actions/workflows/test.yml)  [![documentation](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/trunks.nvim/documentation.yml?branch=main&style=for-the-badge&label=Documentation)](https://github.com/JoeyFitzpatrick/trunks.nvim/actions/workflows/documentation.yml)  [![luacheck](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/trunks.nvim/luacheck.yml?branch=main&style=for-the-badge&label=Luacheck)](https://github.com/JoeyFitzpatrick/trunks.nvim/actions/workflows/luacheck.yml) [![llscheck](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/trunks.nvim/llscheck.yml?branch=main&style=for-the-badge&label=llscheck)](https://github.com/JoeyFitzpatrick/trunks.nvim/actions/workflows/llscheck.yml) [![stylua](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/trunks.nvim/stylua.yml?branch=main&style=for-the-badge&label=Stylua)](https://github.com/JoeyFitzpatrick/trunks.nvim/actions/workflows/stylua.yml)  [![urlchecker](https://img.shields.io/github/actions/workflow/status/JoeyFitzpatrick/trunks.nvim/urlchecker.yml?branch=main&style=for-the-badge&label=URLChecker)](https://github.com/JoeyFitzpatrick/trunks.nvim/actions/workflows/urlchecker.yml)  |
+| License      | [![License-MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](https://github.com/JoeyFitzpatrick/trunks.nvim/blob/main/LICENSE)
 
 
-# What is Ever?
+# What is Trunks?
 
-Ever is a Neovim git client. It takes some ideas from [vim-fugitive](https://github.com/tpope/vim-fugitive), [lazygit](https://github.com/jesseduffield/lazygit), [magit](https://magit.vc/), and [git](https://git-scm.com/) itself, and introduces some other ideas. The main features are:
+Trunks is a Neovim git client. It takes some ideas from [vim-fugitive](https://github.com/tpope/vim-fugitive), [lazygit](https://github.com/jesseduffield/lazygit), [magit](https://magit.vc/), and [git](https://git-scm.com/) itself, and introduces some other ideas. The main features are:
 - Most valid git command can be called via command-mode, e.g. `:G commit`, like fugitive
 - Autocompletion for those commands, e.g. typing `:G switch` will cause valid branches to be autocompleted
 - Keymaps for common actions in various git contexts, e.g. `n` to create a new branch from the branch UI, like lazygit
@@ -24,13 +24,13 @@ A roadmap to beta can be found [here](doc/roadmap_to_beta.md).
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
 {
-    "JoeyFitzpatrick/ever.nvim",
+    "JoeyFitzpatrick/trunks.nvim",
     -- TODO: (you) - Make sure your first release matches v1.0.0 so it auto-releases!
     version = "v1.*",
 }
 ```
 
-Note: lazy loading is handled internally, so it is not required to lazy load Ever. With that being said, if you really want to lazy load Ever, you should be able to lazy load it however you normally lazy load plugins.
+Note: lazy loading is handled internally, so it is not required to lazy load Trunks. With that being said, if you really want to lazy load Trunks, you should be able to lazy load it however you normally lazy load plugins.
 
 
 # Configuration
@@ -39,15 +39,15 @@ Note: lazy loading is handled internally, so it is not required to lazy load Eve
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
 {
-    "JoeyFitzpatrick/ever.nvim",
+    "JoeyFitzpatrick/trunks.nvim",
     config = function()
         -- The next two lines allow the lua LSP to autocomplete config options
-        ---@module "ever"
-        ---@type ever.Configuration
-        vim.g.ever_configuration = {
+        ---@module "trunks"
+        ---@type trunks.Configuration
+        vim.g.trunks_configuration = {
             -- Default configuration
-            -- By default, Ever attempts to prevent nested nvim sessions, in cases
-            -- where a terminal opened by Ever opens an editor (like the commit editor).
+            -- By default, Trunks attempts to prevent nested nvim sessions, in cases
+            -- where a terminal opened by Trunks opens an editor (like the commit editor).
             -- Set this to false to allow "nvim inception" to occur (or handle yourself).
             prevent_nvim_inception = true,
             home = {
@@ -201,7 +201,7 @@ Note that using the `%` character will expand it to the current buffer's filenam
 [Delta](https://github.com/dandavison/delta) - improved git diff output (used in the demos/examples)
 
 # Development and Contributing
-I welcome users of any experience level to contribute to Ever and improve the project. If you'd like to contribute by writing code, please run `scripts/dev_setup/dev_setup.sh` first, which will set up a pre-commit hook that runs tests and some checks. The same checks run in CI, but this will help you catch issues before pushing up code. Note that you may need to run `chmod +x scripts/dev_setup/dev_setup.sh` first, to set up correct permissions to run the script.
+I welcome users of any experience level to contribute to Trunks and improve the project. If you'd like to contribute by writing code, please run `scripts/dev_setup/dev_setup.sh` first, which will set up a pre-commit hook that runs tests and some checks. The same checks run in CI, but this will help you catch issues before pushing up code. Note that you may need to run `chmod +x scripts/dev_setup/dev_setup.sh` first, to set up correct permissions to run the script.
 
 Improvements to the documentation are also welcome. Additionally, there are templates for asking questions, bug reports, and feature requests, all which are also good ways to contribute.
 
@@ -239,12 +239,12 @@ describe("User management controls #simple", function ()...
 See [doc/news.txt](doc/news.txt) for updates.
 
 # Credits
-Thank you to Samuel Williams and the maintainers of [nvim-unception](https://github.com/samjwill/nvim-unception). Some code from that plugin was vendored into Ever to support preventing nested nvim sessions when opening an editor from within an nvim terminal, e.g. the commit editor when running `:G commit`.
+Thank you to Samuel Williams and the maintainers of [nvim-unception](https://github.com/samjwill/nvim-unception). Some code from that plugin was vendored into Trunks to support preventing nested nvim sessions when opening an editor from within an nvim terminal, e.g. the commit editor when running `:G commit`.
 
 Thanks to Evgeni Chasnovski and the [mini.git](https://github.com/echasnovski/mini-git) maintainers. Some code from that plugin was copied for this project (specifically, the filepath completion for command mode). Definitely check out [mini.nvim](https://github.com/echasnovski/mini.nvim), it's pretty sweet!
 
-Thanks to Tim Pope and the maintainers of [vim-fugitive](https://github.com/tpope/vim-fugitive), an absolutely incredible vim plugin that _heavily_ influenced Ever.
+Thanks to Tim Pope and the maintainers of [vim-fugitive](https://github.com/tpope/vim-fugitive), an absolutely incredible vim plugin that _heavily_ influenced Trunks.
 
-Thanks to Jesse Duffield and the maintainers of [lazygit](https://github.com/jesseduffield/lazygit), a sick terminal git TUI that also heavily influenced Ever.
+Thanks to Jesse Duffield and the maintainers of [lazygit](https://github.com/jesseduffield/lazygit), a sick terminal git TUI that also heavily influenced Trunks.
 
-Thanks to Jonas Bernoulli, Kyle Meyer, and the maintainers of [magit](https://github.com/magit/magit). I've never personally used it, but its wonderful documentation inspired both some features and design priniciples of Ever.
+Thanks to Jonas Bernoulli, Kyle Meyer, and the maintainers of [magit](https://github.com/magit/magit). I've never personally used it, but its wonderful documentation inspired both some features and design priniciples of Trunks.

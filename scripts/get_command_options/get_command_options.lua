@@ -11,10 +11,10 @@
 -- Subcommands should never begin with a "-".
 -- * The `git maintenance` and `git notes` commands don't get all subcommands, this should be fixed.
 
----@alias ever.CommandCompletionType "branch" | "filepath" | "subcommand"
+---@alias trunks.CommandCompletionType "branch" | "filepath" | "subcommand"
 
----@class ever.CompletionParams
----@field completion_type? ever.CommandCompletionType
+---@class trunks.CompletionParams
+---@field completion_type? trunks.CommandCompletionType
 ---@field options string[]
 ---@field subcommands? string[]
 
@@ -49,10 +49,10 @@ end
 
 ---@param help_text string
 ---@param cmd string
----@return ever.CompletionParams
+---@return trunks.CompletionParams
 M._parse_options_from_help_text = function(help_text, cmd)
     local completion_type = nil
-    ---@type ever.CompletionParams
+    ---@type trunks.CompletionParams
     local completion_params = { options = {} }
     for flag in help_text:gmatch(cmd_option_pattern) do
         completion_params.options[flag] = flag
@@ -120,7 +120,7 @@ M.get_command_options = function(cmds)
         end
     end
 
-    local filepath = "lua/ever/_constants/command_options.lua"
+    local filepath = "lua/trunks/_constants/command_options.lua"
     write_table_to_file(parsed_commands, filepath)
     os.execute("stylua " .. filepath)
     print("done")

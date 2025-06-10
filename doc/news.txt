@@ -1,17 +1,17 @@
-*ever-news.txt*
+*trunks-news.txt*
 
-Notable changes since Ever 1.0
+Notable changes since Trunks 1.0
 
 
 ===============================================================================
-NEW FEATURES                                     *ever-new-features*
+NEW FEATURES                                     *trunks-new-features*
 
 - Added llscheck.yml - A GitHub workflow that detects type annotation issues!
 - Added urlchecker.yml - A GitHub workflow that finds broken URLs!
 
 
 ===============================================================================
-BREAKING CHANGES                                 *ever-new-breaking*
+BREAKING CHANGES                                 *trunks-new-breaking*
 
 n/a
 

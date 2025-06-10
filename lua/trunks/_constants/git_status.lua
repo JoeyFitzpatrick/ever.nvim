@@ -1,0 +1,64 @@
+---@alias trunks.GitStatus
+---| "A "
+---| "AA"
+---| "AM"
+---| " A"
+---| "C "
+---| " C"
+---| "DD"
+---| "DM"
+---| "D "
+---| " D"
+---| "MM"
+---| "M "
+---| " M"
+---| "R "
+---| " R"
+---| "UU"
+---| "??"
+
+local M = {}
+
+---@type table<string, trunks.GitStatus>
+M.STATUSES = {
+    ADDED = "A ",
+    ADDED_BOTH_STAGED_UNSTAGED = "AA",
+    ADDED_MODIFIED = "AM",
+    ADDED_UNSTAGED = " A",
+    COPIED_STAGED = "C ",
+    COPIED_UNSTAGED = " C",
+    DELETED_BOTH_STAGED_UNSTAGED = "DD",
+    DELETED_MODIFIED_UNSTAGED = "DM",
+    DELETED_STAGED = "D ",
+    DELETED_UNSTAGED = " D",
+    MODIFIED_PARTIALLY_STAGED = "MM",
+    MODIFIED_STAGED = "M ",
+    MODIFIED_UNSTAGED = " M",
+    RENAMED_STAGED = "R ",
+    RENAMED_UNSTAGED = " R",
+    UNMERGED = "UU",
+    UNTRACKED = "??",
+}
+
+M.STAGED_STATUSES = {
+    M.STATUSES.MODIFIED_STAGED,
+    M.STATUSES.ADDED,
+    M.STATUSES.ADDED_MODIFIED,
+    M.STATUSES.DELETED_STAGED,
+    M.STATUSES.RENAMED_STAGED,
+    M.STATUSES.COPIED_STAGED,
+}
+
+M.DELETED_STATUSES = {
+    M.STATUSES.DELETED_BOTH_STAGED_UNSTAGED,
+    M.STATUSES.DELETED_MODIFIED_UNSTAGED,
+    M.STATUSES.DELETED_STAGED,
+    M.STATUSES.DELETED_UNSTAGED,
+}
+
+M.RENAMED_STATUSES = {
+    M.STATUSES.RENAMED_STAGED,
+    M.STATUSES.RENAMED_UNSTAGED,
+}
+
+return M

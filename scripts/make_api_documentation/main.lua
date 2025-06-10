@@ -1,4 +1,4 @@
---- The file that auto-creates documentation for `ever`.
+--- The file that auto-creates documentation for `trunks`.
 
 local success, doc = pcall(require, "mini.doc")
 
@@ -81,8 +81,8 @@ end
 
 --- Add the text that Vimdoc uses to generate doc/tags (basically surround the text with *s).
 ---
----@param text string Any text, e.g. `"ever.ClassName"`.
----@return string # The wrapped text, e.g. `"*ever.ClassName*"`.
+---@param text string Any text, e.g. `"trunks.ClassName"`.
+---@return string # The wrapped text, e.g. `"*trunks.ClassName*"`.
 ---
 local function _add_tag(text)
     return (text:gsub("(%S+)", "%*%1%*"))
@@ -174,7 +174,7 @@ end
 ---    Usually a function in Lua is defined with `function M.foo`. In this
 ---    example, `module_identifier` would be the `M` part.
 ---@param module_name string
----    The real name for the module. e.g. `"ever"`.
+---    The real name for the module. e.g. `"trunks"`.
 ---
 local function _replace_function_name(section, module_identifier, module_name)
     local prefix = string.format("^%s%%.", module_identifier)
@@ -390,18 +390,18 @@ local function _get_module_identifier(path) -- luacheck: ignore 212 -- unused ar
     return "M"
 end
 
----@class ever.AutoDocumentationEntry
+---@class trunks.AutoDocumentationEntry
 ---    The simple source/destination of "Lua file that we want to auto-create
 ---    documentation from + the .txt file that we want auto-create to".
 ---@field source string
 ---    An absolute path to a Lua file on-disk. e.g. `"/path/to/init.lua"`.
 ---@field destination string
 ---    An absolute path for the auto-created documentation.
----    e.g. `"/out/ever.txt"`.
+---    e.g. `"/out/trunks.txt"`.
 
 --- Make sure `paths` can be processed by this script.
 ---
----@param paths ever.AutoDocumentationEntry[]
+---@param paths trunks.AutoDocumentationEntry[]
 ---    The source/destination pairs to check.
 ---
 local function _validate_paths(paths)
@@ -418,12 +418,12 @@ local function main()
     local root = vim.fs.normalize(vim.fs.joinpath(current_directory, "..", ".."))
     local paths = {
         {
-            source = vim.fs.joinpath(root, "lua", "ever", "init.lua"),
-            destination = vim.fs.joinpath(root, "doc", "ever_api.txt"),
+            source = vim.fs.joinpath(root, "lua", "trunks", "init.lua"),
+            destination = vim.fs.joinpath(root, "doc", "trunks_api.txt"),
         },
         {
-            source = vim.fs.joinpath(root, "lua", "ever", "types.lua"),
-            destination = vim.fs.joinpath(root, "doc", "ever_types.txt"),
+            source = vim.fs.joinpath(root, "lua", "trunks", "types.lua"),
+            destination = vim.fs.joinpath(root, "doc", "trunks_types.txt"),
         },
     }
 

@@ -1,5 +1,5 @@
 vim.opt.rtp:append(".")
 
-vim.cmd("runtime plugin/ever.lua")
+vim.cmd("runtime plugin/trunks.lua")
 
-require("ever")
+require("trunks")

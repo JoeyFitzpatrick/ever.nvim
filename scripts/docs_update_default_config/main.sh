@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Path to the configuration file
-CONFIG_FILE="lua/ever/_core/default_configuration.lua"
+CONFIG_FILE="lua/trunks/_core/default_configuration.lua"
 README_FILE="README.md"
-DOC_FILE="doc/ever.md"
+DOC_FILE="doc/trunks.md"
 
 # Check if the configuration file exists
 if [ ! -f "$CONFIG_FILE" ]; then
