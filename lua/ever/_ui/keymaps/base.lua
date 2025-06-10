@@ -32,10 +32,6 @@ local function set_terminal_keymaps(bufnr, channel_id)
     vim.keymap.set("n", "K", function()
         vim.api.nvim_chan_send(channel_id, "k")
     end, opts)
-
-    -- vim.keymap.set("t", "<esc>", function()
-    --     vim.cmd("stopinsert")
-    -- end, opts)
 end
 
 --- Set the appropriate keymaps for a given command and element.
@@ -137,6 +133,15 @@ function M.get_keymaps(bufnr, ui_type, opts)
     end, { buffer = bufnr })
 
     return mappings
+end
+
+--- We often need specific "q" functionality, so here's a simple helper.
+---@param bufnr integer
+---@param opts ever.DeregisterOpts
+function M.set_q_keymap(bufnr, opts)
+    vim.keymap.set("n", "q", function()
+        require("ever._core.register").deregister_buffer(bufnr, opts)
+    end, { desc = "Close current Ever buffer", buffer = bufnr })
 end
 
 return M

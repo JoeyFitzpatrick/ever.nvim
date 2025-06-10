@@ -80,8 +80,9 @@ M.commit = {
     trigger_redraw = true,
 }
 
+M.config = { insert = true }
 M.diff = { display_strategy = M.STRATEGIES.RIGHT, insert = false }
-M.fetch = { trigger_redraw = true }
+M.fetch = { display_strategy = M.STRATEGIES.DYNAMIC, trigger_redraw = true }
 M.merge = { insert = true, trigger_redraw = true }
 
 M.notes = {
@@ -96,11 +97,13 @@ M.notes = {
 M.pull = { display_strategy = M.STRATEGIES.DYNAMIC, trigger_redraw = true }
 M.push = { display_strategy = M.STRATEGIES.DYNAMIC, trigger_redraw = true }
 M.rebase = { insert = true, trigger_redraw = true }
+M.repack = { display_strategy = M.STRATEGIES.DYNAMIC }
 M.reset = { trigger_redraw = true }
 M.revert = { trigger_redraw = true }
 M.show = { display_strategy = M.STRATEGIES.FULL, insert = true }
 M.stage = { trigger_redraw = true }
 M.stash = { trigger_redraw = true }
 M.switch = { trigger_redraw = true }
+M.whatchanged = { insert = true }
 
 return M
