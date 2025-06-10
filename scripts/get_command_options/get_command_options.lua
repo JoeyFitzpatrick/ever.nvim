@@ -2,6 +2,14 @@
 -- It can be run via the terminal by running this:
 -- nvim --headless -c 'luafile scripts/get_command_options/get_command_options.lua' -c 'qa'
 -- Or just source the file by running `:h source` with this file open in neovim
+--
+-- There are a number of minor issues that need to be fixed:
+-- * Any command that is not considered a valid command under some circumstances,
+-- or are very niche, such as svn, gitk, gui, gitweb, instaweb, multi-pack-index, archimport, and scalar,
+-- should be removed.
+-- * Some commands get subcommand options that begin with a "-" character, such as "-p", or "--list".
+-- Subcommands should never begin with a "-".
+-- * The `git maintenance` and `git notes` commands don't get all subcommands, this should be fixed.
 
 ---@alias ever.CommandCompletionType "branch" | "filepath" | "subcommand"
 
