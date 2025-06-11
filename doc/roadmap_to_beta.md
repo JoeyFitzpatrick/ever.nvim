@@ -96,3 +96,6 @@ When using a command like `:G show abc123`, there are keymaps that allow for ope
 
 ### Quiet commands
 In git, many commands take a `--quiet` flag that surpresses informational messages. It would be nice to have this work for `:G` commands, so running a command like `:G checkout some-branch --quiet` should not open a split, for instance.
+
+### Reblame handles files not in commit
+When reblaming a file that has a different name at a given commit, a pretty ugly error is shown. We should handle that more gracefully by either figuring out the old file name, or if that's not possible, show a better error.
