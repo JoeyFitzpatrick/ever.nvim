@@ -1,6 +1,8 @@
 # Roadmap to Beta
 At the time of this writing, Trunks.nvim is in alpha. This document shows what features, bug fixes, and improvements are needed for Trunks.nvim to get to beta.
 
+While the project is in alpha, we will not use versioning. Once all of the improvements in this document are either accomplished or de-prioritized, we'll do a beta release with version 0.1.0. We also need to release on luarocks once we hit beta.
+
 ## Features
 
 ### Display files in a tree
