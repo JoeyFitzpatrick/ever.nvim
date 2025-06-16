@@ -8,9 +8,6 @@
 ---@field state table<string, any>
 ---@field win? integer
 
----@class trunks.DeregisterOpts
----@field skip_go_to_last_buffer? boolean
-
 local M = {}
 
 ---@type table<integer, trunks.RegisterOptsWithState>
@@ -35,7 +32,8 @@ end
 ---@param bufnr integer
 local function navigate_to_last_non_trunks_buffer(bufnr)
     local win = vim.fn.bufwinid(bufnr)
-    if not win then
+    local no_win_found = win == -1
+    if no_win_found then
         return
     end
     local buf_to_navigate_to = M.last_non_trunks_buffer_for_win[win]
@@ -49,23 +47,20 @@ end
 local function delete_trunks_buffers_for_win(win)
     for bufnr, opts in pairs(M.buffers) do
         if opts.win == win then
-            M.deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
+            M.deregister_buffer(bufnr)
         end
     end
 end
 
 ---@param bufnr? integer
----@param opts trunks.DeregisterOpts
-function M.deregister_buffer(bufnr, opts)
+function M.deregister_buffer(bufnr)
     if not bufnr then
         return
     end
     M.buffers[bufnr] = nil
     if vim.api.nvim_buf_is_valid(bufnr) then
-        if not opts.skip_go_to_last_buffer then
-            navigate_to_last_non_trunks_buffer(bufnr)
-            delete_trunks_buffers_for_win(vim.api.nvim_get_current_win())
-        end
+        navigate_to_last_non_trunks_buffer(bufnr)
+        delete_trunks_buffers_for_win(vim.api.nvim_get_current_win())
         vim.api.nvim_buf_delete(bufnr, { force = true })
     end
 end

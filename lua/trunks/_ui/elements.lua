@@ -218,10 +218,9 @@ end
 ---@param opts trunks.ElementNewBufferOpts -- opts for new buffer
 ---@return integer, integer -- buffer id, window id
 function M.new_buffer(opts)
-    local current_buf = vim.api.nvim_get_current_buf()
     local bufnr = vim.api.nvim_create_buf(false, true)
-
     local win
+
     if opts.win_config then
         local enter = true
         if opts.enter == false then
@@ -230,7 +229,9 @@ function M.new_buffer(opts)
         win = vim.api.nvim_open_win(bufnr, enter, opts.win_config)
     else
         win = vim.api.nvim_get_current_win()
+        local current_buf = vim.api.nvim_get_current_buf()
         vim.api.nvim_win_set_buf(win, bufnr)
+        setup_last_non_trunks_buffer(current_buf, bufnr, win)
     end
 
     if opts.filetype then
@@ -253,10 +254,8 @@ function M.new_buffer(opts)
     register.register_buffer(bufnr, { win = win })
 
     vim.keymap.set("n", "q", function()
-        register.deregister_buffer(bufnr, {})
+        register.deregister_buffer(bufnr)
     end, { buffer = bufnr })
-
-    setup_last_non_trunks_buffer(current_buf, bufnr, win)
 
     return bufnr, win
 end

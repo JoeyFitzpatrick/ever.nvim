@@ -6,7 +6,6 @@
 ---@field open_file_keymaps? boolean
 ---@field auto_display_keymaps? boolean
 ---@field diff_keymaps? boolean
----@field skip_go_to_last_buffer? boolean
 
 local M = {}
 
@@ -92,7 +91,7 @@ local function display_keymap_help(mappings, ui_type, opts)
     local keymap_opts = { buffer = bufnr }
 
     vim.keymap.set("n", "q", function()
-        require("trunks._core.register").deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
+        require("trunks._core.register").deregister_buffer(bufnr)
     end, keymap_opts)
 end
 
@@ -127,10 +126,7 @@ function M.get_keymaps(bufnr, ui_type, opts)
     end
 
     vim.keymap.set("n", "q", function()
-        require("trunks._core.register").deregister_buffer(
-            bufnr,
-            { skip_go_to_last_buffer = opts.skip_go_to_last_buffer or opts.popup }
-        )
+        require("trunks._core.register").deregister_buffer(bufnr)
     end, { buffer = bufnr })
 
     return mappings
@@ -138,10 +134,9 @@ end
 
 --- We often need specific "q" functionality, so here's a simple helper.
 ---@param bufnr integer
----@param opts trunks.DeregisterOpts
-function M.set_q_keymap(bufnr, opts)
+function M.set_q_keymap(bufnr)
     vim.keymap.set("n", "q", function()
-        require("trunks._core.register").deregister_buffer(bufnr, opts)
+        require("trunks._core.register").deregister_buffer(bufnr)
     end, { desc = "Close current Trunks buffer", buffer = bufnr })
 end
 

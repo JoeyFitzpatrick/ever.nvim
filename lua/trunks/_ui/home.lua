@@ -167,19 +167,19 @@ local function create_and_render_buffer(tab, indices)
     local set = require("trunks._ui.keymaps.set").safe_set_keymap
 
     set("n", "q", function()
-        require("trunks._core.register").deregister_buffer(bufnr, {})
+        require("trunks._core.register").deregister_buffer(bufnr)
     end, { buffer = bufnr })
 
     set("n", keymaps.next, function()
         local old_bufnr = bufnr
-        require("trunks._core.register").deregister_buffer(old_bufnr, {})
+        require("trunks._core.register").deregister_buffer(old_bufnr)
         tabs:cycle_tab("forward")
         create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
     end, { buffer = bufnr })
 
     set("n", keymaps.previous, function()
         local old_bufnr = bufnr
-        require("trunks._core.register").deregister_buffer(old_bufnr, {})
+        require("trunks._core.register").deregister_buffer(old_bufnr)
         tabs:cycle_tab("back")
         create_and_render_buffer(tabs.current_option, tabs.current_tab_indices)
     end, { buffer = bufnr })

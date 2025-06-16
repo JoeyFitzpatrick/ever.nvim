@@ -21,7 +21,7 @@ local cmd_ui_map = {
         -- It also makes the "q" keymap exit neovim if this is the last buffer, so we need to set it again
         vim.bo["filetype"] = "man"
         vim.keymap.set("n", "q", function()
-            require("trunks._core.register").deregister_buffer(0, { skip_go_to_last_buffer = true })
+            require("trunks._core.register").deregister_buffer(0)
         end, { buffer = 0 })
     end,
     log = function(cmd)
@@ -92,7 +92,7 @@ local function branch_interceptor(cmd)
             require("trunks._ui.home_options.branch").render(bufnr, { start_line = 0, cmd = branch_cmd })
             -- By default branch UI "q" map will go back to last buffer, but in a split we just want to close it
             require("trunks._ui.keymaps.set").safe_set_keymap("n", "q", function()
-                require("trunks._core.register").deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
+                require("trunks._core.register").deregister_buffer(bufnr)
             end, { buffer = bufnr })
         end
     end

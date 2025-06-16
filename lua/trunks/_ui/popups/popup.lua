@@ -35,7 +35,7 @@ local function get_popup_lines(bufnr, mapping_config, title)
                 else
                     mapping.action()
                 end
-                require("trunks._core.register").deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
+                require("trunks._core.register").deregister_buffer(bufnr)
             end, { buffer = bufnr, silent = true, nowait = true, desc = mapping.description })
         end
         return lines
@@ -60,7 +60,7 @@ end
 
 local function set_keymaps(bufnr)
     vim.keymap.set("n", "q", function()
-        require("trunks._core.register").deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
+        require("trunks._core.register").deregister_buffer(bufnr)
     end, { buffer = bufnr, noremap = true, nowait = true })
 end
 

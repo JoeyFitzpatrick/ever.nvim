@@ -47,7 +47,7 @@ end
 ---@param is_staged boolean
 local function set_diff_keymaps(bufnr, is_staged)
     require("trunks._ui.interceptors.diff.diff_keymaps").set_keymaps(bufnr)
-    local keymaps = require("trunks._ui.keymaps.base").get_keymaps(bufnr, "diff", { skip_go_to_last_buffer = true })
+    local keymaps = require("trunks._ui.keymaps.base").get_keymaps(bufnr, "diff")
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
     local set = require("trunks._ui.keymaps.set").safe_set_keymap
 
@@ -55,11 +55,11 @@ local function set_diff_keymaps(bufnr, is_staged)
     -- In this case, we want it to close both diff buffers
     -- So we need to set it here
     set("n", "q", function()
-        require("trunks._core.register").deregister_buffer(STAGED_BUFNR, { skip_go_to_last_buffer = true })
-        require("trunks._core.register").deregister_buffer(UNSTAGED_BUFNR, { skip_go_to_last_buffer = true })
+        require("trunks._core.register").deregister_buffer(STAGED_BUFNR)
+        require("trunks._core.register").deregister_buffer(UNSTAGED_BUFNR)
         -- At this point, we are in the staging area files buffer
         -- We want to close it and navigate back to the last non-staging-area buffer
-        require("trunks._core.register").deregister_buffer(0, { skip_go_to_last_buffer = false })
+        require("trunks._core.register").deregister_buffer(0)
     end, keymap_opts)
 
     ---@param mode "n" | "v"
@@ -167,8 +167,8 @@ local function set_autocmds(bufnr)
             CURRENT_DIFF_FILE = line_data.filename
             local filename = line_data.safe_filename
 
-            require("trunks._core.register").deregister_buffer(UNSTAGED_BUFNR, { skip_go_to_last_buffer = true })
-            require("trunks._core.register").deregister_buffer(STAGED_BUFNR, { skip_go_to_last_buffer = true })
+            require("trunks._core.register").deregister_buffer(UNSTAGED_BUFNR)
+            require("trunks._core.register").deregister_buffer(STAGED_BUFNR)
 
             local win = vim.api.nvim_get_current_win()
             local diff_cmds = get_diff_cmd(line_data.status, filename)
@@ -206,8 +206,8 @@ local function set_autocmds(bufnr)
         desc = "Close open diffs when buffer is hidden",
         buffer = bufnr,
         callback = function()
-            require("trunks._core.register").deregister_buffer(UNSTAGED_BUFNR, { skip_go_to_last_buffer = true })
-            require("trunks._core.register").deregister_buffer(STAGED_BUFNR, { skip_go_to_last_buffer = true })
+            require("trunks._core.register").deregister_buffer(UNSTAGED_BUFNR)
+            require("trunks._core.register").deregister_buffer(STAGED_BUFNR)
             UNSTAGED_BUFNR = nil
             STAGED_BUFNR = nil
             CURRENT_DIFF_FILE = nil

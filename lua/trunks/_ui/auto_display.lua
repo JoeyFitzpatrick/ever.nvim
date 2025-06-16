@@ -38,7 +38,7 @@ local function set_diff_buffer_autocmds(diff_bufnr, original_bufnr, ui_type)
             if buf then
                 clear_state(buf.state, ui_type)
             end
-            require("trunks._core.register").deregister_buffer(diff_bufnr, {})
+            require("trunks._core.register").deregister_buffer(diff_bufnr)
         end,
         group = vim.api.nvim_create_augroup(string.format("Trunks%sCloseAutoDisplay", ui_type), { clear = true }),
     })
@@ -48,12 +48,12 @@ end
 ---@param original_bufnr integer
 local function set_diff_buffer_keymaps(diff_bufnr, original_bufnr)
     require("trunks._ui.keymaps.set").safe_set_keymap("n", "q", function()
-        require("trunks._core.register").deregister_buffer(diff_bufnr, { skip_go_to_last_buffer = true })
-        require("trunks._core.register").deregister_buffer(original_bufnr, {})
+        require("trunks._core.register").deregister_buffer(diff_bufnr)
+        require("trunks._core.register").deregister_buffer(original_bufnr)
     end, { buffer = diff_bufnr })
 
     require("trunks._ui.keymaps.set").safe_set_keymap("n", "<enter>", function()
-        require("trunks._core.register").deregister_buffer(diff_bufnr, { skip_go_to_last_buffer = true })
+        require("trunks._core.register").deregister_buffer(diff_bufnr)
     end, { buffer = diff_bufnr })
 end
 

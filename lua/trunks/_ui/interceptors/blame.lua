@@ -18,7 +18,7 @@ end
 
 local function set_keymaps(bufnr)
     local keymap_opts = { noremap = true, silent = true, buffer = bufnr, nowait = true }
-    local keymaps = require("trunks._ui.keymaps.base").get_keymaps(bufnr, "blame", { skip_go_to_last_buffer = true })
+    local keymaps = require("trunks._ui.keymaps.base").get_keymaps(bufnr, "blame", {})
     local set = require("trunks._ui.keymaps.set").safe_set_keymap
 
     set("n", keymaps.checkout, function()
@@ -257,7 +257,7 @@ M.render = function(cmd)
 
     if result ~= "success" then
         BLAME_WINDOWS[blame_buffer_name] = nil
-        require("trunks._core.register").deregister_buffer(bufnr, { skip_go_to_last_buffer = true })
+        require("trunks._core.register").deregister_buffer(bufnr)
         return
     end
 
