@@ -142,6 +142,7 @@
 ---@field checkout? string
 ---@field commit_details? string
 ---@field commit_info? string
+---@field recover? string
 ---@field show? string
 
 ---@class trunks.StashKeymaps

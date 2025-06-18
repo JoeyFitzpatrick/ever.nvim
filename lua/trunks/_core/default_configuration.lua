@@ -99,6 +99,7 @@ return {
             checkout = "c",
             commit_details = "<enter>",
             commit_info = "i",
+            recover = "r",
             show = "s",
         },
     },

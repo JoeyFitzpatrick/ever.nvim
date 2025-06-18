@@ -79,9 +79,10 @@ return {
     ---@type trunks.ReflogKeymaps
     reflog = {
         checkout = "Checkout commit (with detached HEAD)",
-        commit_details = "Show commit details",
+        commit_details = "Show commit in Trunks commit details UI",
         commit_info = "Show commit info",
-        show = "Show commit details",
+        recover = "Recover this commit by making a branch from it",
+        show = "Show commit details (native diff)",
     },
     ---@type trunks.StashKeymaps
     stash = {

@@ -145,6 +145,7 @@ Note: lazy loading is handled internally, so it is not required to lazy load Tru
                     checkout = "c",
                     commit_details = "<enter>",
                     commit_info = "i",
+                    recover = "r",
                     show = "s",
                 },
             },

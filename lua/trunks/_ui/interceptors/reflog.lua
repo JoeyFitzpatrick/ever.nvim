@@ -58,6 +58,19 @@ local function set_keymaps(bufnr)
         require("trunks._ui.elements").terminal("git log -n 1 " .. line_data.hash, { display_strategy = "full" })
     end, keymap_opts)
 
+    set("n", keymaps.recover, function()
+        local ok, line_data = pcall(get_line, bufnr)
+        if not ok or not line_data then
+            return
+        end
+        vim.ui.input({ prompt = "Name for new branch off of " .. line_data.hash .. ": " }, function(input)
+            if not input then
+                return
+            end
+            vim.cmd(string.format("G checkout -b %s %s", input, line_data.hash))
+        end)
+    end, keymap_opts)
+
     set("n", keymaps.show, function()
         local ok, line_data = pcall(get_line, bufnr)
         if not ok or not line_data then
