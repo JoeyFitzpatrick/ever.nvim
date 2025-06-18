@@ -30,12 +30,15 @@ local function get_popup_lines(bufnr, mapping_config, title)
         for _, mapping in ipairs(mapping_config) do
             table.insert(lines, string.format(" %s %s\t", mapping.keys, mapping.description))
             require("trunks._ui.keymaps.set").safe_set_keymap("n", mapping.keys, function()
+                -- Close the popup before performing the action. This prevents issues where
+                -- a nested popup doesn't render because the action opens a popup, which is
+                -- then immediately closed.
+                require("trunks._core.register").deregister_buffer(bufnr)
                 if type(mapping.action) == "string" then
                     vim.cmd(mapping.action)
                 else
                     mapping.action()
                 end
-                require("trunks._core.register").deregister_buffer(bufnr)
             end, { buffer = bufnr, silent = true, nowait = true, desc = mapping.description })
         end
         return lines
