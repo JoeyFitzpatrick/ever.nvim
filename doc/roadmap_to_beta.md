@@ -65,6 +65,13 @@ A potential pitfall here is that we currently map from command to key, not key t
 ### Diff highlight engine
 I'm not a big fan of the built-in diff highlighting. It would be nice to have something closer to [delta](https://github.com/dandavison/delta). This would allow for using regular buffers for diffs in all cases, instead of terminal buffers, which would be a big win for functionality.
 
+I am pretty sure we can leverage virtual text to accomplish this. The gist of it would be:
+1. Get diff output
+1. Omit the first character of each line, except the @@ lines (aka context lines)
+1. Highlight added/removed lines appropriately
+1. Omit the context lines entirely, and replace with virtual text using `vim.api.nvim_buf_set_extmark`
+This should print the context lines, while not counting them for syntax highlighting purposes since they aren't actually in the buffer.
+
 ### Git pull can't rebase multiple branches
 Sometimes when using the `git pull` mapping in a UI, instead of pulling, there is an error that says `can't rebase onto multiple branches`. This usually goes away after pulling a second or third time. It would be nice if this just didn't happen at all.
 
